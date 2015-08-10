@@ -134,12 +134,14 @@ function workflow_access_features_rebuild($module) {
   }
 
   foreach ($wids as $workflow_name => $wid) {
-    $states = $workflow->getStates($all = TRUE);
-    foreach ($states as $state) {
-      // Remove all workflow access records for states belonging to this
-      // workflow. We don't want lingering entries - we only want the ones we're
-      // about to insert.
-      workflow_access_delete_workflow_access_by_sid($state->sid);
+    $workflow = workflow_load_by_name($workflow_name);
+    if (!empty($workflow) && $states = $workflow->getStates($all = TRUE)) {
+      foreach ($states as $state) {
+        // Remove all workflow access records for states belonging to this
+        // workflow. We don't want lingering entries - we only want the ones we're
+        // about to insert.
+        workflow_access_delete_workflow_access_by_sid($state->sid);
+      }
     }
   }
 
