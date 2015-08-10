@@ -114,10 +114,26 @@ function workflow_entity_info() {
   // Add bundle info but bypass entity_load() as we cannot use it here.
   // (The bundle-setup is copied from the D7 entityform module.)
   // Get all workflows, keyed by wid.
-  $types = db_select('workflows', 'w')
-    ->fields('w')
-    ->execute()
-    ->fetchAllAssoc('wid');
+  // Use try..catch.. to workaround #1311820, @see #2484325.
+  try {
+    // Add bundle info but bypass entity_load() as we cannot use it here.
+    // (The bundle-setup is copied from the D7 entityform module.)
+    // Get all workflows, keyed by wid.
+    $types = db_select('workflows', 'w')
+      ->fields('w')
+      ->execute()
+      ->fetchAllAssoc('wid');
+  }
+  catch (PDOException $ex) {
+    watchdog(
+      'workflow',
+      'Failed to retrieve workflow types: %exception',
+      array('%exception' => (string)$ex),
+      WATCHDOG_ERROR);
+
+    $types = array();
+  }
+
   // Build an array of bundles.
   foreach ($types as $type => $info) {
     $entities['WorkflowTransition']['bundles'][$type] = array(
