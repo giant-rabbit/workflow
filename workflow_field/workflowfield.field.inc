@@ -217,8 +217,8 @@ function workflowfield_field_prepare_view($entity_type, $entities, $field, $inst
 
   foreach ($items as $id => &$item_array) {
     foreach ($item_array as $index => &$item) {
-      if (!isset($item['value']) && isset($item['workflow']['workflow_sid'])) {
-        $item['value'] = $item['workflow']['workflow_sid'];
+      if (!isset($item['value'])) {
+        $item['value'] = isset($item['workflow']['workflow_sid']) ? $item['workflow']['workflow_sid'] : '';
       }
     }
   }

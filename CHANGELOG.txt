@@ -634,3 +634,4 @@ Issue #2546152 by NancyDru: Added submodule workflow_notify.
 Issue #2532128 by wayaslij: EntityMetadataWrapper $property call should first check if method exists
 Issue #2413593 by kyoder: Fixed EntityMetadataWrapperException in workflow.tokens.inc
 Issue #2169859 by kyoder, BAHbKA: Problems with Workflow Access Features
+Issue #2373103 by chilic: Notice in Node Preview mode in list_field_formatter_view()
