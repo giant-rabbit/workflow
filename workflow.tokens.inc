@@ -180,6 +180,12 @@ function workflow_tokens($type, $tokens, array $data = array(), array $options =
     foreach ($tokens as $name => $original) {
       if (FALSE !== strpos($name, ':')) {
         // This is a chained property (contains ':').
+        $name_parts = explode(':', $name);
+        switch (end($name_parts)) {
+          case 'comment':
+            $replacements[$original] = $entity->workflow_transitions[$name_parts[0]]->$name_parts[1];
+            break;
+        }
       }
       elseif (isset($data['workflow_token_type'])) {
         // This part taken from entity_token_tokens().
