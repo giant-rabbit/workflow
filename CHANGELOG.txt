@@ -631,3 +631,4 @@ Issue #2417193 by kaare: Added stub for undefined method WorkflowItem::delete()
 Issue #2430243: Fixed fragile check for entity edit mode in WorkflowTransitionForm::submitForm()
 Issue #2467103: State is lost when comment with Workflow Widget is submitted, and node has end-state
 Issue #2546152 by NancyDru: Added submodule workflow_notify.
+Issue #2532128 by wayaslij: EntityMetadataWrapper $property call should first check if method exists
