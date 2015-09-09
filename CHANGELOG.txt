@@ -638,3 +638,4 @@ Issue #2373103 by chilic: Notice in Node Preview mode in list_field_formatter_vi
 Issue #2472501 by alan-io1: Use features_get_default in hook_features_rebuild
 Issue #2484325 by GuyPaddock: Error on Site installation: table Workflows doesn't exist
 Issue #2376557 by deetergp: Token 'comment' does not work
+Issue #2351299 by johnv: Prepare D8-Port: split class files'
