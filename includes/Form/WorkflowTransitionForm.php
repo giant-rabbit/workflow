@@ -531,8 +531,6 @@ class WorkflowTransitionForm { // extends FormBase {
 
     // Now, save/execute the transition.
     $transition = $this->getTransition($old_sid, $items, $field_name, $user);
-    $force = $force || $transition->isForced();
-
     // Try to execute the transition. Return $old_sid when error.
     if (!$transition) {
       // This should only happen when testing/developing.
@@ -554,11 +552,13 @@ class WorkflowTransitionForm { // extends FormBase {
       // - validate option; add hook to let other modules change comment.
       // - add to history; add to watchdog
       // Return the new State ID. (Execution may fail and return the old Sid.)
+      $force = $force || $transition->isForced();
       $new_sid = $transition->execute($force);
     }
     else {
       // A scheduled transition must only be saved to the database.
       // The entity is not changed.
+      $force = $force || $transition->isForced();
       $transition->save();
 
       // The current value is still the previous state.

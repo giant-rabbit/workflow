@@ -241,7 +241,7 @@ class WorkflowTransition extends Entity {
    * @return int
    *   New state ID. If execution failed, old state ID is returned,
    *
-   * @deprecated: workflow_execute_transition() --> WorkflowTransition::execute().
+   * deprecated: workflow_execute_transition() --> WorkflowTransition::execute().
    */
   public function execute($force = FALSE) {
     $user = $this->getUser();
