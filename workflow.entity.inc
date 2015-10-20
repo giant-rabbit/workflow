@@ -221,7 +221,7 @@ function workflow_entity_property_info_alter(&$info) {
     'getter callback' => '_workflow_metadata_workflow_get_properties',
   );
   unset($info['Workflow']['properties']['tab_roles']['description']);
-  if (!isset($info['Workflow']['properties']['tab_roles'])) {
+  if (!isset($info['Workflow']['properties']['tab_roles']) || !is_array($info['Workflow']['properties']['tab_roles'])) {
     $info['Workflow']['properties']['tab_roles'] = array();
   }
   $info['Workflow']['properties']['tab_roles'] += array(
