@@ -450,7 +450,7 @@ class Workflow extends Entity {
       elseif ($target_sid && $target_sid != $config_transition->target_sid) {
         // Not the requested 'to' state.
       }
-      elseif ($config_transition->isAllowed($roles)) {
+      elseif ($roles = 'ALL' || $config_transition->isAllowed($roles)) {
         // Transition is allowed, permitted. Add to list.
         $config_transition->setWorkflow($this);
         $config_transitions[$config_transition->tid] = $config_transition;
