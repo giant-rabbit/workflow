@@ -7,8 +7,6 @@
  * As you will notice this file will only handle the <export> of Worflows,
  * including states and transitions. The <import> is handeled magically,
  * and all modifications are done in function Workflow::save().
- *
- * @see http://foxinbox.org/content/features-magic-how-features-adds-additional-items-export for an introduction.
  */
 
 define('WORKFLOW_FEATURES_AUTHOR_NAME', 'workflow_features_author_name');
