@@ -156,8 +156,7 @@ function workflow_entity_info() {
     'features controller class' => FALSE,
     'base table' => 'workflow_scheduled_transition',
     'entity keys' => array(
-      // This entity does not have a ID yet. Below is to avoid the Notice: Undefined index: id in EntityDefaultMetadataController->entityPropertyInfo()
-      'id' => 'do-not-use',
+      'id' => 'tid',
     ),
     'label callback' => 'entity_class_label',
     'module' => 'workflow',

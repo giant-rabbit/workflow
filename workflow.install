@@ -279,6 +279,11 @@ function workflow_schema() {
   );
   $schema['workflow_scheduled_transition'] = array(
     'fields' => array(
+      'tid' => array(
+        'description' => 'The unique ID for this record.',
+        'type' => 'serial',
+        'not null' => TRUE,
+      ),
       'entity_type' => array(
         'description' => 'The type of entity this transition belongs to.',
         'type' => 'varchar',
@@ -782,4 +787,16 @@ function workflow_update_7016() {
   if (db_field_exists('workflow_node_history', 'nid') && !db_index_exists('workflow_node_history', 'nid')) {
     db_add_index('workflow_node_history', 'nid', array('nid'));
   }
+}
+
+/**
+ * Add a primary key to {workflow_scheduled_transition}.
+ */
+function workflow_update_7017() {
+  db_add_field('workflow_scheduled_transition', 'tid', array(
+    'type' => 'serial',
+    ), array(
+    'primary key' => array('tid'),
+  ));
+  return t('Added stid primary key to {workflow_scheduled_transition}');
 }
