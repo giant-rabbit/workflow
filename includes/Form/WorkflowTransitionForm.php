@@ -21,6 +21,7 @@ class WorkflowTransitionForm { // extends FormBase {
    * Constructs a WorkflowTransitionForm object.
    * @param array $field
    * @param array $instance
+   * @param $entity_type
    * @param $entity
    */
   public function __construct(array $field, array $instance, $entity_type, $entity) {
@@ -54,6 +55,7 @@ class WorkflowTransitionForm { // extends FormBase {
   public function buildForm(array $form, array &$form_state) {
     global $user;
 
+    /* @var $transition WorkflowTransition */
     $transition = NULL;
     if (isset($form_state['WorkflowTransition'])) {
       // If provided, get data from WorkflowTransition.
@@ -68,7 +70,7 @@ class WorkflowTransitionForm { // extends FormBase {
       $entity = $this->entity = $transition->getEntity();
       $entity_type = $this->entity_type = $transition->entity_type;
       // Figure out the $entity's bundle and id.
-      list($entity_id, , $entity_bundle) = entity_extract_ids($entity_type, $entity);
+      list(, , $entity_bundle) = entity_extract_ids($entity_type, $entity);
       $entity_id = entity_id($entity_type, $entity);
 
       // Show the current state and the Workflow form to allow state changing.
@@ -76,7 +78,6 @@ class WorkflowTransitionForm { // extends FormBase {
       // @todo: support multiple workflows per entity.
       // For workflow_tab_page with multiple workflows, use a separate view. See [#2217291].
       $field = _workflow_info_field($field_name, $workflow);
-      $field_id = $field['id'];
       $instance = field_info_instance($entity_type, $field_name, $entity_bundle);
     }
     else {
@@ -87,7 +88,6 @@ class WorkflowTransitionForm { // extends FormBase {
 
       $field = $this->field;
       $field_name = $field['field_name'];
-      $field_id = $field['id'];
       $instance = $this->instance;
 
       // $field['settings']['wid'] can be numeric or named.
@@ -164,8 +164,8 @@ class WorkflowTransitionForm { // extends FormBase {
 
     // Fetch the form ID. This is unique for each entity, to allow multiple form per page (Views, etc.).
     // Make it uniquer by adding the field name, or else the scheduling of
-    // multiple workflow_fields is not independent of eachother.
-    // IF we are truely on a Transition form (so, not a Node Form with widget)
+    // multiple workflow_fields is not independent of each other.
+    // IF we are truly on a Transition form (so, not a Node Form with widget)
     // then change the form id, too.
     $form_id = $this->getFormId();
     if (!isset($form_state['build_info']['base_form_id'])) {
@@ -300,8 +300,7 @@ class WorkflowTransitionForm { // extends FormBase {
       }
       $timezones = drupal_map_assoc(timezone_identifiers_list());
       $timestamp = $transition->getTimestamp();
-      $hours = $transition->isScheduled() ? '00:00' : format_date($timestamp, 'custom', 'H:i', $timezone);
-
+      $hours = (!$transition->isScheduled()) ? '00:00' : format_date($timestamp, 'custom', 'H:i', $timezone);
       $element['workflow']['workflow_scheduled'] = array(
         '#type' => 'radios',
         '#title' => t('Schedule'),
@@ -374,7 +373,7 @@ class WorkflowTransitionForm { // extends FormBase {
       // How do action buttons work? See also d.o. issue #2187151.
       // Create 'action buttons' per state option. Set $sid property on each button.
       // 1. Admin sets ['widget']['options']['#type'] = 'buttons'.
-      // 2. This function formElelent() creates 'action buttons' per state option;
+      // 2. This function formElement() creates 'action buttons' per state option;
       //    sets $sid property on each button.
       // 3. User clicks button.
       // 4. Callback _workflow_transition_form_validate_buttons() sets proper State.
@@ -398,7 +397,7 @@ class WorkflowTransitionForm { // extends FormBase {
         '#attributes' => array('class' => array('form-save-default-button')),
       );
 
-      // The 'add submit' can explicitely set by workflowfield_field_formatter_view(),
+      // The 'add submit' can explicitly set by workflowfield_field_formatter_view(),
       // to add the submit button on the Content view page and the Workflow history tab.
       // Add a submit button, but only on Entity View and History page.
       // Add the submit function only if one provided. Set the submit_callback accordingly.
@@ -432,17 +431,14 @@ class WorkflowTransitionForm { // extends FormBase {
    */
   public function submitForm(array &$form, array &$form_state, array &$items) {
     // $items is a D7 parameter.
-    // @todo: clean this code up. It is the result of glueing code together.
+    // @todo: clean this code up. It is the result of gluing code together.
     global $user; // @todo #2287057: verify if submit() really is only used for UI. If not, $user must be passed.
 
     $entity = $this->entity;
     $entity_type = $this->entity_type;
-    $entity_id = ($entity) ? entity_id($entity_type, $entity) : 0;
 
     $field = $this->field;
     $field_name = $field['field_name'];
-    $field_id = $field['id'];
-    $instance = $this->instance;
 
     // Retrieve the data from the form.
     if (isset($form_state['values']['workflow_field'])) {
@@ -579,6 +575,13 @@ class WorkflowTransitionForm { // extends FormBase {
    * Extract WorkflowTransition or WorkflowScheduledTransition from the form.
    *
    * This merely extracts the transition from the form/widget. No validation.
+   *
+   * @param $old_sid
+   * @param array $items
+   * @param $field_name
+   * @param \stdClass $user
+   *
+   * @return \WorkflowScheduledTransition|\WorkflowTransition|null
    */
   public function getTransition($old_sid, array $items, $field_name, stdClass $user) {
     $entity_type = $this->entity_type;
@@ -609,6 +612,7 @@ class WorkflowTransitionForm { // extends FormBase {
         else {
           // This only happens on workflows, when only one transition from
           // '(creation)' to another state is allowed.
+          /* @var $workflow Workflow */
           $workflow = $state->getWorkflow();
           $new_sid = $workflow->getFirstSid($this->entity_type, $this->entity, $field_name, $user, FALSE);
         }
