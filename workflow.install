@@ -11,7 +11,7 @@
 function workflow_enable() {
   $message = t('Thanks for using Workflow. To maintain workflows, enable the
     <a href="!url_ui">Workflow UI module</a>. To add a Workflow Field to your
-    entity, enable the <a href="!url">Workflow Field module</a>.',
+    entity, enable the <a href="!url_field">Workflow Field module</a>.',
     array(
       '!url_ui' => url('admin/config/modules'),
       '!url_field' => url('admin/config/modules'),

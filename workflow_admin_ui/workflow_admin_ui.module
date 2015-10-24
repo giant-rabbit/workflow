@@ -45,7 +45,7 @@ function workflow_admin_ui_help($path, $arg) {
           same time (unless you are in a migration phase). Visit the <a href=
           "@url">modules</a> page.', array('@url' => url('admin/modules',
           array('fragment' => 'Workflow'))));
-        drupal_set_message($m, 'error');
+        drupal_set_message($m, 'warning');
       }
       return;
 
