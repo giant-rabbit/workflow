@@ -60,6 +60,13 @@ class WorkflowItem extends WorkflowD7Base {// D8: extends ConfigFieldItemBase im
 
   /**
    * Implements hook_field_settings_form() -> ConfigFieldItemInterface::settingsForm().
+   *
+   * @param array $form
+   * @param array $form_state
+   * @param $has_data
+   *
+   * @return array $element
+   *   The newly constructed element.
    */
   public function settingsForm(array $form, array &$form_state, $has_data) {
     $field_info = self::getInfo();
@@ -69,6 +76,7 @@ class WorkflowItem extends WorkflowD7Base {// D8: extends ConfigFieldItemBase im
 
     // Create list of all Workflow types. Include an initial empty value.
     // Validate each workflow, and generate a message if not complete.
+    /* @var $workflow Workflow */
     $workflows = array();
     $workflows[''] = t('- Select a value -');
     foreach (workflow_load_multiple() as $wid => $workflow) {
@@ -153,7 +161,7 @@ class WorkflowItem extends WorkflowD7Base {// D8: extends ConfigFieldItemBase im
         'Using Workflow Field, the widget is always shown when editing an
         Entity. Set this checkbox in case you only want to change the status
         on the Workflow History tab or on the Node View. (This checkbox is
-        only needed because Drupal core does not have a <hidden> widget.)'
+        only needed because Drupal core does not have a "hidden" widget.)'
       ),
     );
     $element['widget']['name_as_title'] = array(
@@ -240,22 +248,6 @@ class WorkflowItem extends WorkflowD7Base {// D8: extends ConfigFieldItemBase im
     return $element;
   }
 
-  /*
-   * Currently, there are no instance Settings.
-   * hook_field_instance_settings_form() -> ConfigFieldItemInterface::instanceSettingsForm()
-   */
-  // public function instanceSettingsForm(array $form, array &$form_state, $has_data) {
-  // }
-
-  /**
-   * Does NOT not implement hook_field_presave().
-   *
-   * Since $nid is needed, but not yet known at this moment.
-   * hook_field_presave() -> FieldItemInterface::preSave()
-   */
-  // function workflowfield_field_presave($entity_type, $entity, $field, $instance, $langcode, &$items) {
-  // }
-
   /**
    * Implements hook_field_insert() -> FieldItemInterface::insert().
    */
@@ -273,16 +265,17 @@ class WorkflowItem extends WorkflowD7Base {// D8: extends ConfigFieldItemBase im
    * @param int $wid
    *   The Workflow Id.
    *
-   * @return
-   *   The string representation of the $values array:
-   *    - Values are separated by a carriage return.
-   *    - Each value is in the format "value|label" or "value".
+   * @return string
+   * The string representation of the $values array:
+   * - Values are separated by a carriage return.
+   * - Each value is in the format "value|label" or "value".
    */
   protected function _allowed_values_string($wid = 0) {
     $lines = array();
     $states = workflow_state_load_multiple($wid);
     $previous_wid = -1;
 
+    /* @var $state WorkflowState */
     foreach ($states as $state) {
       // Only show enabled states.
       if ($state->isActive()) {
