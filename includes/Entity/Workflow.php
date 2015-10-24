@@ -124,7 +124,7 @@ class Workflow extends Entity {
       $state = $this->getCreationState();
     }
     // Make sure the default roles are permitted in transitions for better UX.
-    if ($is_new) {
+    if ($is_new && (count(workflow_load_multiple()) == 1) ) {
       foreach (user_roles() as $rid => $name) {
         $perms = array('participate in workflow' => 1);
         user_role_change_permissions($rid, $perms);  // <=== Enable Roles
