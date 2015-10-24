@@ -762,7 +762,8 @@ function workflow_update_7015() {
 
   // Load&save workflows, to populate the label.
   // Do this after all db-updates!!
-  foreach (workflow_load_multiple() as $workflow) {
+  // Do not use workflow_*() functions.
+  foreach (entity_load('Workflow') as $workflow) {
     $workflow->save();
     // Load&save workflow states, to populate the state name.
     foreach ($workflow->getStates(TRUE, TRUE) as $state) {
