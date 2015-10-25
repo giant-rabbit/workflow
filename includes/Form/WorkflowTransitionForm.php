@@ -278,6 +278,9 @@ class WorkflowTransitionForm { // extends FormBase {
       $element['workflow']['#attributes'] = array('class' => array('workflow-form-container'));
 
       // The 'options' widget. May be removed later if 'Action buttons' are chosen.
+      // The help text is not available for container. Let's add it to the
+      // State box.
+      $help_text = $instance['description'];
       $element['workflow']['workflow_sid'] = array(
         '#type' => $settings_options_type,
         '#title' => $settings_title_as_name ? t('Change !name state', array('!name' => $workflow_label)) : t('Target state'),
@@ -285,6 +288,7 @@ class WorkflowTransitionForm { // extends FormBase {
         // '#name' => $workflow_label,
         // '#parents' => array('workflow'),
         '#default_value' => $default_value,
+        '#description' => $help_text,
       );
     }
 
