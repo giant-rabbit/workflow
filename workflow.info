@@ -3,7 +3,7 @@ description = Workflow API. (Enable Workflow Node or Workflow Field to add arbit
 package = Workflow
 core = 7.x
 
-dependencies[] = entity
+dependencies[] = entity (>7.x-1.5)
 
 files[] = includes/Entity/Workflow.php
 files[] = includes/Entity/WorkflowState.php

@@ -12,10 +12,6 @@ class EntityWorkflowUIController extends EntityDefaultUIController {
   public function hook_menu() {
     $items = parent::hook_menu();
 
-    // Workflow is now an exportable entity. But the 'Import' menu item is
-    // still broken. We show it, but it requires #1967794 before it works.
-    // unset($items['admin/config/workflow/workflow/import']);
-
     // Set this on the object so classes that extend hook_menu() can use it.
     $id_count = count(explode('/', $this->path));
     $wildcard = isset($this->entityInfo['admin ui']['menu wildcard']) ? $this->entityInfo['admin ui']['menu wildcard'] : '%entity_object';
