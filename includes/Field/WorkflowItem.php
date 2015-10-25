@@ -37,6 +37,7 @@ class WorkflowItem extends WorkflowD7Base {// D8: extends ConfigFieldItemBase im
           'widget' => array(
             'options' => 'select',
             'name_as_title' => 1,
+            'fieldset' => 0,
             'hide' => 0,
             'schedule' => 1,
             'schedule_timezone' => 1,
@@ -133,6 +134,16 @@ class WorkflowItem extends WorkflowD7Base {// D8: extends ConfigFieldItemBase im
       '#title' => t('Workflow widget'),
       '#description' => t('Set some global properties of the widgets for this
         workflow. Some can be altered per widget instance.'
+      ),
+    );
+    $fieldset_options = array(0 => t('No fieldset'), 1 => t('Collapsible fieldset'), 2 => t('Collapsed fieldset'));
+    $element['widget']['fieldset'] = array(
+      '#type' => 'select',
+      '#options' => $fieldset_options,
+      '#title' => t('Show the form in a fieldset?'),
+      '#default_value' => $settings['widget']['fieldset'],
+      '#description' => t("The Widget can be wrapped in a visible fieldset. You'd
+        do this when you use the widget on a Node Edit page."
       ),
     );
     $element['widget']['options'] = array(

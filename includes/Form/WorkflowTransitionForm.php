@@ -197,9 +197,9 @@ class WorkflowTransitionForm { // extends FormBase {
       }
     }
 
-
     // Capture settings to format the form/widget.
     $settings_title_as_name = !empty($field['settings']['widget']['name_as_title']);
+    $settings_fieldset = isset($field['settings']['widget']['fieldset']) ? $field['settings']['widget']['fieldset'] : 0;
     $settings_options_type = $field['settings']['widget']['options'];
     // The schedule can be hidden via field settings, ...
     $settings_schedule = !empty($field['settings']['widget']['schedule']);
@@ -273,14 +273,27 @@ class WorkflowTransitionForm { // extends FormBase {
       return $form;  // <---- exit.
     }
     else {
-      // Prepare a UI wrapper. This might be a fieldset.
-      $element['workflow']['#type'] = 'container'; // 'fieldset';
-      $element['workflow']['#attributes'] = array('class' => array('workflow-form-container'));
+      // Prepare a UI wrapper. This might be a fieldset or a container.
+      if ($settings_fieldset == 0) { // Use 'container'.
+        $element['workflow'] += array(
+          '#type' => 'container',
+          '#attributes' => array('class' => array('workflow-form-container')),
+        );
+      }
+      else {
+        $element['workflow'] += array(
+          '#type' => 'fieldset',
+          '#title' => t($workflow_label),
+          '#collapsible' => TRUE,
+          '#collapsed' => ($settings_fieldset == 1) ? FALSE : TRUE,
+          '#attributes' => array('class' => array('workflow-form-container')),
+        );
+      }
 
       // The 'options' widget. May be removed later if 'Action buttons' are chosen.
       // The help text is not available for container. Let's add it to the
       // State box.
-      $help_text = $instance['description'];
+      $help_text = isset($instance['description']) ? $instance['description'] : '';
       $element['workflow']['workflow_sid'] = array(
         '#type' => $settings_options_type,
         '#title' => $settings_title_as_name ? t('Change !name state', array('!name' => $workflow_label)) : t('Target state'),

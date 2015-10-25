@@ -7,21 +7,6 @@
 
 /**
  * Plugin implementation of the 'workflow_default' widget.
- *
- * @todo D8: Replace "extends WorkflowD7WidgetBase" by "extends WidgetBase"
- *           or perhaps by "extends OptionsWidgetBase" from Options module.
- *
- * @FieldWidget(
- *   id = "workflow_default",
- *   label = @Translation("Workflow"),
- *   field_types = {
- *     "workflow"
- *   },
- *   settings = {
- *     "name_as_title" = 1
- *     "comment" = 1
- *   }
- * )
  */
 class WorkflowDefaultWidget extends WorkflowD7Base { // D8: extends WidgetBase {
 
@@ -37,6 +22,7 @@ class WorkflowDefaultWidget extends WorkflowD7Base { // D8: extends WidgetBase {
         'field types' => array('workflow'),
         'settings' => array(
           'name_as_title' => 1,
+          'fieldset' => 0,
           'comment' => 1,
         ),
       ),

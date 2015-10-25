@@ -1299,6 +1299,7 @@ function _workflow_info_field($field_name, $workflow = NULL) {
     // Add default values.
     $field['settings']['widget'] += array(
       'name_as_title' => TRUE,
+      'fieldset' => 0,
       'options' => 'radios',
       'schedule' => TRUE,
       'schedule_timezone' => TRUE,
