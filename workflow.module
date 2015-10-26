@@ -737,6 +737,36 @@ function _workflow_transition_form_validate_buttons($form, &$form_state) {
 }
 
 /**
+ * Saves the workflow field, rather then the whole entity.
+ *
+ * This is especially important when adding a new entity, and having an extra
+ * activity:
+ * - a Rules action after adding, cloning an entity (#2425453, #2550719)
+ * - revisions are expected after each update. (#2563125)
+ *
+ * @param $entity_type
+ * @param $entity
+ * @param $field_name
+ * @param $langcode
+ * @param $value
+ */
+function workflow_entity_field_save($entity_type, $entity, $field_name, $langcode, $value) {
+  if ($value !== FALSE) {
+    $entity->{$field_name}[$langcode][0]['workflow'] = $value;
+  }
+
+  //  entity_save($entity_type, $entity);
+  field_attach_presave($entity_type, $entity);
+  field_attach_update($entity_type, $entity);
+  if ($entity_type == 'node') {
+    // Rebuild node access - necessary if using workflow access.
+    node_access_acquire_grants($entity);
+    // Manually clearing entity cache.
+    entity_get_controller($entity_type)->resetCache(array($entity->nid));
+  }
+}
+
+/**
  * Executes a transition (change state of a node), from outside the node, e.g., workflow_cron().
  *
  * Serves as a wrapper function to hide differences between Node API and Field API.
@@ -770,11 +800,12 @@ function workflow_execute_transition($entity_type, $entity, $field_name, $transi
 
     // Do a separate update to update the field (Workflow Field API)
     // This will call hook_field_update() and WorkflowFieldDefaultWidget::submit().
-    $entity->{$field_name}[$transition->language][0]['transition'] = $transition;
-    // @todo: perhaps use field_attach_update, for better performance, and not change node properties.
-    // @todo: if transition is scheduled or new_sid == old_sid and no comment, proceed as if no $field_name.
-    entity_save($entity_type, $entity);
-    // field_attach_update($entity_type, $entity);
+    $langcode = $transition->language;
+    $entity->{$field_name}[$langcode][0]['transition'] = $transition;
+    // Save ony the field, not the complete entity.
+dpm(__FUNCTION__.'/'.__LINE__);
+    workflow_entity_field_save($entity_type, $entity, $field_name, $langcode, FALSE);
+//entity_save($entity_type, $entity);
 
     $new_sid = workflow_node_current_state($entity, $entity_type, $field_name);
   }

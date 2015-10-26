@@ -468,11 +468,11 @@ class WorkflowTransitionForm { // extends FormBase {
 //      $field_name = $field['field_name'];
     }
     elseif (isset($form_state['triggering_element'])) {
-      // We are on an Entity/Node/Comment Form page.
+      // We are on an Entity/Node/Comment Form page (add/edit).
       $field_name = $form_state['triggering_element']['#workflow_field_name'];
     }
     else {
-      // We are on a Comment Form page.
+      // We are on an Entity/Comment Form page (add/edit).
     }
 
     // Determine if the transition is forced.
@@ -491,7 +491,7 @@ class WorkflowTransitionForm { // extends FormBase {
       // Also test for 'is_new'. When Migrating content, the 'changed' property may be set externally.
       // Caveat: Some entities do not have 'changed' property set.
       if ((!empty($entity->is_new)) || (isset($entity->changed) && $entity->changed == REQUEST_TIME)) {
-        // We are in edit mode. No need to save the entity explicitly.
+        // We are in add/edit mode. No need to save the entity explicitly.
 
 //        // Add the $form_state to the $items, so we can do a getTransition() later on.
 //        $items[0]['workflow'] = $form_state['input'];
@@ -503,6 +503,8 @@ class WorkflowTransitionForm { // extends FormBase {
         // Save $entity, but only if sid has changed.
         // Use field_attach_update for this? Save always?
         $entity->{$field_name}[$langcode][0]['workflow'] = $form_state['input'];
+        // @todo & totest: Save ony the field, not the complete entity.
+        // workflow_entity_field_save($entity_type, $entity, $field_name, $langcode, FALSE);
         entity_save($entity_type, $entity);
 
         return; // <---- exit!
@@ -510,6 +512,8 @@ class WorkflowTransitionForm { // extends FormBase {
       else {
         // We are saving a node from a comment.
         $entity->{$field_name}[$langcode] = $items;
+        // @todo & totest: Save ony the field, not the complete entity.
+        // workflow_entity_field_save($entity_type, $entity, $field_name, $langcode, FALSE);
         entity_save($entity_type, $entity);
 
         return; // <---- exit!
