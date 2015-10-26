@@ -318,7 +318,12 @@ class WorkflowTransitionForm { // extends FormBase {
       $timezones = drupal_map_assoc(timezone_identifiers_list());
       $timestamp = $transition->getTimestamp();
       $hours = (!$transition->isScheduled()) ? '00:00' : format_date($timestamp, 'custom', 'H:i', $timezone);
-      $element['workflow']['workflow_scheduled'] = array(
+      // Add a container, so checkbox and time stay together in extra fields.
+      $element['workflow']['workflow_scheduling'] = array(
+        '#type' => 'container',
+        '#tree' => TRUE,
+      );
+      $element['workflow']['workflow_scheduling']['scheduled'] = array(
         '#type' => 'radios',
         '#title' => t('Schedule'),
         '#options' => array(
@@ -330,7 +335,7 @@ class WorkflowTransitionForm { // extends FormBase {
           'id' => 'scheduled_' . $form_id,
         ),
       );
-      $element['workflow']['workflow_scheduled_date_time'] = array(
+      $element['workflow']['workflow_scheduling']['date_time'] = array(
         '#type' => 'fieldset',
         '#title' => t('At'),
         '#attributes' => array('class' => array('container-inline')),
@@ -340,7 +345,7 @@ class WorkflowTransitionForm { // extends FormBase {
           'visible' => array(':input[id="' . 'scheduled_' . $form_id . '"]' => array('value' => '1')),
         ),
       );
-      $element['workflow']['workflow_scheduled_date_time']['workflow_scheduled_date'] = array(
+      $element['workflow']['workflow_scheduling']['date_time']['workflow_scheduled_date'] = array(
         '#type' => 'date',
         '#default_value' => array(
           'day' => date('j', $timestamp),
@@ -348,7 +353,7 @@ class WorkflowTransitionForm { // extends FormBase {
           'year' => date('Y', $timestamp),
         ),
       );
-      $element['workflow']['workflow_scheduled_date_time']['workflow_scheduled_hour'] = array(
+      $element['workflow']['workflow_scheduling']['date_time']['workflow_scheduled_hour'] = array(
         '#type' => 'textfield',
         '#title' => t('Time'),
         '#maxlength' => 7,
@@ -356,13 +361,13 @@ class WorkflowTransitionForm { // extends FormBase {
         '#default_value' => $hours,
         '#element_validate' => array('_workflow_transition_form_element_validate_time'),
       );
-      $element['workflow']['workflow_scheduled_date_time']['workflow_scheduled_timezone'] = array(
+      $element['workflow']['workflow_scheduling']['date_time']['workflow_scheduled_timezone'] = array(
         '#type' => $settings_schedule_timezone ? 'select' : 'hidden',
         '#title' => t('Time zone'),
         '#options' => $timezones,
         '#default_value' => array($timezone => $timezone),
       );
-      $element['workflow']['workflow_scheduled_date_time']['workflow_scheduled_help'] = array(
+      $element['workflow']['workflow_scheduling']['date_time']['workflow_scheduled_help'] = array(
         '#type' => 'item',
         '#prefix' => '<br />',
         '#description' => t('Please enter a time.
@@ -643,7 +648,7 @@ class WorkflowTransitionForm { // extends FormBase {
       // Get the comment.
       $comment = isset($items[0]['workflow']['workflow_comment']) ? $items[0]['workflow']['workflow_comment'] : '';
       // Remember, the workflow_scheduled element is not set on 'add' page.
-      $scheduled = !empty($items[0]['workflow']['workflow_scheduled']);
+      $scheduled = !empty($items[0]['workflow']['workflow_scheduling']['scheduled']);
       if ($hid) {
         // We are editing an existing transition. Only comment may be changed.
         $transition = workflow_transition_load($hid);
@@ -656,8 +661,8 @@ class WorkflowTransitionForm { // extends FormBase {
       else {
         // Schedule the time to change the state.
         // If Field Form is used, use plain values;
-        // If Node Form is used, use fieldset 'workflow_scheduled_date_time'.
-        $schedule = isset($items[0]['workflow']['workflow_scheduled_date_time']) ? $items[0]['workflow']['workflow_scheduled_date_time'] : $items[0]['workflow'];
+        // If Node Form is used, use fieldset 'date_time'.
+        $schedule = isset($items[0]['workflow']['workflow_scheduling']['date_time']) ? $items[0]['workflow']['workflow_scheduling']['date_time'] : $items[0]['workflow'];
         if (!isset($schedule['workflow_scheduled_hour'])) {
           $schedule['workflow_scheduled_hour'] = '00:00';
         }
