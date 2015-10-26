@@ -80,7 +80,7 @@ class WorkflowTransitionForm { // extends FormBase {
       // @todo: support multiple workflows per entity.
       // For workflow_tab_page with multiple workflows, use a separate view. See [#2217291].
       $field = _workflow_info_field($field_name, $workflow);
-      $instance = field_info_instance($entity_type, $field_name, $entity_bundle);
+      $instance = $this->instance + field_info_instance($entity_type, $field_name, $entity_bundle);
     }
     else {
       // Get data from normal parameters.
@@ -110,7 +110,7 @@ class WorkflowTransitionForm { // extends FormBase {
       $current_state = $transition->getOldState();
       if ($transition->isExecuted()) {
         // The states may not be changed anymore.
-        $options = array();
+        $options = array($current_state->sid => $current_state->label());
       }
       else {
         $options = $current_state->getOptions($entity_type, $entity, $field_name, $user, $force);
