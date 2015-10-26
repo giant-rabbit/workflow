@@ -560,9 +560,7 @@ function workflow_execute_transition($entity_type, $entity, $field_name, $transi
     $langcode = $transition->language;
     $entity->{$field_name}[$langcode][0]['transition'] = $transition;
     // Save ony the field, not the complete entity.
-dpm(__FUNCTION__.'/'.__LINE__);
     workflow_entity_field_save($entity_type, $entity, $field_name, $langcode, FALSE);
-//entity_save($entity_type, $entity);
 
     $new_sid = workflow_node_current_state($entity, $entity_type, $field_name);
   }
