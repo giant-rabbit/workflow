@@ -37,8 +37,10 @@ class WorkflowTransitionForm { // extends FormBase {
   public function getFormId() {
     $field = $this->field;
     $entity_id = entity_id($this->entity_type, $this->entity);
+    // The field is not set when editing a stand alone Transition.
+    $field_id = isset($field['id']) ? $field['id'] : '';
 
-    return implode('_', array('workflow_transition_form', $this->entity_type, $entity_id, $field['id']));
+    return implode('_', array('workflow_transition_form', $this->entity_type, $entity_id, $field_id));
   }
 
   /**

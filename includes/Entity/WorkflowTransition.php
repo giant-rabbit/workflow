@@ -626,7 +626,7 @@ class WorkflowTransitionController extends EntityAPIController {
   /**
    * Insert (no update) a transition.
    *
-   * @deprecated workflow_insert_workflow_node_history() --> WorkflowTransition::save()
+   * deprecated workflow_insert_workflow_node_history() --> WorkflowTransition::save()
    */
   public function save($entity, DatabaseTransaction $transaction = NULL) {
     // Check for no transition.
