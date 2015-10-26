@@ -171,7 +171,13 @@ function workflow_access_node_access_records($node) {
   // But then again: node_access is only for nodes...
   $uid = isset($node->uid) ? $node->uid : 0;
 
+  $count = 0;
   foreach ($node->workflow_transitions as $transition) {
+    // @todo: add support for +1 workflows per entity.
+    if ($count++ == 1 ) {
+      continue;
+    }
+
     $field_name = $transition->field_name;
     $priority = variable_get('workflow_access_priority', 0);
 
