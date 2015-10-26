@@ -96,11 +96,22 @@ function _workflowfield_metadata_property_get($entity, array $options, $name, $e
       // Sometimes that is not widget, or the submit function has not been processed yet.
 
       // On a normal widget:
-      $data[$columns[0]] = $sid = isset($data['value']) ? $data['value'] : 0;
+      $sid = isset($data['value']) ? $data['value'] : 0;
       // On a workflow form widget:
-      $data[$columns[0]] = $sid = isset($data['workflow']['workflow_sid']) ? $data['workflow']['workflow_sid'] : $sid;
+      $sid = isset($data['workflow']['workflow_sid']) ? $data['workflow']['workflow_sid'] : $sid;
 
-      $values[$delta] = $data[$columns[0]];
+      // The workflow widget was not loaded properly. @see #2597307.
+      // So we need to reload the entity to extract the correct value.
+      if (!$sid && isset($data['workflow'])) {
+        // $new_entity = $entity->original; // is NULL :-(
+        list($entity_id, , ) = entity_extract_ids($entity_type, $entity);
+        $new_entity = entity_load_single($entity_type, $entity_id);
+        $workflow = $new_entity->{$name}[$langcode][$delta];
+        $sid = isset($workflow['value']) ? (int) $workflow['value'] : 0;
+      }
+
+      $data[$columns[0]] = $sid;
+      $values[$delta] = $sid;
     }
   }
   // For an empty single-valued field, we have to return NULL.
