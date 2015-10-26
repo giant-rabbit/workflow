@@ -386,8 +386,21 @@ class WorkflowTransitionForm { // extends FormBase {
       '#rows' => 2,
     );
 
-    // Add the fields from the WorkflowTransition.
-    //    field_attach_form('WorkflowTransition', $transition, $element['workflow'], $form_state);
+    // Add the fields and extra_fields from the WorkflowTransition.
+    // Because we have a 'workflow' wrapper, it doesn't work flawlessly.
+    field_attach_form('WorkflowTransition', $transition, $element['workflow'], $form_state);
+    // Undo the following elements from field_attach_from. They mess up $this->getTransition().
+    // - '#parents' corrupts the Defaultwidget.
+    unset($element['workflow']['#parents']);
+    // - '#pre_render' adds the exra_fields from workflow_field_extra_fields().
+    //   That doesn't work, since 'workflow' is not of #type 'form', but
+    //   'container' or 'fieldset', and must be executed separately,.
+    $element['workflow']['#pre_render'] = array_diff( $element['workflow']['#pre_render'], array('_field_extra_fields_pre_render') );
+    // Add extra fields.
+    $rescue_value = $element['workflow']['#type'];
+    $element['workflow']['#type'] = 'form';
+    $element['workflow'] = _field_extra_fields_pre_render($element['workflow']);
+    $element['workflow']['#type'] = $rescue_value;
 
     // Finally, add Submit buttons/Action buttons.
     // Either a default 'Submit' button is added, or a button per permitted state.

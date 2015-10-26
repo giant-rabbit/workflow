@@ -17,6 +17,7 @@ function workflow_entity_info() {
     'plural label' => t('Workflows'),
     'entity class' => 'Workflow',
     'controller class' => 'WorkflowController',
+    'metadata controller class' => 'EntityDefaultMetadataController',
     'features controller class' => 'WorkflowFeaturesController',
     'module' => 'workflow',
     'base table' => 'workflows',
@@ -32,7 +33,7 @@ function workflow_entity_info() {
     'label callback' => 'entity_class_label',
     'uri callback' => 'entity_class_uri',
     // The following is added in workflow_admin_ui.module.
-/*
+    /*
     // 'access callback' => 'workflow_access',
     // 'admin ui' => array(
     //   'path' => 'admin/config/workflow/workflow',
@@ -40,13 +41,14 @@ function workflow_entity_info() {
     //   'controller class' => 'EntityWorkflowUIController',
     //   'menu wildcard' => '%workflow',
     // ),
- */
+     */
   );
 
   $entities['WorkflowState'] = array(
     'label' => t('Workflow state'),
     'entity class' => 'WorkflowState',
     'controller class' => 'WorkflowStateController',
+    'metadata controller class' => 'EntityDefaultMetadataController',
     // 'features controller class' => FALSE, //@todo: implement this.
     'module' => 'workflow',
     'base table' => 'workflow_states',
@@ -64,6 +66,7 @@ function workflow_entity_info() {
     'entity class' => 'WorkflowConfigTransition',
     // Add controller Class. 'Workflow' class is the de-facto controller.
     'controller class' => 'WorkflowConfigTransitionController',
+    'metadata controller class' => 'EntityDefaultMetadataController',
     'base table' => 'workflow_transitions',
     'exportable' => FALSE,
     'module' => 'workflow',
@@ -90,6 +93,9 @@ function workflow_entity_info() {
     'label' => t('Workflow executed transition'),
     'entity class' => 'WorkflowTransition',
     'controller class' => 'WorkflowTransitionController',
+    'metadata controller class' => 'EntityDefaultMetadataController',
+    // Do not use 'extra fields controller class'. Use hook_field_extra_fields instead.
+    // 'extra fields controller class' => 'EntityDefaultExtraFieldsController',
     'views controller class' => 'EntityDefaultViewsController',
     'rules controller class' => 'EntityDefaultRulesController',
     'features controller class' => FALSE,
@@ -102,6 +108,12 @@ function workflow_entity_info() {
     'bundle keys' => array(
       'bundle' => 'wid',
     ),
+
+//    'admin ui' => array(
+//      'path' => 'admin/config/workflow/workflow/manage/%workflow_transition/fields2',
+//      'menu wildcard' => '%workflow_transition',
+//      'controller class' => 'EntityDefaultUIController',
+//    ),
 
     'entity keys' => array(
       'id' => 'hid',
@@ -151,6 +163,7 @@ function workflow_entity_info() {
     'label' => t('Workflow scheduled transition'),
     'entity class' => 'WorkflowScheduledTransition',
     'controller class' => 'WorkflowTransitionController',
+    'metadata controller class' => 'EntityDefaultMetadataController',
     'views controller class' => 'EntityDefaultViewsController',
     'rules controller class' => 'EntityDefaultRulesController',
     'features controller class' => FALSE,
@@ -379,6 +392,54 @@ function _workflow_metadata_workflow_get_properties($entity, array $options, $na
     case 'options':
       return 'n/a';
   }
+}
+
+
+/**
+ * Implements hook_field_extra_fields().
+ *
+ * We do not use 'extra fields controller class', which only adds 'display'
+ * fields, not 'form' fields. Use hook_field_extra_fields instead.
+ *
+ * hook_field_extra_fields() is invoked by _field_extra_fields_pre_render(), which is a pre-render function used by field_attach_form(), and field_attach_view().
+ * @see https://api.drupal.org/api/drupal/modules!field!field.api.php/function/hook_field_extra_fields/7
+ * @see http://drupal.stackexchange.com/questions/10527/how-should-i-use-hook-field-extra-fields
+ *
+ */
+function workflow_field_extra_fields() {
+  $extra = array();
+
+  $entity_type = 'WorkflowTransition';
+
+  $info = entity_get_info($entity_type);
+  foreach ($info['bundles'] as $bundle => $bundle_info) {
+    $extra[$entity_type][$bundle] = array(
+      'form' => array(
+        'workflow_sid' => array(
+          'widget-type' => 'select',
+          'label' => t('State Id'),
+          'description' => t('Target state Id'),
+          'weight' => -4,
+          'edit' => 'hoi edit', // (optional) String containing markup (normally a link) used as the element's 'edit' operation in the administration interface. Only for 'form' context.
+          'delete' => 'hoi delete', // (optional) String containing markup (normally a link) used as the element's 'delete' operation in the administration interface. Only for 'form' context.
+        ),
+        'scheduled_container' => array(
+          'label' => t('Scheduling'),
+          'description' => t('Schedule checkbox & date/time'),
+          'weight' => -4,
+        ),
+        'workflow_comment' => array(
+          'label' => t('Comment'),
+          'description' => t('Comment text area'),
+          'weight' => -4,
+        ),
+      ),
+      'display' => array(
+      )
+    );
+  }
+
+  return $extra;
 }
 
 /**
