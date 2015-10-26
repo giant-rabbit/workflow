@@ -107,12 +107,13 @@ class WorkflowTransitionForm { // extends FormBase {
     $grouped = ($settings_options_type == 'select');
     if ($transition) {
       // If a Transition is passed as parameter, use this.
-      $current_state = $transition->getOldState();
       if ($transition->isExecuted()) {
+        $current_state = $transition->getNewState();
         // The states may not be changed anymore.
         $options = array($current_state->sid => $current_state->label());
       }
       else {
+        $current_state = $transition->getOldState();
         $options = $current_state->getOptions($entity_type, $entity, $field_name, $user, $force);
       }
       $show_widget = $current_state->showWidget($entity_type, $entity, $field_name, $user, $force);
