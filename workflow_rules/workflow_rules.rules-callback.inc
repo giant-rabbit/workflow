@@ -135,6 +135,9 @@ function _workflow_rules_set_state(array $parameters, RulesAction $action) {
 
   // Select the last state on the list.
   $new_sid = array_pop($parameters['workflow_state']);
+  if ($new_sid == 'ANY') {
+    $new_sid = $old_sid;
+  }
   $comment = $parameters['workflow_comment'];
 
   $transition = new WorkflowTransition();
