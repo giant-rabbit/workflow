@@ -111,7 +111,7 @@ class WorkflowTransitionForm { // extends FormBase {
         // We are editing an existing/executed/not-scheduled transition.
         // Only the comments may be changed!
         $current_state = $transition->getNewState();
-        $current_sid = $current_state->id();
+        $current_sid = $current_state->sid;
         // The states may not be changed anymore.
         $options = array($current_sid => $current_state->label());
         // You may not schedule an existing Transition.
