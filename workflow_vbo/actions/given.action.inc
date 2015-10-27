@@ -132,7 +132,7 @@ function workflow_vbo_given_state_action_form(array $context) {
   // - $context['view'] = "(Object) view"
   // - $context['settings'] = "array()"
 
-  
+
   // @todo: There's a problem here: we do not know the node types of the
   // selected items, and we do not know the field_names, so we have no clue
   // about the allowed workflows or states.
