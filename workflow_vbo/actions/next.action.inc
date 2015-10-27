@@ -23,6 +23,9 @@ function workflow_vbo_next_action_info() {
 
 /**
  * Implements a Drupal action. Move a node to the next state in the workflow.
+ *
+ * @param $entity
+ * @param array $context
  */
 function workflow_vbo_next_state_action($entity, array $context) {
   global $user;
@@ -30,7 +33,7 @@ function workflow_vbo_next_state_action($entity, array $context) {
   if (!isset($entity)) {
     $entity = $context['node'];
   }
-  // In 'after saving new content', the node is already saved. Avoid sencond insert.
+  // In 'after saving new content', the node is already saved. Avoid second insert.
   // Todo: clone?
   unset($entity->is_new);
 
@@ -56,22 +59,13 @@ function workflow_vbo_next_state_action($entity, array $context) {
     return;
   }
 
-  // Get the node's new State Id (which is the next available state).
-  $current_state = workflow_state_load_single($current_sid);
-  $options = $current_state->getOptions($entity_type, $entity, $field_name, $user, FALSE);
-  $new_sid = $current_sid;
-  $flag = $current_state->isCreationState();
-  foreach ($options as $sid => $name) {
-    if ($flag) {
-      $new_sid = $sid;
-      break;
-    }
-    if ($sid == $current_sid) {
-      $flag = TRUE;
-    }
-  }
-
   $force = FALSE;
+
+  // Get the node's new State Id (which is the next available state).
+  /* @var $current_state WorkflowState */
+  $current_state = workflow_state_load_single($current_sid);
+  $new_sid = $current_state->getNextSid($entity_type, $entity, $field_name, $user, $force);
+
   // Get the Comment. It is empty.
   $comment = '';
 

@@ -25,6 +25,8 @@ function workflow_vbo_given_action_info() {
 
 /**
  * Implements a Drupal action. Move a node to a specified state in the workflow.
+ * @param $entity
+ * @param array $context
  */
 function workflow_vbo_given_state_action($entity, array $context) {
   global $user;
@@ -58,7 +60,7 @@ function workflow_vbo_given_state_action($entity, array $context) {
   if (!isset($entity)) {
     $entity = $context['node'];
   }
-  // In 'after saving new content', the node is already saved. Avoid sencond insert.
+  // In 'after saving new content', the node is already saved. Avoid second insert.
   // Todo: clone?
   unset($entity->is_new);
 
@@ -98,9 +100,9 @@ function workflow_vbo_given_state_action($entity, array $context) {
   // Get the Comment. Parse the $comment variables.
   $comment_string = $form_state['input']['workflow_comment'];
   $comment = t($comment_string, array(
-	      '%title' => entity_label($entity_type, $entity), // "@" and "%" will automatically run check_plain().
+      '%title' => entity_label($entity_type, $entity), // "@" and "%" will automatically run check_plain().
       '%state' => workflow_get_sid_label($new_sid),
-      '%user' => theme('username', array('account' => $user)),
+      '%user' => $user->name,
     )
   );
 
@@ -130,7 +132,7 @@ function workflow_vbo_given_state_action_form(array $context) {
   // - $context['view'] = "(Object) view"
   // - $context['settings'] = "array()"
 
-
+  
   // @todo: There's a problem here: we do not know the node types of the
   // selected items, and we do not know the field_names, so we have no clue
   // about the allowed workflows or states.
@@ -205,7 +207,7 @@ function workflow_vbo_given_state_action_form(array $context) {
 
   if (!$entity) {
     // For the Advanced actions form on admin/config/system/actions, 
-    // remove the Sumbit function.
+    // remove the Submit function.
     unset($form['#submit']);
   }
 

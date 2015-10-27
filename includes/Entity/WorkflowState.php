@@ -199,6 +199,7 @@ class WorkflowState extends Entity {
 
     // Delete the transitions this state is involved in.
     $workflow = workflow_load_single($this->wid);
+    /* @var $transition WorkflowTransition */
     foreach ($workflow->getTransitionsBySid($current_sid, 'ALL') as $transition) {
       $transition->delete();
     }
@@ -431,6 +432,7 @@ class WorkflowState extends Entity {
       }
     }
     else {
+      /* @var $transition WorkflowTransition */
       $transitions = $this->getTransitions($entity_type, $entity, $field_name, $user, $force);
       foreach ($transitions as $transition) {
         // Get the label of the transition, and if empty of the target state.
@@ -458,6 +460,43 @@ class WorkflowState extends Entity {
     }
 
     return $options;
+  }
+
+  /**
+   * Returns the next state for the current state.
+   *
+   * @param string $entity_type
+   *   The type of the entity at hand.
+   * @param object $entity
+   *   The entity at hand. May be NULL (E.g., on a Field settings page).
+   * @param $field_name
+   * @param $user
+   * @param bool $force
+   *
+   * @return array
+   *   An array of sid=>label pairs.
+   *   If $this->sid is set, returns the allowed transitions from this state.
+   *   If $this->sid is 0 or FALSE, then labels of ALL states of the State's
+   *   Workflow are returned.
+   *
+   */
+  public function getNextSid($entity_type, $entity, $field_name, $user, $force = FALSE) {
+    $new_sid = $this->sid;
+
+    $options = $this->getOptions($entity_type, $entity, $field_name, $user, $force);
+    // Loop over every option. To find the next one.
+    $flag = $this->isCreationState();
+    foreach ($options as $sid => $name) {
+      if ($flag) {
+        $new_sid = $sid;
+        break;
+      }
+      if ($sid == $this->sid) {
+        $flag = TRUE;
+      }
+    }
+
+    return $new_sid;
   }
 
   /**
