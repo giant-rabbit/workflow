@@ -108,21 +108,22 @@ class WorkflowTransitionForm { // extends FormBase {
     if ($transition) {
       // If a Transition is passed as parameter, use this.
       if ($transition->isExecuted()) {
+        // We are editing an existing/executed/not-scheduled transition.
+        // Only the comments may be changed!
         $current_state = $transition->getNewState();
+        $current_sid = $current_state->id();
         // The states may not be changed anymore.
-        $options = array($current_state->sid => $current_state->label());
+        $options = array($current_sid => $current_state->label());
+        // You may not schedule an existing Transition.
+        $field['settings']['widget']['schedule'] = FALSE;
       }
       else {
         $current_state = $transition->getOldState();
+        $current_sid = $current_state->id();
         $options = $current_state->getOptions($entity_type, $entity, $field_name, $user, $force);
       }
       $show_widget = $current_state->showWidget($entity_type, $entity, $field_name, $user, $force);
-      $current_sid = $transition->old_sid;
       $default_value = $transition->new_sid;
-      // You may not schedule an existing Transition.
-      if ($transition->isExecuted()) {
-        $field['settings']['widget']['schedule'] = FALSE;
-      }
     }
     elseif (!$entity) {
       // Sometimes, no entity is given. We encountered the following cases:
