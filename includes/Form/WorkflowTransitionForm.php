@@ -276,10 +276,10 @@ class WorkflowTransitionForm { // extends FormBase {
 
     // Add class following node-form pattern (both on form and container).
     $workflow_type_id = $workflow->getName();
-    $element['workflow']['#attributes']['class'][] = 'workflow-container';
-    $element['workflow']['#attributes']['class'][] = 'workflow-' . $workflow_type_id . '-container';
-    // Add class for backwards compatibility.
-    $element['workflow']['#attributes']['class'][] = 'node-form-container';
+    $element['workflow']['#attributes']['class'][] = 'workflow-transition-container';
+    $element['workflow']['#attributes']['class'][] = 'workflow-transition-' . $workflow_type_id . '-container';
+    // Add class for D7-backwards compatibility (only on container).
+    $element['workflow']['#attributes']['class'][] = 'workflow-form-container';
 
     if (!$show_widget) {
       // Show no widget.
@@ -468,8 +468,8 @@ class WorkflowTransitionForm { // extends FormBase {
 
     // Add class following node-form pattern (both on form and container).
     $workflow_type_id = $workflow->getName();
-    $form['#attributes']['class'][] = 'workflow-form';
-    $form['#attributes']['class'][] = 'workflow-' . $workflow_type_id . '-form';
+    $form['#attributes']['class'][] = 'workflow-transition-form';
+    $form['#attributes']['class'][] = 'workflow-transition-' . $workflow_type_id . '-form';
 
     return $form;
   }
