@@ -346,7 +346,10 @@ class WorkflowTransitionForm { // extends FormBase {
           '1' => t('Schedule for state change'),
         ),
         '#default_value' => $transition->isScheduled() ? '1' : '0',
-        '#attributes' => array('id' => 'scheduled_' . $form_id),
+        '#attributes' => array(
+          // 'id' => 'scheduled_' . $form_id,
+          'class' => array(drupal_html_class('scheduled_' .  $form_id)),
+        ),
       );
       $element['workflow']['workflow_scheduling']['date_time'] = array(
         '#type' => 'fieldset',
@@ -355,7 +358,8 @@ class WorkflowTransitionForm { // extends FormBase {
         '#prefix' => '<div style="margin-left: 1em;">',
         '#suffix' => '</div>',
         '#states' => array(
-          'visible' => array(':input[id="' . 'scheduled_' . $form_id . '"]' => array('value' => '1')),
+          //'visible' => array(':input[id="' . 'scheduled_' . $form_id . '"]' => array('value' => '1')),
+          'visible' => array('input.' . drupal_html_class('scheduled_' .  $form_id) => array('value' => '1')),
         ),
       );
       $element['workflow']['workflow_scheduling']['date_time']['workflow_scheduled_date'] = array(
