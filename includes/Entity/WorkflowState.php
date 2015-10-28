@@ -428,7 +428,7 @@ class WorkflowState extends Entity {
       // We cannot use getTransitions, since there are no ConfigTransitions
       // from State with ID 0, and we do not want to repeat States.
       foreach ($workflow->getStates() as $state) {
-        $options[$state->value()] = check_plain(t($state->label()));
+        $options[$state->value()] = $state->label(); // Translation is done later.
       }
     }
     else {
@@ -443,7 +443,7 @@ class WorkflowState extends Entity {
           $label = $target_state ? $target_state->label() : '';
         }
         $new_sid = $transition->target_sid;
-        $options[$new_sid] = check_plain(t($label));
+        $options[$new_sid] = $label; // Translation is done later.
       }
 
       // Include current state for same-state transitions, except when $sid = 0.
@@ -451,8 +451,14 @@ class WorkflowState extends Entity {
       // but only if the transitions have been saved at least one time.
       if ($current_sid && ($current_sid != $workflow->getCreationSid())) {
         if (!isset($options[$current_sid])) {
-          $options[$current_sid] = check_plain(t($this->label()));
+          $options[$current_sid] = $this->label(); // Translation is done later.
         }
+      }
+
+      // Properly fix the labels.
+      // Translate, convert '&', make secure.
+      foreach($options as $key => $label) {
+        $options[$key] = html_entity_decode(check_plain(t($label)));
       }
 
       // Save to entity-specific cache.
@@ -473,12 +479,8 @@ class WorkflowState extends Entity {
    * @param $user
    * @param bool $force
    *
-   * @return array
-   *   An array of sid=>label pairs.
-   *   If $this->sid is set, returns the allowed transitions from this state.
-   *   If $this->sid is 0 or FALSE, then labels of ALL states of the State's
-   *   Workflow are returned.
-   *
+   * @return int $sid
+   *   A state ID.
    */
   public function getNextSid($entity_type, $entity, $field_name, $user, $force = FALSE) {
     $new_sid = $this->sid;
