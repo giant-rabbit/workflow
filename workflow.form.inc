@@ -150,8 +150,9 @@ function workflow_form_alter(&$form, &$form_state, $form_id) {
           // Hide same-state-button on the transtion-form (that is:
           // view page or workflow history tab) if there is nothing to do.
           // However, a Transition may be fieldable.
-          if ($form['workflow']['workflow_comment']['#access'] == FALSE)
-          $workflow_submit_button['#access'] = FALSE;
+          if ($form['workflow']['workflow_comment']['#access'] == FALSE) {
+            $workflow_submit_button['#access'] = FALSE;
+          }
         }
         elseif ($form['#id'] == 'comment-form') {
           // On comment-form, the button must stay, since you can comment to same state.
