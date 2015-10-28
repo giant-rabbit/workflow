@@ -583,6 +583,15 @@ class WorkflowTransitionForm { // extends FormBase {
       // The current value is still the previous state.
       $new_sid = $old_sid;
     }
+    elseif ($transition->isScheduled() || $transition->isExecuted()) {
+      // A scheduled or executed transition must only be saved to the database.
+      // The entity is not changed.
+      $force = $force || $transition->isForced();
+      $transition->save();
+
+      // The current value is still the previous state.
+      $new_sid = $old_sid;
+    }
     elseif (!$transition->isScheduled()) {
       // Now the data is captured in the Transition, and before calling the
       // Execution, restore the default values for Workflow Field.
@@ -599,15 +608,6 @@ class WorkflowTransitionForm { // extends FormBase {
       // Return the new State ID. (Execution may fail and return the old Sid.)
       $force = $force || $transition->isForced();
       $new_sid = $transition->execute($force);
-    }
-    else {
-      // A scheduled transition must only be saved to the database.
-      // The entity is not changed.
-      $force = $force || $transition->isForced();
-      $transition->save();
-
-      // The current value is still the previous state.
-      $new_sid = $old_sid;
     }
 
     // The entity is still to be saved, so set to a 'normal' value.

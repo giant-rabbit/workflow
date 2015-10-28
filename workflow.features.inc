@@ -84,7 +84,7 @@ class WorkflowFeaturesController extends EntityDefaultFeaturesController {
   /**
    * Overridden to not delete upon revert.
    */
-/*
+  /*
   function revert($module = NULL) {
     // Loads defaults from feature code.
     $defaults = features_get_default($entity_type, $module);
@@ -94,7 +94,7 @@ class WorkflowFeaturesController extends EntityDefaultFeaturesController {
       }
     }
   }
- */
+   */
 }
 
 /**
@@ -108,10 +108,9 @@ function workflow_features_pipe_field_base_alter(&$pipe, $data, $export) {
       // $info = field_info_field($field_name);
       $field = _workflow_info_field($field_name);
       if ($field['type'] == 'workflow') {
-// Do NOT include the Workflow. See #2375261.
-//        // $field['settings']['wid'] can be numeric or named.
-//        $workflow = workflow_load_single($field['settings']['wid']);
-//        $pipe['Workflow'][] = $workflow->name;
+        // $field['settings']['wid'] can be numeric or named.
+        $workflow = workflow_load_single($field['settings']['wid']);
+        $pipe['Workflow'][] = $workflow->name;
       }
     }
   }
