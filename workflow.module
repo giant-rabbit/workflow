@@ -448,7 +448,7 @@ function workflow_state_formatter($entity_type, $entity, $field = array(), $inst
     // executed transition.
     if ($default_value != $current_sid) {
       $entity = clone $entity;
-      $entity->{$field_name}['und'][0]['value'] = $default_value;
+      $entity->{$field_name}[LANGUAGE_NONE][0]['value'] = $default_value;
     }
     // Generate a renderable array for the field. Use default language determination ($langcode = NULL).
     $list_element = field_view_field($entity_type, $entity, $field_name, $list_display);
