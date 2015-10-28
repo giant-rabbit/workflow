@@ -483,7 +483,7 @@ class WorkflowTransition extends Entity {
   /**
    * Get the Transitions $workflow.
    *
-   * @return object
+   * @return Workflow|NULL
    *   The workflow for this Transition.
    */
   public function getWorkflow() {

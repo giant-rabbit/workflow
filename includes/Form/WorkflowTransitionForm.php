@@ -274,6 +274,13 @@ class WorkflowTransitionForm { // extends FormBase {
       $form['workflow_current_state']['#weight'] = -0.005;
     }
 
+    // Add class following node-form pattern (both on form and container).
+    $workflow_type_id = $workflow->getName();
+    $element['workflow']['#attributes']['class'][] = 'workflow-container';
+    $element['workflow']['#attributes']['class'][] = 'workflow-' . $workflow_type_id . '-container';
+    // Add class for backwards compatibility.
+    $element['workflow']['#attributes']['class'][] = 'node-form-container';
+
     if (!$show_widget) {
       // Show no widget.
       $element['workflow']['workflow_sid']['#type'] = 'value';
@@ -287,7 +294,6 @@ class WorkflowTransitionForm { // extends FormBase {
       if ($settings_fieldset == 0) { // Use 'container'.
         $element['workflow'] += array(
           '#type' => 'container',
-          '#attributes' => array('class' => array('workflow-form-container')),
         );
       }
       else {
@@ -296,7 +302,6 @@ class WorkflowTransitionForm { // extends FormBase {
           '#title' => t($workflow_label),
           '#collapsible' => TRUE,
           '#collapsed' => ($settings_fieldset == 1) ? FALSE : TRUE,
-          '#attributes' => array('class' => array('workflow-form-container')),
         );
       }
 
@@ -341,9 +346,7 @@ class WorkflowTransitionForm { // extends FormBase {
           '1' => t('Schedule for state change'),
         ),
         '#default_value' => $transition->isScheduled() ? '1' : '0',
-        '#attributes' => array(
-          'id' => 'scheduled_' . $form_id,
-        ),
+        '#attributes' => array('id' => 'scheduled_' . $form_id),
       );
       $element['workflow']['workflow_scheduling']['date_time'] = array(
         '#type' => 'fieldset',
@@ -462,6 +465,12 @@ class WorkflowTransitionForm { // extends FormBase {
     }
 
     $form += $element;
+
+    // Add class following node-form pattern (both on form and container).
+    $workflow_type_id = $workflow->getName();
+    $form['#attributes']['class'][] = 'workflow-form';
+    $form['#attributes']['class'][] = 'workflow-' . $workflow_type_id . '-form';
+
     return $form;
   }
 
