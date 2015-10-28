@@ -433,8 +433,8 @@ function workflow_state_formatter($entity_type, $entity, $field = array(), $inst
   $list_element = array();
 
   $field_name = isset($field['field_name']) ? $field['field_name'] : '';
-  $current_sid = ($default_value == NULL) ? workflow_node_current_state($entity, $entity_type, $field_name) : $default_value;
-  if (!$current_sid) {
+  $current_sid = workflow_node_current_state($entity, $entity_type, $field_name);
+  if (!$current_sid && !$default_value) {
     $list_element = array();
   }
   elseif ($field_name) {
@@ -444,6 +444,12 @@ function workflow_state_formatter($entity_type, $entity, $field = array(), $inst
     // Add the 'current value' formatter for this field.
     $list_display = $instance['display']['default'];
     $list_display['type'] = 'list_default';
+    // Clone the entity and restore old value, in case you want to show an
+    // executed transition.
+    if ($default_value != $current_sid) {
+      $entity = clone $entity;
+      $entity->{$field_name}['und'][0]['value'] = $default_value;
+    }
     // Generate a renderable array for the field. Use default language determination ($langcode = NULL).
     $list_element = field_view_field($entity_type, $entity, $field_name, $list_display);
     // Make sure the current value is before the form. (which has weight = 0.005)
@@ -451,6 +457,7 @@ function workflow_state_formatter($entity_type, $entity, $field = array(), $inst
   }
   else {
     // This is a Workflow Node workflow.
+    $current_sid = ($default_value == NULL) ? $current_sid : $default_value;
     $current_state = workflow_state_load_single($current_sid);
     $args = array(
       'state' => $current_state ? workflow_get_sid_label($current_sid) : 'unknown state',

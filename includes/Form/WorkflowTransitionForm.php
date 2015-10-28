@@ -111,19 +111,22 @@ class WorkflowTransitionForm { // extends FormBase {
       if ($transition->isExecuted()) {
         // We are editing an existing/executed/not-scheduled transition.
         // Only the comments may be changed!
-        $current_state = $transition->getNewState();
+        // Fetch the old state for the formatter on top of form.
+        $current_state = $transition->getOldState();
         $current_sid = $current_state->sid;
+
         // The states may not be changed anymore.
-        $options = array($current_sid => $current_state->label());
-        // You may not schedule an existing Transition.
-        $field['settings']['widget']['schedule'] = FALSE;
+        $new_state = $transition->getNewState();
+        $options = array($new_state->sid => $new_state->label());
+        // We need the widget to edit the comment.
+        $show_widget = TRUE;
       }
       else {
         $current_state = $transition->getOldState();
-        $current_sid = $current_state->id();
+        $current_sid = $current_state->sid;
         $options = $current_state->getOptions($entity_type, $entity, $field_name, $user, $force);
+        $show_widget = $current_state->showWidget($entity_type, $entity, $field_name, $user, $force);
       }
-      $show_widget = $current_state->showWidget($entity_type, $entity, $field_name, $user, $force);
       $default_value = $transition->new_sid;
     }
     elseif (!$entity) {
@@ -206,8 +209,10 @@ class WorkflowTransitionForm { // extends FormBase {
     $settings_title_as_name = !empty($field['settings']['widget']['name_as_title']);
     $settings_fieldset = isset($field['settings']['widget']['fieldset']) ? $field['settings']['widget']['fieldset'] : 0;
     $settings_options_type = $field['settings']['widget']['options'];
-    // The schedule can be hidden via field settings, ...
-    $settings_schedule = !empty($field['settings']['widget']['schedule']);
+    // The scheduling info can be hidden via field settings, ...
+    // You may not schedule an existing Transition.
+    // You must have the correct permission.
+    $settings_schedule = !empty($field['settings']['widget']['schedule']) && !$transition->isExecuted() && user_access('schedule workflow transitions');
     if ($settings_schedule) {
       if (isset($form_state['step']) && ($form_state['step'] == 'views_bulk_operations_config_form')) {
         // On VBO 'modify entity values' form, leave field settings.
@@ -263,7 +268,7 @@ class WorkflowTransitionForm { // extends FormBase {
 
     // Show state formatter before the rest of the form,
     // when transition is scheduled or widget is hidden.
-    if ($transition->isScheduled() || !$show_widget) {
+    if ( (!$show_widget) || $transition->isScheduled() || $transition->isExecuted()) {
       $form['workflow_current_state'] = workflow_state_formatter($entity_type, $entity, $field, $instance, $current_sid);
       // Set a proper weight, which works for Workflow Options in select list AND action buttons.
       $form['workflow_current_state']['#weight'] = -0.005;
@@ -313,7 +318,7 @@ class WorkflowTransitionForm { // extends FormBase {
     // Display scheduling form, but only if entity is being edited and user has
     // permission. State change cannot be scheduled at entity creation because
     // that leaves the entity in the (creation) state.
-    if ($settings_schedule == TRUE && user_access('schedule workflow transitions')) {
+    if ($settings_schedule == TRUE) {
       if (variable_get('configurable_timezones', 1) && $user->uid && drupal_strlen($user->timezone)) {
         $timezone = $user->timezone;
       }
