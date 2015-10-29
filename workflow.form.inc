@@ -44,7 +44,7 @@ function _workflow_use_action_buttons($new_value = NULL) {
 function workflow_form_alter(&$form, &$form_state, $form_id) {
 
   // Use a fast, custom way to check if we need to do this.
-  // @todo: Adapt to use with multiple workflows per entity.
+  // @todo: Make this work with multiple workflows per entity.
   if (!_workflow_use_action_buttons()) {
     return;
   }
@@ -99,9 +99,6 @@ function workflow_form_alter(&$form, &$form_state, $form_id) {
     $submit_action = $form['actions']['submit'];
 
     $current_sid = $workflow_form['workflow_sid']['#default_value'];
-
-    // The options widget is no longer valid, so hide it.
-    $element['workflow']['workflow_sid']['#type'] = 'hidden';
 
     // Get the min weight for our buttons.
     $option_weight = isset($submit_action['#weight']) ? $submit_action['#weight'] : 0;

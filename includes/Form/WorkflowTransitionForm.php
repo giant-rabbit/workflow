@@ -458,7 +458,6 @@ class WorkflowTransitionForm { // extends FormBase {
         // '#executes_submit_callback' => TRUE,
         '#attributes' => array('class' => array('form-save-default-button')),
       );
-      $submit_functions = empty($instance['widget']['settings']['submit_function']) ? array() : array($instance['widget']['settings']['submit_function']);
       // The 'add submit' can explicitly set by workflowfield_field_formatter_view(),
       // to add the submit button on the Content view page and the Workflow history tab.
       // Add a submit button, but only on Entity View and History page.
@@ -471,7 +470,8 @@ class WorkflowTransitionForm { // extends FormBase {
         // $element['workflow']['actions']['submit']['#submit'] = array();
       }
     }
-/*
+    /*
+    $submit_functions = empty($instance['widget']['settings']['submit_function']) ? array() : array($instance['widget']['settings']['submit_function']);
     if ($settings_options_type == 'buttons' || $submit_functions) {
     }
     else {
@@ -480,7 +480,7 @@ class WorkflowTransitionForm { // extends FormBase {
       // is 'just a field'.
       // So, no Submit button is to be shown.
     }
-*/
+     */
 
     $form += $element;
 
