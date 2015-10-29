@@ -285,6 +285,7 @@ class WorkflowTransitionForm { // extends FormBase {
       // Show no widget.
       $element['workflow']['workflow_sid']['#type'] = 'value';
       $element['workflow']['workflow_sid']['#value'] = $default_value;
+      $element['workflow']['workflow_sid']['#options'] = $options; // In case action buttons need them.
 
       $form += $element;
       return $form;  // <---- exit.
@@ -312,6 +313,7 @@ class WorkflowTransitionForm { // extends FormBase {
       $element['workflow']['workflow_sid'] = array(
         '#type' => $settings_options_type,
         '#title' => $settings_title_as_name ? t('Change !name state', array('!name' => $workflow_label)) : t('Target state'),
+        '#access' => TRUE,
         '#options' => $options,
         // '#name' => $workflow_label,
         // '#parents' => array('workflow'),
@@ -435,10 +437,17 @@ class WorkflowTransitionForm { // extends FormBase {
 
       // Performance: inform workflow_form_alter() to do its job.
       _workflow_use_action_buttons(TRUE);
+
+      // Hide the options box. It will be replaced by action buttons.
+      $element['workflow']['workflow_sid']['#type'] = 'select';
+      $element['workflow']['workflow_sid']['#access'] = FALSE;
     }
 
-    $submit_functions = empty($instance['widget']['settings']['submit_function']) ? array() : array($instance['widget']['settings']['submit_function']);
-    if ($settings_options_type == 'buttons' || $submit_functions) {
+    if ($form_state['build_info']['base_form_id'] == 'workflow_transition_form') {
+      // Add action buttons on WorkflowTransitionForm (history tab, formatter)
+      // but not on Entity form, and not if action_buttons is selected.
+
+      // @todo D8: put buttons outside of 'workflow' element, in the standard location.
       $element['workflow']['actions']['#type'] = 'actions';
       $element['workflow']['actions']['submit'] = array(
         '#type' => 'submit',
@@ -449,18 +458,21 @@ class WorkflowTransitionForm { // extends FormBase {
         // '#executes_submit_callback' => TRUE,
         '#attributes' => array('class' => array('form-save-default-button')),
       );
-
+      $submit_functions = empty($instance['widget']['settings']['submit_function']) ? array() : array($instance['widget']['settings']['submit_function']);
       // The 'add submit' can explicitly set by workflowfield_field_formatter_view(),
       // to add the submit button on the Content view page and the Workflow history tab.
       // Add a submit button, but only on Entity View and History page.
       // Add the submit function only if one provided. Set the submit_callback accordingly.
-      if ($submit_functions) {
-        $element['workflow']['actions']['submit']['#submit'] = $submit_functions;
+      if (!empty($instance['widget']['settings']['submit_function'])) {
+        $element['workflow']['actions']['submit']['#submit'] = array($instance['widget']['settings']['submit_function']);
       }
       else {
         // '#submit' Must be empty, or else the submit function is not called.
         // $element['workflow']['actions']['submit']['#submit'] = array();
       }
+    }
+/*
+    if ($settings_options_type == 'buttons' || $submit_functions) {
     }
     else {
       // In some cases, no submit callback function is specified. This is
@@ -468,6 +480,7 @@ class WorkflowTransitionForm { // extends FormBase {
       // is 'just a field'.
       // So, no Submit button is to be shown.
     }
+*/
 
     $form += $element;
 

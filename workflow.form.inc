@@ -53,7 +53,7 @@ function workflow_form_alter(&$form, &$form_state, $form_id) {
   // (So this won't work with multiple workflows per entity.)
   $workflow_form = array();
   if (isset($form['workflow'])) {
-    // Workflow Node.
+    // Workflow Node or // Workflow History tab.
     $workflow_form = &$form['workflow'];
     $field_info = $workflow_form['workflow_field']['#value'];
     $field_name = $field_info['field_name'];
@@ -171,10 +171,8 @@ function workflow_form_alter(&$form, &$form_state, $form_id) {
 
     // Remove the default submit button from the form.
     unset($form['actions']['submit']);
-    // Remove the submit button from the workflow form.
+    // On Edit page, remove the submit button from the workflow form.
     unset($workflow_form['actions']);
-    // Remove the options element.
-    unset($workflow_form['workflow_sid']);
   }
 }
 
