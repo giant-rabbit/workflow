@@ -125,6 +125,8 @@ function workflow_form_alter(&$form, &$form_state, $form_id) {
         '#validate' => array('_workflow_transition_form_validate_buttons'),
         // '#executes_submit_callback' => TRUE,
       );
+      // Add class to workflow button.
+      $workflow_submit_button['#attributes']['class'][] = drupal_html_class('workflow_button_' . $option_name);
 
       // Append the form's #validate function, or it won't be called upon submit,
       // because the workflow buttons have its own #validate.
@@ -145,9 +147,10 @@ function workflow_form_alter(&$form, &$form_state, $form_id) {
       }
 
       // Hide the same-state button in some cases.
+      // Alternative: use hide($element);
       if ($same_state_button) {
         if (substr( $form['#form_id'], 0, 24) == 'workflow_transition_form') {
-          // Hide same-state-button on the transtion-form (that is:
+          // Hide same-state-button on the transition-form (that is:
           // view page or workflow history tab) if there is nothing to do.
           // However, a Transition may be fieldable.
           if ($form['workflow']['workflow_comment']['#access'] == FALSE) {
@@ -211,6 +214,7 @@ function workflow_transition_form_submit($form, &$form_state) {
     watchdog('workflow', 'workflow_transition_form_submit() is called with error.');
     // We are on an Entity/Node/Comment Form page.
     // We should not be here.
+    return;
   }
 
 }
