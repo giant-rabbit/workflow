@@ -566,6 +566,7 @@ function workflow_execute_transition($entity_type, $entity, $field_name, $transi
     // This will call hook_field_update() and WorkflowFieldDefaultWidget::submit().
     $langcode = $transition->language;
     $entity->{$field_name}[$langcode][0]['transition'] = $transition;
+    $entity->{$field_name}[$langcode][0]['value'] = $transition->new_sid;
     // Save ony the field, not the complete entity.
     workflow_entity_field_save($entity_type, $entity, $field_name, $langcode, FALSE);
 
