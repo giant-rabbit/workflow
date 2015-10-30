@@ -174,6 +174,33 @@ function workflow_form_alter(&$form, &$form_state, $form_id) {
 }
 
 /**
+ * Form builder. Allow workflow comment change from menu item/Views link.
+ *
+ * @todo D8: This is used, because the D7 form workflow_transition_form
+ * has the wrong parameters for the EntityUIController.
+ * But changing it breaks backwards compatibility.
+ */
+function workflow_transition_wrapper_form(array $form, array &$form_state, $transition, $op, $form_id) {
+  // Override the default function 'entity_ui_controller_form_<op>'; we're not ready for that yet.
+  $form['#validate'] = array('workflow_transition_form_validate');
+  $form['#submit'] = array('workflow_transition_form_submit');
+
+  // The Workflow transition is provided as such:
+  // $form_state['entity_type'] = 'WorkflowTransition';
+  // $form_state['WorkflowTransition'] = (Object) WorkflowTransition;
+  return workflow_transition_form($form, $form_state, array(), array(), '', NULL);
+}
+
+function workflow_transition_form(array $form, array &$form_state, array $field, $instance, $entity_type, $entity) {
+  if (!isset ($instance['widget']['settings']['submit_function'])) {
+    $instance['widget']['settings']['submit_function'] = 'workflow_transition_form_submit';
+  }
+
+  $transition_form = new WorkflowTransitionForm($field, $instance, $entity_type, $entity);
+  return $transition_form->buildForm($form, $form_state);
+}
+
+/**
  * Submit callback function for the Workflow Form / DefaultWidget.
  *
  * Validate target state and either save a transition immediately or schedule
