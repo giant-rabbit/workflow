@@ -559,6 +559,13 @@ class WorkflowTransition extends Entity {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function getFieldName() {
+    return $this->field_name;
+  }
+
+  /**
    * Functions, common to the WorkflowTransitions.
    */
   public function getOldState() {
@@ -569,12 +576,35 @@ class WorkflowTransition extends Entity {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function getComment() {
+    return $this->comment;
+  }
+
+  /**
    * Returns the time on which the transitions was or will be executed.
    *
    * @return mixed
    */
   public function getTimestamp() {
     return $this->stamp;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTimestampFormatted() {
+    $timestamp = $this->stamp;
+    return format_date($timestamp);;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setTimestamp($value) {
+    $this->stamp = $value;
+    return $this;
   }
 
   /**
@@ -599,6 +629,27 @@ class WorkflowTransition extends Entity {
   }
   public function force($force = TRUE) {
     return $this->force = $force;
+  }
+
+  /**
+   * Helper debugging function to easily show the contents fo a transition.
+   */
+  public function dpm(){
+    $transition = $this;
+    $entity = $transition->getEntity();
+    $entity_type = $transition->entity_type;
+    list($entity_id, , $entity_bundle) = entity_extract_ids($entity_type, $entity);
+    $time = $transition->getTimestampFormatted();
+    // Do this extensive $user_name lines, for some troubles with Action.
+    $user = $transition->getUser();
+    $user_name = ($user) ? $user->name : 'unknown username';
+    $t_string = get_class($this) . ' ' . (isset($this->hid) ? $this->hid : '');
+    $output[] = 'Entity  = ' . ((!$entity) ? 'NULL' : ($entity_type . '/' . $entity_bundle . '/' . $entity_id));
+    $output[] = 'Field   = ' . $transition->getFieldName();
+    $output[] = 'From/To = ' . $transition->old_sid . ' > ' . $transition->new_sid . ' @ ' . $time;
+    $output[] = 'Comment = ' . $user_name . ' says: ' . $transition->getComment();
+    $output[] = 'Forced  = ' . ($transition->isForced() ? 'yes' : 'no');
+    if (function_exists('dpm')) { dpm($output, $t_string); }
   }
 
 }
