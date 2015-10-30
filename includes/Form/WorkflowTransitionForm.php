@@ -275,7 +275,7 @@ class WorkflowTransitionForm { // extends FormBase {
     }
 
     // Add class following node-form pattern (both on form and container).
-    $workflow_type_id = $workflow->getName();
+    $workflow_type_id = ($workflow) ? $workflow->getName() : 'none'; // No workflow on New Action form.
     $element['workflow']['#attributes']['class'][] = 'workflow-transition-container';
     $element['workflow']['#attributes']['class'][] = 'workflow-transition-' . $workflow_type_id . '-container';
     // Add class for D7-backwards compatibility (only on container).
@@ -485,7 +485,7 @@ class WorkflowTransitionForm { // extends FormBase {
     $form += $element;
 
     // Add class following node-form pattern (both on form and container).
-    $workflow_type_id = $workflow->getName();
+    $workflow_type_id = ($workflow) ? $workflow->getName() : 'none'; // No workflow on New Action form.
     $form['#attributes']['class'][] = 'workflow-transition-form';
     $form['#attributes']['class'][] = 'workflow-transition-' . $workflow_type_id . '-form';
 
@@ -602,7 +602,8 @@ class WorkflowTransitionForm { // extends FormBase {
     }
 
     // Now, save/execute the transition.
-    $transition = $this->getTransition($old_sid, $items, $field_name, $user);
+    $transition = $this->getTransition($old_sid, $items, $field_name, $user, $form, $form_state);
+
     // Try to execute the transition. Return $old_sid when error.
     if (!$transition) {
       // This should only happen when testing/developing.
@@ -659,7 +660,7 @@ class WorkflowTransitionForm { // extends FormBase {
    *
    * @return \WorkflowScheduledTransition|\WorkflowTransition|null
    */
-  public function getTransition($old_sid, array $items, $field_name, stdClass $user) {
+  public function getTransition($old_sid, array $items, $field_name, stdClass $user, array &$form = array(), array &$form_state = array()) {
     $entity_type = $this->entity_type;
     $entity = $this->entity;
     // $entity_id = entity_id($entity_type, $entity);
