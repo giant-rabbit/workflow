@@ -567,6 +567,8 @@ class Workflow extends Entity {
 }
 
 function _workflow_rebuild_roles(array $roles, array $role_map) {
+  $cached_roles = &drupal_static(__FUNCTION__, array());
+
   // See also https://drupal.org/node/1702626 .
   $new_roles = array();
   foreach ($roles as $key => $rid) {
@@ -574,8 +576,14 @@ function _workflow_rebuild_roles(array $roles, array $role_map) {
       $new_roles[$rid] = $rid;
     }
     else {
-      if ($role = user_role_load_by_name($role_map[$rid])) {
-        $new_roles[$role->rid] = $role->rid;
+      if (!isset($cached_roles[$role_map[$rid]])) {
+        if ($role = user_role_load_by_name($role_map[$rid])) {
+          $cached_roles[$role_map[$rid]] = $role->rid;
+          $new_roles[$role->rid] = $cached_roles[$role_map[$rid]];
+        }
+      }
+      else {
+        $new_roles[$role->rid] = $cached_roles[$role_map[$rid]];
       }
     }
   }
@@ -639,11 +647,11 @@ class WorkflowController extends EntityAPIControllerExportable {
   /**
    * Overrides DrupalDefaultEntityController::cacheSet().
    */
-/*
-  // protected function cacheSet($entities) { }
-  //   return parent::cacheSet($entities);
-  // }
- */
+  /*
+    // protected function cacheSet($entities) { }
+    //   return parent::cacheSet($entities);
+    // }
+   */
 
   /**
    * Overrides DrupalDefaultEntityController::resetCache().
