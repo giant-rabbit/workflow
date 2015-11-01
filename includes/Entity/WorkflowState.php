@@ -114,7 +114,14 @@ class WorkflowState extends Entity {
       // Just for grins, add a tag that might result in modifications.
       $query->addTag('workflow_states');
 
-      $query->execute()->fetchAll(PDO::FETCH_CLASS, 'WorkflowState');
+      // @see #2285983 for using SQLite.
+      // $query->execute()->fetchAll(PDO::FETCH_CLASS, 'WorkflowState');
+      /* @var $tmp DatabaseStatementBase */
+      $statement = $query->execute();
+      $statement->setFetchMode(PDO::FETCH_CLASS,'WorkflowState');
+      foreach ($statement->fetchAll() as $state) {
+        self::$states[$state->sid] = $state;
+      }
     }
 
     if (!$wid) {
@@ -516,7 +523,7 @@ class WorkflowState extends Entity {
       ->fields('wn')
       ->condition('sid', $sid, '=')
       ->execute();
-    $count = $result->rowCount();
+    $count = count($result->fetchAll()); // @see #2285983 for using SQLite.
 
     // Get the numbers for Workflow Field.
     $fields = _workflow_info_fields();
