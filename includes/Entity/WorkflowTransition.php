@@ -241,7 +241,7 @@ class WorkflowTransition extends Entity {
    * @return int
    *   New state ID. If execution failed, old state ID is returned,
    *
-   * deprecated: workflow_execute_transition() --> WorkflowTransition::execute().
+   * deprecated workflow_execute_transition() --> WorkflowTransition::execute().
    */
   public function execute($force = FALSE) {
     $user = $this->getUser();
@@ -505,7 +505,7 @@ class WorkflowTransition extends Entity {
    *   The entity, that is added to the Transition.
    */
   public function getEntity() {
-    if (empty($this->entity)) {
+    if (empty($this->entity) && $this->entity_type) {
       $entity_type = $this->entity_type;
       $entity_id = $this->entity_id;
       $entity = entity_load_single($entity_type, $entity_id);
@@ -638,7 +638,7 @@ class WorkflowTransition extends Entity {
     $transition = $this;
     $entity = $transition->getEntity();
     $entity_type = $transition->entity_type;
-    list($entity_id, , $entity_bundle) = entity_extract_ids($entity_type, $entity);
+    list($entity_id, , $entity_bundle) = ($entity) ? entity_extract_ids($entity_type, $entity) : array('', '', '');
     $time = $transition->getTimestampFormatted();
     // Do this extensive $user_name lines, for some troubles with Action.
     $user = $transition->getUser();

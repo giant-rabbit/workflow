@@ -142,10 +142,10 @@ class WorkflowTransitionForm { // extends FormBase {
     else {
       $current_sid = workflow_node_current_state($entity, $entity_type, $field_name);
       if ($current_state = workflow_state_load_single($current_sid)) {
+        /* @var $current_state WorkflowTransition */
         $options = $current_state->getOptions($entity_type, $entity, $field_name, $user, $force);
         $show_widget = $current_state->showWidget($entity_type, $entity, $field_name, $user, $force);
-        // Determine the default value. If we are in CreationState, use a fast alternative for $workflow->getFirstSid().
-        $default_value = $current_state->isCreationState() ? key($options) : $current_sid;
+        $default_value = !$current_state->isCreationState() ? $current_sid : $workflow->getFirstSid($entity_type, $entity, $field_name, $user, FALSE);
       }
       else {
         // We are in trouble! A message is already set in workflow_node_current_state().

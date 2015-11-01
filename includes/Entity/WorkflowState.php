@@ -70,7 +70,7 @@ class WorkflowState extends Entity {
    * @param int $wid
    *   An optional Workflow ID, to check if the requested State is valid for the Workflow.
    *
-   * @return mixed $state
+   * @return WorkflowState|NULL|FALSE $state
    *   WorkflowState if state is successfully loaded,
    *   NULL if not loaded,
    *   FALSE if state does not belong to requested Workflow.
@@ -96,8 +96,8 @@ class WorkflowState extends Entity {
    *   An array of cached states.
    *
    * D7.x-2.x: deprecated workflow_get_workflow_states --> workflow_state_load_multiple
-   * D7.x-2.x: workflow_get_workflow_states_all --> workflow_state_load_multiple
-   * D7.x-2.x: workflow_get_other_states_by_sid --> workflow_state_load_multiple
+   * D7.x-2.x: deprecated workflow_get_workflow_states_all --> workflow_state_load_multiple
+   * D7.x-2.x: deprecated workflow_get_other_states_by_sid --> workflow_state_load_multiple
    */
   public static function getStates($wid = 0, $reset = FALSE) {
     if ($reset) {
