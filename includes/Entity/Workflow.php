@@ -319,6 +319,42 @@ class Workflow extends Entity {
   }
 
   /**
+   * Returns the next state for the current state.
+   *
+   * @param string $entity_type
+   *   The type of the entity at hand.
+   * @param object $entity
+   *   The entity at hand. May be NULL (E.g., on a Field settings page).
+   * @param $field_name
+   * @param $user
+   * @param bool $force
+   *
+   * @return int $sid
+   *   A state ID.
+   */
+  public function getNextSid($entity_type, $entity, $field_name, $user, $force = FALSE) {
+    $new_sid = workflow_node_current_state($entity, $entity_type, $field_name);
+
+    if ($new_sid && $new_state = workflow_state_load_single($new_sid)) {
+      /* @var $current_state WorkflowState */
+      $options = $new_state->getOptions($entity_type, $entity, $field_name, $user, $force);
+      // Loop over every option. To find the next one.
+      $flag = $new_state->isCreationState();
+      foreach ($options as $sid => $name) {
+        if ($flag) {
+          $new_sid = $sid;
+          break;
+        }
+        if ($sid == $new_state->sid) {
+          $flag = TRUE;
+        }
+      }
+    }
+
+    return $new_sid;
+  }
+
+  /**
    * Gets all states for a given workflow.
    *
    * @param mixed $all

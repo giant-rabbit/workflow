@@ -43,7 +43,7 @@ function workflow_vbo_next_state_action($entity, array $context) {
     $context['entity_type'] :
     // In an Advanced Action. 
     str_replace(array('_insert', '_update' , '_delete'), '', $context['hook']);
-  list($entity_id, , ) = entity_extract_ids($entity_type, $entity);
+  list($entity_id, , $entity_bundle) = entity_extract_ids($entity_type, $entity);
 
   if (!$entity_id) {
     watchdog('workflow_vbo', 'Unable to get current entity ID - entity is not yet saved.');
@@ -53,21 +53,25 @@ function workflow_vbo_next_state_action($entity, array $context) {
   // Get the current State Id. Also, $field_name will be set magically, by reference.
   $field_name = NULL;
   $current_sid = workflow_node_current_state($entity, $entity_type, $field_name);
-  if (!$current_sid) {
-    watchdog('workflow_vbo', 'Unable to get current workflow state of entity %id.',
+  // Get the Comment. It is empty.
+  $comment = '';
+  // Only 'normal' state transitions are valid.
+  $force = FALSE;
+
+  // Get the node's new State Id (which is the next available state).
+  $workflow = workflow_get_workflows_by_type($entity_bundle, $entity_type);
+  if (!$workflow) {
+    watchdog('workflow_vbo', 'Unable to get current workflow of entity %id.',
       array('%id' => $entity_id));
     return;
   }
 
-  $force = FALSE;
-
-  // Get the node's new State Id (which is the next available state).
-  /* @var $current_state WorkflowState */
-  $current_state = workflow_state_load_single($current_sid);
-  $new_sid = $current_state->getNextSid($entity_type, $entity, $field_name, $user, $force);
-
-  // Get the Comment. It is empty.
-  $comment = '';
+  $new_sid = $workflow->getNextSid($entity_type, $entity, $field_name, $user, $force);
+  if (!$new_sid) {
+    watchdog('workflow_vbo', 'Unable to get current workflow state of entity %id.',
+      array('%id' => $entity_id));
+    return;
+  }
 
   // Fire the transition.
   $transition = new WorkflowTransition();

@@ -476,39 +476,6 @@ class WorkflowState extends Entity {
   }
 
   /**
-   * Returns the next state for the current state.
-   *
-   * @param string $entity_type
-   *   The type of the entity at hand.
-   * @param object $entity
-   *   The entity at hand. May be NULL (E.g., on a Field settings page).
-   * @param $field_name
-   * @param $user
-   * @param bool $force
-   *
-   * @return int $sid
-   *   A state ID.
-   */
-  public function getNextSid($entity_type, $entity, $field_name, $user, $force = FALSE) {
-    $new_sid = $this->sid;
-
-    $options = $this->getOptions($entity_type, $entity, $field_name, $user, $force);
-    // Loop over every option. To find the next one.
-    $flag = $this->isCreationState();
-    foreach ($options as $sid => $name) {
-      if ($flag) {
-        $new_sid = $sid;
-        break;
-      }
-      if ($sid == $this->sid) {
-        $flag = TRUE;
-      }
-    }
-
-    return $new_sid;
-  }
-
-  /**
    * Returns the number of entities with this state.
    *
    * @return int
