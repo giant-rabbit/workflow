@@ -380,7 +380,7 @@ function _workflow_metadata_workflow_get_properties($entity, array $options, $na
         // getPropertyLanguage() may return NULL if no language is set,
         // or may not exist on properties.
 
-        if (method_exists($wrapper->{$property}, 'getPropertyLanguage')) {
+        if (isset($wrapper->{$property}) && method_exists($wrapper->{$property}, 'getPropertyLanguage')) {
           if (!$langcode = $wrapper->{$property}->getPropertyLanguage()) {
             $langcode = LANGUAGE_NONE;
           }
