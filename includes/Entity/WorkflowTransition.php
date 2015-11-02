@@ -48,8 +48,8 @@ class WorkflowTransition extends Entity {
   /**
    * Creates a new entity.
    *
-   * @param string $entity_type
-   *   The entity type of the attached $entity.
+   * @param array $values
+   *   The initial values.
    * @param string $entityType
    *   The entity type of this Entity subclass.
    *
@@ -80,6 +80,15 @@ class WorkflowTransition extends Entity {
 
   /**
    * Helper function for __construct. Used for all children of WorkflowTransition (aka WorkflowScheduledTransition)
+   *
+   * @param $entity_type
+   * @param $entity
+   * @param $field_name
+   * @param $old_sid
+   * @param $new_sid
+   * @param null $uid
+   * @param int $stamp
+   * @param string $comment
    */
   public function setValues($entity_type, $entity, $field_name, $old_sid, $new_sid, $uid = NULL, $stamp = REQUEST_TIME, $comment = '') {
     // Normally, the values are passed in an array, and set in parent::__construct, but we do it ourselves.
@@ -133,6 +142,9 @@ class WorkflowTransition extends Entity {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function defaultLabel() {
     // @todo; Should return title of WorkflowConfigTransition. Make it a superclass??
     return t('Workflow transition !hid', array('!hid' =>3));
@@ -152,9 +164,11 @@ class WorkflowTransition extends Entity {
    * Since this may return a lot of data, a limit is included to allow for only one result.
    *
    * @param string $entity_type
-   * @param int $entity_id
+   * @param array $entity_ids
    * @param string $field_name
    *   Optional. Can be NULL, if you want to load any field.
+   * @param null $limit
+   * @param string $langcode
    *
    * @return array
    *   An array of WorkflowTransitions.
@@ -201,12 +215,15 @@ class WorkflowTransition extends Entity {
    * - In permissions;
    * - By permission hooks, implemented by other modules.
    *
-   * @return bool
+   * @param $roles
+   * @param $user
+   * @param $force
+   *
+   * @return bool TRUE if OK, else FALSE.
    *   TRUE if OK, else FALSE.
    *
-   *   Having both $roles AND $user seems redundant, but $roles have been
-   *   tampered with, even though they belong to the $user.
-   *
+   * Having both $roles AND $user seems redundant, but $roles have been
+   * tampered with, even though they belong to the $user.
    * @see WorkflowConfigTransition::isAllowed()
    */
   protected function isAllowed($roles, $user, $force) {
@@ -305,7 +322,7 @@ class WorkflowTransition extends Entity {
       if (!$force) {
         // Make sure this transition is allowed by custom module.
         // @todo D8: remove, or replace by 'transition pre'. See WorkflowState::getOptions().
-        // @todo D8: replace all parameters that are inlcuded in $transition.
+        // @todo D8: replace all parameters that are included in $transition.
         $permitted = module_invoke_all('workflow', 'transition permitted', $old_sid, $new_sid, $entity, $force, $entity_type, $field_name, $this, $user);
         // Stop if a module says so.
         if (in_array(FALSE, $permitted, TRUE)) {
@@ -430,6 +447,7 @@ class WorkflowTransition extends Entity {
 
       // Remove any scheduled state transitions.
       foreach (WorkflowScheduledTransition::load($entity_type, $entity_id, $field_name) as $scheduled_transition) {
+        /* @var $scheduled_transition WorkflowScheduledTransition */
         $scheduled_transition->delete();
       }
 
@@ -448,7 +466,7 @@ class WorkflowTransition extends Entity {
         // We have a problem here with Rules, Trigger, etc. when invoking
         // 'transition post': the entity has not been saved, yet. we are still
         // IN the transition, not AFTER. Alternatives:
-        // 1. Save the field here explicitely, using field_attach_save;
+        // 1. Save the field here explicitly, using field_attach_save;
         // 2. Move the invoke to another place: hook_entity_insert(), hook_entity_update();
         // 3. Rely on the entity hooks. This works for Rules, not for Trigger.
         // --> We choose option 2:
@@ -634,7 +652,7 @@ class WorkflowTransition extends Entity {
   /**
    * Helper debugging function to easily show the contents fo a transition.
    */
-  public function dpm(){
+  public function dpm($function = '') {
     $transition = $this;
     $entity = $transition->getEntity();
     $entity_type = $transition->entity_type;
@@ -643,7 +661,8 @@ class WorkflowTransition extends Entity {
     // Do this extensive $user_name lines, for some troubles with Action.
     $user = $transition->getUser();
     $user_name = ($user) ? $user->name : 'unknown username';
-    $t_string = get_class($this) . ' ' . (isset($this->hid) ? $this->hid : '');
+    $t_string = get_class($this) . ' ' . (isset($this->hid) ? $this->hid : '') . ' ' . ($function ? ("in function '$function'") : '');
+    $t_string = $this->getEntityTypeId() . ' ' . $this->id() ;
     $output[] = 'Entity  = ' . ((!$entity) ? 'NULL' : ($entity_type . '/' . $entity_bundle . '/' . $entity_id));
     $output[] = 'Field   = ' . $transition->getFieldName();
     $output[] = 'From/To = ' . $transition->old_sid . ' > ' . $transition->new_sid . ' @ ' . $time;

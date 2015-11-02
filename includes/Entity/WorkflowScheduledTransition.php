@@ -43,7 +43,7 @@ class WorkflowScheduledTransition extends WorkflowTransition {
    * @return array
    *   An array of WorkflowScheduledTransitions.
    *
-   * @deprecated: workflow_get_workflow_scheduled_transition_by_nid() --> WorkflowScheduledTransition::load()
+   * deprecated: workflow_get_workflow_scheduled_transition_by_nid() --> WorkflowScheduledTransition::load()
    */
   public static function load($entity_type, $entity_id, $field_name = '', $limit = NULL) {
     if (!$entity_id) {
@@ -70,7 +70,7 @@ class WorkflowScheduledTransition extends WorkflowTransition {
   /**
    * Given a timeframe, get all scheduled transitions.
    *
-   * @deprecated: workflow_get_workflow_scheduled_transition_by_between() --> WorkflowScheduledTransition::loadBetween()
+   * deprecated: workflow_get_workflow_scheduled_transition_by_between() --> WorkflowScheduledTransition::loadBetween()
    */
   public static function loadBetween($start = 0, $end = 0) {
     $query = db_select('workflow_scheduled_transition', 'wst');
@@ -132,7 +132,7 @@ class WorkflowScheduledTransition extends WorkflowTransition {
   /**
    * Given a node, delete transitions for it.
    *
-   * @deprecated: workflow_delete_workflow_scheduled_transition_by_nid() --> WorkflowScheduledTransition::delete()
+   * deprecated: workflow_delete_workflow_scheduled_transition_by_nid() --> WorkflowScheduledTransition::delete()
    */
   public function delete() {
     // Support translated Workflow Field workflows by including the language.
