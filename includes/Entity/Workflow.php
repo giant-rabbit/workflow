@@ -619,7 +619,7 @@ function _workflow_rebuild_roles(array $roles, array $role_map) {
         }
       }
       else {
-        $new_roles[$role->rid] = $cached_roles[$role_map[$rid]];
+        $new_roles[$rid] = $cached_roles[$role_map[$rid]];
       }
     }
   }
