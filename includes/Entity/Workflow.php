@@ -258,6 +258,8 @@ class Workflow extends Entity {
    *   saved directly in the database. This is because you can use States only
    *   with Transitions, and they rely on State IDs which are generated
    *   magically when saving the State. But you may need a temporary state.
+   *
+   * @return WorkflowState
    */
   public function createState($name, $save = TRUE) {
     $wid = $this->wid;
@@ -455,6 +457,11 @@ class Workflow extends Entity {
    *   $conditions['sid'] : if provided, a 'from' State ID.
    *   $conditions['target_sid'] : if provided, a 'to' state ID.
    *   $conditions['roles'] : if provided, an array of roles, or 'ALL'.
+   * @param bool $reset
+   *   Indicator to reset the cache.
+   *
+   * @return array
+   *   An array of keyed transitions.
    */
   public function getTransitions($tids = FALSE, array $conditions = array(), $reset = FALSE) {
     $config_transitions = array();
@@ -631,6 +638,8 @@ function _workflow_rebuild_roles(array $roles, array $role_map) {
  *
  * @param WorkflowConfigTransition $a
  * @param WorkflowConfigTransition $b
+ *
+ * @return int
  */
 function _workflow_transitions_sort_by_weight($a, $b) {
   // First sort on From-State.
