@@ -697,3 +697,4 @@ Issue #2363521: Fixed removed scheduled action button in Node View page
 Issue #2580543: Fixed warnings when displaying tokens
 Issue #318325: Add hook_widget_form_alter to workflow.api.php
 Issue #2607998: Warning: array_flip() appears when workflow_block is enabled
+Issue #2608128 by Murz: Function workflow_execute_transition() ignores timestamp of Workflow transition
