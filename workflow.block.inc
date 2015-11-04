@@ -28,10 +28,10 @@ function workflow_block_view($delta) {
   $form = array();
 
   // @todo: how to make this work for non-nodes, like terms?
-  if (arg(0) == 'node') {
+  $entity = NULL;
+  if ((arg(0) == 'node') && (arg(1) !== NULL) ) {
     $entity_type = arg(0);
     $entity_id = arg(1);
-    $field_name = NULL;
     $entity = entity_load_single($entity_type, $entity_id);
   }
 
@@ -39,6 +39,7 @@ function workflow_block_view($delta) {
     list($entity_id, , $entity_bundle) = entity_extract_ids($entity_type, $entity);
 
     // Get the current sid. $field_name is updated with relevant value.
+    $field_name = NULL;
     $current_sid = workflow_node_current_state($entity, $entity_type, $field_name);
     $current_state = workflow_state_load_single($current_sid);
     $workflow = $current_state->getWorkflow();
