@@ -41,8 +41,11 @@ function workflow_block_view($delta) {
     // Get the current sid. $field_name is updated with relevant value.
     $field_name = NULL;
     $current_sid = workflow_node_current_state($entity, $entity_type, $field_name);
-    $current_state = workflow_state_load_single($current_sid);
-    $workflow = $current_state->getWorkflow();
+    $current_state = ($current_sid) ? workflow_state_load_single($current_sid) : NULL;
+    $workflow = ($current_state) ? $current_state->getWorkflow() : NULL;
+    if (!$workflow) {
+      return $block;
+    }
 
     // Show the current state and the Workflow form to allow state changing.
     // N.B. This part is replicated in hook_node_view, workflow_tab_page, workflow_vbo, transition_edit.
