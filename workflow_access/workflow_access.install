@@ -19,7 +19,6 @@ function workflow_access_schema() {
       ),
       'rid' => array(
         'type' => 'int',
-        'description' => 'The User role ID.',
         'not null' => TRUE,
       ),
       'grant_view' => array(
