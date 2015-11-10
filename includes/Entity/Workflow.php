@@ -6,7 +6,7 @@
  * Contains workflow\includes\Entity\WorkflowController.
  */
 
-class Workflow extends Entity {
+class Workflow extends Entity implements WorkflowInterface {
   public $wid = 0;
   public $name = '';
   public $tab_roles = array();
