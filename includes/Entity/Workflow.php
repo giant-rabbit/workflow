@@ -249,6 +249,16 @@ class Workflow extends Entity {
    */
 
   /**
+   * Returns the workflow id.
+   *
+   * @return int
+   *   $wid
+   */
+  public function getWorkflowId() {
+    return $this->wid;
+  }
+
+  /**
    * Create a new state for this workflow.
    *
    * @param string $name
