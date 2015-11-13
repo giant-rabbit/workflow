@@ -102,7 +102,7 @@ function workflow_form_alter(&$form, &$form_state, $form_id) {
     $default_submit_action = $form['actions']['save'];
     unset($form['actions']['save']);
   }
-  if (isset($default_submit_action) {
+  if (isset($default_submit_action)) {
     $current_sid = $workflow_form['workflow_sid']['#default_value'];
     $scheduled = isset($workflow_form['workflow_scheduling']['scheduled']) && $workflow_form['workflow_scheduling']['scheduled']['#default_value'];
 
