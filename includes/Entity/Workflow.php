@@ -6,6 +6,7 @@
  * Contains workflow\includes\Entity\WorkflowController.
  */
 
+// Include file to avoid drush upgrade errors.
 include_once('WorkflowInterface.php');
 
 class Workflow extends Entity implements WorkflowInterface {
