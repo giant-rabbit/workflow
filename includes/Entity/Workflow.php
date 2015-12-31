@@ -6,6 +6,8 @@
  * Contains workflow\includes\Entity\WorkflowController.
  */
 
+include_once('WorkflowInterface.php');
+
 class Workflow extends Entity implements WorkflowInterface {
   public $wid = 0;
   public $name = '';
