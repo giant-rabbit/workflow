@@ -10,7 +10,8 @@ define('WORKFLOW_CREATION_DEFAULT_WEIGHT', -50);
 define('WORKFLOW_DELETION', 0);
 // Couldn't find a more elegant way to preserve translation.
 define('WORKFLOW_CREATION_STATE_NAME', '(' . t('creation') . ')');
-define('WORKFLOW_ROLE_AUTHOR_NAME', '(' . t('author') . ')');
+// #2657072 brackets are added later to indicate a special role, and distinguish from frequently used 'author' role.
+define('WORKFLOW_ROLE_AUTHOR_NAME', 'author');
 define('WORKFLOW_ROLE_AUTHOR_RID', '-1');
 
 // The definition of the Field_info property type. Shared between 'workflow_field' and 'workflow_rules'.
@@ -570,10 +571,9 @@ function workflow_execute_transition($entity_type, $entity, $field_name, $transi
 function workflow_get_roles($permission = 'participate in workflow') {
   static $roles = NULL;
   if (!$roles[$permission]) {
-    $roles[$permission] = array(WORKFLOW_ROLE_AUTHOR_RID => WORKFLOW_ROLE_AUTHOR_NAME);
-    $roles[$permission] += user_roles(FALSE, $permission);
-    foreach ($roles[$permission] as $rid => &$role_name) {
-      $name = check_plain(t($role_name));
+    $roles[$permission][WORKFLOW_ROLE_AUTHOR_RID] =  '(' . t(WORKFLOW_ROLE_AUTHOR_NAME) . ')';
+    foreach (user_roles(FALSE, $permission) as $rid => $role_name) {
+      $roles[$permission][$rid] = check_plain(t($role_name));
     }
   }
   return $roles[$permission];
