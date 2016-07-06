@@ -762,6 +762,11 @@ function workflow_node_previous_state($entity, $entity_type, $field_name) {
       // Get language. Multi-language is not supported for Workflow Node.
       $langcode = _workflow_metadata_workflow_get_properties($previous_entity, array(), 'langcode', $entity_type, $field_name);
     }
+    elseif (isset($entity->workflow_transitions[$field_name]->sid)) {
+      // A new node. Upon save with Workflow Access enabled, the sid is needed
+      // in workflow_access_node_access_records.
+      $sid = $entity->workflow_transitions[$field_name]->sid;
+    }
   }
   else {
     // Not possible. All options are covered.
