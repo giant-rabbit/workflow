@@ -431,8 +431,8 @@ function workflow_field_extra_fields() {
           'label' => t('State Id'),
           'description' => t('Target state Id'),
           'weight' => -4,
-          'edit' => 'hoi edit', // (optional) String containing markup (normally a link) used as the element's 'edit' operation in the administration interface. Only for 'form' context.
-          'delete' => 'hoi delete', // (optional) String containing markup (normally a link) used as the element's 'delete' operation in the administration interface. Only for 'form' context.
+          // 'edit' => 'test', // (optional) String containing markup (normally a link) used as the element's 'edit' operation in the administration interface. Only for 'form' context.
+          // 'delete' => 'test', // (optional) String containing markup (normally a link) used as the element's 'delete' operation in the administration interface. Only for 'form' context.
         ),
         'scheduled_container' => array(
           'label' => t('Scheduling'),
