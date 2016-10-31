@@ -363,8 +363,7 @@ function workflow_cron() {
       // The scheduled transition is not scheduled anymore, and is also deleted from DB.
       // A watchdog message is created with the result.
       $scheduled_transition->schedule(FALSE);
-      $scheduled_transition->force(TRUE);
-      workflow_execute_transition($entity_type, $entity, $field_name, $scheduled_transition);
+      workflow_execute_transition($entity_type, $entity, $field_name, $scheduled_transition, TRUE);
 
       if (!$field_name) {
         $clear_cache = TRUE;
@@ -541,6 +540,7 @@ function workflow_execute_transition($entity_type, $entity, $field_name, $transi
   if ($force) {
     $transition->force($force);
   }
+  $force = $transition->isForced();
 
   if ($field_name) {
     // @todo: use $new_sid = $transition->execute() without generating infinite loops.
