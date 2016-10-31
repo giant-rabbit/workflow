@@ -807,3 +807,10 @@ function workflow_update_7017() {
 
   return t('Added tid primary key to {workflow_scheduled_transition}');
 }
+
+/**
+ * Enable the List module, newly added as a dependency.
+ */
+function workflow_update_7200() {
+  module_enable(array('list'));
+}

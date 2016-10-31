@@ -4,6 +4,7 @@ package = Workflow
 core = 7.x
 
 dependencies[] = entity (>7.x-1.5)
+dependencies[] = list
 
 files[] = includes/Entity/Workflow.php
 files[] = includes/Entity/WorkflowInterface.php
