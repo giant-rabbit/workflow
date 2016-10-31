@@ -544,19 +544,20 @@ function workflow_execute_transition($entity_type, $entity, $field_name, $transi
 
   if ($field_name) {
     // @todo: use $new_sid = $transition->execute() without generating infinite loops.
+    $langcode = $transition->language;
 
     // Do a separate update to update the field (Workflow Field API)
     // This will call hook_field_update() and WorkflowFieldDefaultWidget::submit().
-    $langcode = $transition->language;
     $entity->{$field_name}[$langcode][0]['transition'] = $transition;
     $entity->{$field_name}[$langcode][0]['value'] = $transition->new_sid;
-    // Save ony the field, not the complete entity.
+    // Save only the field, not the complete entity.
     workflow_entity_field_save($entity_type, $entity, $field_name, $langcode, FALSE);
 
     $new_sid = workflow_node_current_state($entity, $entity_type, $field_name);
   }
   else {
     // For Node API, the node is not saved, since all fields are custom.
+    // Force = TRUE for backwards compatibility with version 7.x-1.2
     $new_sid = $transition->execute($force = TRUE);
   }
 
