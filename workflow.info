@@ -15,3 +15,4 @@ files[] = includes/Field/WorkflowD7Base.php
 files[] = includes/Field/WorkflowItem.php
 files[] = includes/Field/WorkflowDefaultWidget.php
 files[] = includes/Form/WorkflowTransitionForm.php
+files[] = workflow.features.inc
