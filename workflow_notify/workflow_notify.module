@@ -129,10 +129,10 @@ function workflow_notify_entity_update($entity, $entity_type) {
   $field_name = NULL;
 
   $new_state = workflow_node_current_state($entity, $entity_type, $field_name);
-  $transition = $entity->workflow_transitions[$field_name];
-
-  _workflow_notify($new_state, $entity, $entity_type, $field_name, $transition, $user = NULL);
-  return;
+  if (isset($entity->workflow_transitions[$field_name])) {
+    $transition = $entity->workflow_transitions[$field_name];
+    _workflow_notify($new_state, $entity, $entity_type, $field_name, $transition, $user = NULL);
+  }
 }
 
 /**
