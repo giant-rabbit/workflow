@@ -12,7 +12,7 @@
 define('WORKFLOW_FEATURES_AUTHOR_NAME', 'workflow_features_author_name');
 
 // Even if workflow Node is not enabled, Features may use Node API's type_maps.
-module_load_include('inc', 'workflow', 'workflow.node.type_map');
+require_once dirname(__FILE__) . '/workflow.node.type_map.inc';
 
 /**
  * Default controller handling features integration.
