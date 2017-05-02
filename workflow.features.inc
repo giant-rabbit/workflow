@@ -31,8 +31,6 @@ class WorkflowFeaturesController extends EntityDefaultFeaturesController {
         if (count($workflow->getTypeMap())) {
           $export['dependencies']['workflownode'] = 'workflownode';
         }
-        // Add dependency on workflow_field.
-        $export['features']['Workflow'][$workflow_name] = $workflow_name;
       }
     }
 
