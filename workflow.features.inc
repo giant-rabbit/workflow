@@ -109,7 +109,21 @@ class WorkflowFeaturesController extends EntityDefaultFeaturesController {
     // Add roles to translate role IDs on target system.
     $permission = NULL;
 
+    // Get system roles.
     $workflow->system_roles = workflow_get_roles($permission);
+    // Only export system roles for roles used by this workflow.
+    $roles = array();
+    foreach ($workflow->transitions as $id => $transition) {
+      foreach ($transition->roles as $rid) {
+        $roles[] = $rid;
+      }
+    }
+    $roles = array_unique($roles);
+    foreach ($workflow->system_roles as $id => $system_role) {
+      if (!in_array($id, $roles)) {
+        unset($workflow->system_roles[$id]);
+      }
+    }
 
     $sid_to_name_map = $this->pack_states($workflow);
     $this->pack_transitions($workflow, $sid_to_name_map);
