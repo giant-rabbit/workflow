@@ -217,7 +217,8 @@ function _workflow_notify($new_state, $entity, $entity_type = '', $field_name = 
       . "WHERE ur.rid IN (:rids) "
       . "AND u.status = 1 ";
     $users = db_query($query, array(':rids' => $notify))->fetchCol();
-  } else {
+  }
+  else {
     $users = array();
   }
 
@@ -246,19 +247,20 @@ function _workflow_notify($new_state, $entity, $entity_type = '', $field_name = 
 
   // Retrieve the remaining list without duplicates.
   $accounts = $args['users'];
-  $addr_list = array();
-
   // Just quit if there are no users.
   if (empty($accounts)) {
     watchdog('workflow_notify', 'No recipients - email skipped.', array(),
       WATCHDOG_DEBUG, l(t('view'), $entity_uri['path']));
     return;
   }
-
+  $addr_list = array();
   foreach ($accounts as $uid => $account) {
     $addr_list[] = format_username($account) . '<' . $account->mail . '>';
   }
+  // The to-parameter to drupal_mail is a string, not an array, separated by commas.
+  $to = implode(', ', $addr_list);
 
+  // Retrieve the params parameter for drupal_mail.
   $params = array(
     'clear' => TRUE,
     'sanitize' => FALSE,
@@ -273,13 +275,14 @@ function _workflow_notify($new_state, $entity, $entity_type = '', $field_name = 
 
   // Build the subject and body of the mail.
   // Token replacement occurs in hook_mail().
-  // @TODO: Currently no translation occurs.
+  // @todo: Currently no translation occurs.
   $params['context']['subject'] = variable_get("workflow_notify_subject_$new_state",
     '[node:title] is now "[workflow:workflow-current-state-name]"');
 
   $params['context']['body'] = variable_get("workflow_notify_body_$new_state",
     '<a href="[node:url:absolute]">[node:title]</a> is now "@state".');
 
+  // Retrieve the from-address.
   switch (variable_get('workflow_notify_from_address_' . $wid, 'site')) {
     case 'site':
       $from = variable_get('site_mail', ini_get('sendmail_from'));
@@ -290,13 +293,21 @@ function _workflow_notify($new_state, $entity, $entity_type = '', $field_name = 
       break;
   }
 
-  // Send the email.
-  drupal_mail('workflow_notify',
-    'workflow_notify',
-    implode(', ', $addr_list),
-    language_default(),
-    $params,
-    $from);
+  // Send the mail, and check for success. Note that this does not guarantee
+  // message delivery; only that there were no PHP-related issues encountered
+  // while sending.
+  $module = 'workflow_notify';
+  $key = 'workflow_notify';
+  $language = language_default();
+  // https://api.drupal.org/api/drupal/includes!mail.inc/function/drupal_mail/7.x
+  $result = drupal_mail($module, $key, $to, $language, $params, $from);
+  /*
+  if ($result['result'] == TRUE) {
+    drupal_set_message(t('Your message has been sent.'));
+  }
+  else {
+    drupal_set_message(t('There was a problem sending your message and it was not sent.'), 'error');
+  }
+   */
 
-  return;
 }
