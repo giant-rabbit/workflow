@@ -255,7 +255,7 @@ function _workflow_notify($new_state, $entity, $entity_type = '', $field_name = 
   }
   $addr_list = array();
   foreach ($accounts as $uid => $account) {
-    $addr_list[] = format_username($account) . '<' . $account->mail . '>';
+    $addr_list[] = format_username($account) . ' <' . $account->mail . '>';
   }
   // The to-parameter to drupal_mail is a string, not an array, separated by commas.
   $to = implode(', ', $addr_list);
