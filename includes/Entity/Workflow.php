@@ -160,8 +160,10 @@ class Workflow extends Entity implements WorkflowInterface {
       $data = (array)$data;
 
       if (is_numeric($name)) {
-        $start_state = $saved_states[$saved_state_names[$data['sid']]];
-        $end_state = $saved_states[$saved_state_names[$data['target_sid']]];
+        //$start_state = $saved_states[$saved_state_names[$data['sid']]];
+        //$end_state = $saved_states[$saved_state_names[$data['target_sid']]];
+        $start_state = $saved_states[$data['sid']];      // #2876303
+        $end_state = $saved_states[$data['target_sid']]; // #2876303
         $name = WorkflowConfigTransition::machineName($start_state->getName(),
           $end_state->getName());
       }
