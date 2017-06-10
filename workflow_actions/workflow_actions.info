@@ -1,8 +1,9 @@
 name = Workflow Trigger
 description = Enables actions to be fired upon a Workflow State change.
-
-dependencies[] = workflow
-dependencies[] = trigger
-
 package = Workflow
 core = 7.x
+
+dependencies[] = trigger
+dependencies[] = workflow
+
+configure = admin/structure/trigger/workflow

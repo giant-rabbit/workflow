@@ -2,8 +2,7 @@ name = Workflow Actions
 description = "Provides actions that can be associated to triggers, or
                used as VBO-action. Provided actions are 'set to next state'
                and 'set to specific state'."
-
-dependencies[] = workflow
-
 package = Workflow
 core = 7.x
+
+dependencies[] = workflow

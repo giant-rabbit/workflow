@@ -55,7 +55,8 @@ class WorkflowConfigTransition extends Entity {
   }
 
   protected function defaultUri() {
-    return array('path' => 'admin/config/workflow/workflow/manage/' . $this->wid . '/transitions/');
+    $wid = $this->wid;
+    return array('path' => WORKFLOW_ADMIN_UI_PATH . "/manage/$wid/transitions/");
   }
 
   /**

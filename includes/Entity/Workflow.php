@@ -253,12 +253,14 @@ class Workflow extends Entity implements WorkflowInterface {
   public function isValid() {
     $is_valid = TRUE;
 
+    $workflow_name = $this->getName();
+    $wid = $this->getWorkflowId();
     // Don't allow workflows with no states. There should always be a creation state.
     $states = $this->getStates($all = FALSE);
     if (count($states) < 1) {
       // That's all, so let's remind them to create some states.
       $message = t('Workflow %workflow has no states defined, so it cannot be assigned to content yet.',
-        array('%workflow' => $this->getName()));
+        array('%workflow' => $workflow_name));
       drupal_set_message($message, 'warning');
 
       // Skip allowing this workflow.
@@ -270,7 +272,7 @@ class Workflow extends Entity implements WorkflowInterface {
     if (count($transitions) < 1) {
       // That's all, so let's remind them to create some transitions.
       $message = t('Workflow %workflow has no transitions defined, so it cannot be assigned to content yet.',
-        array('%workflow' => $this->getName()));
+        array('%workflow' => $workflow_name));
       drupal_set_message($message, 'warning');
 
       // Skip allowing this workflow.
@@ -283,7 +285,7 @@ class Workflow extends Entity implements WorkflowInterface {
       $message = t('Please maintain Workflow %workflow on its <a href="@url">settings</a> page.',
         array(
           '%workflow' => $this->getName(),
-          '@url' => url('admin/config/workflow/workflow/manage/' . $this->wid),
+          '@url' => url(WORKFLOW_ADMIN_UI_PATH . "/manage/$wid"),
         )
       );
       drupal_set_message($message, 'warning');
@@ -696,7 +698,8 @@ class Workflow extends Entity implements WorkflowInterface {
   }
 
   protected function defaultUri() {
-    return array('path' => 'admin/config/workflow/workflow/manage/' . $this->wid);
+    $wid = $this->wid;
+    return array('path' => WORKFLOW_ADMIN_UI_PATH . "/manage/$wid");
   }
 
   protected function rebuildRoles(array &$roles) {

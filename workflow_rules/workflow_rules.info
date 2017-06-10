@@ -1,9 +1,9 @@
 name = Workflow Rules
 description = Provides additional, workflow-specific Rules integration.
-core = 7.x
 package = Workflow
+core = 7.x
 
-dependencies[] = workflow
 dependencies[] = rules
+dependencies[] = workflow
 
 configure = admin/config/workflow/rules

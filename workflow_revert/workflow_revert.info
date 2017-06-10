@@ -1,5 +1,6 @@
 name = Workflow Revert
-description = "Adds a 'Revert' link to the first workflow history row."
-dependencies[] = workflow
-core = 7.x
+description = Adds a 'Revert' link to the first workflow history row.
 package = Workflow
+core = 7.x
+
+dependencies[] = workflow

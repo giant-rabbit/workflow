@@ -111,7 +111,7 @@ class WorkflowItem extends WorkflowD7Base {// D8: extends ConfigFieldItemBase im
       '#default_value' => $wid,
       '#required' => TRUE,
       '#disabled' => $has_data,
-      '#description' => t('Choose the Workflow type. Maintain workflows !url.', array('!url' => l(t('here'), 'admin/config/workflow/workflow'))),
+      '#description' => t('Choose the Workflow type. Maintain workflows !url.', array('!url' => l(t('here'), WORKFLOW_ADMIN_UI_PATH))),
     );
 
     // Inform the user of possible states.
