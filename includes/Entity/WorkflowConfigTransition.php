@@ -133,6 +133,25 @@ class WorkflowConfigTransition extends Entity {
       $workflow->save();
     }
   }
+
+  /**
+   * Helper debugging function to easily show the contents of a transition.
+   */
+  public function dpm($function = 'not_specified') {
+    $transition = $this;
+    $time = NULL;
+
+    // Do this extensive $user_name lines, for some troubles with Action.
+    $t_string = get_class($this) . ' ' . $this->identifier() . " in function '$function'";
+    //$output[] = 'Entity  = ' . ((!$entity) ? 'NULL' : ($entity_type . '/' . $entity_bundle . '/' . $entity_id));
+    //$output[] = 'Field   = ' . $transition->getFieldName();
+    $output[] = 'From/To = ' . $transition->sid . ' > ' . $transition->target_sid . ' @ ' . $time;
+    //$output[] = 'Comment = ' . $user_name . ' says: ' . $transition->getComment();
+    //$output[] = 'Forced  = ' . ($transition->isForced() ? 'yes' : 'no');
+    if (function_exists('dpm')) { dpm($output, $t_string); }
+  }
+
+
 }
 
 /**

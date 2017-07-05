@@ -89,7 +89,7 @@ class Workflow extends Entity implements WorkflowInterface {
   protected function preRebuild() {
     // Remap roles. They can come from another system with shifted role IDs.
     // See also https://drupal.org/node/1702626 .
-    $this->rebuildRoles($this->tab_roles);
+    $this->tab_roles = $this->rebuildRoles($this->tab_roles);
 
     // After update.php or import feature, label might be empty. @todo: remove in D8.
     if (empty($this->label)) {
@@ -160,39 +160,32 @@ class Workflow extends Entity implements WorkflowInterface {
       $data = (array)$data;
 
       if (is_numeric($name)) {
-        //$start_state = $saved_states[$saved_state_names[$data['sid']]];
-        //$end_state = $saved_states[$saved_state_names[$data['target_sid']]];
         if (isset($saved_states[$data['sid']]) && isset($saved_states[$data['target_sid']])) {
           $start_state = $saved_states[$data['sid']];      // #2876303
           $end_state = $saved_states[$data['target_sid']]; // #2876303
-          $name = WorkflowConfigTransition::machineName($start_state->getName(), $end_state->getName());
         }
         else {
-          // Error
-          $start_state = $saved_states[$data['sid']];      // #2876303
-          $end_state = $saved_states[$data['target_sid']]; // #2876303
-          $name = WorkflowConfigTransition::machineName($start_state->getName(), $end_state->getName());
+          $start_state = $this->getState($data['sid']);
+          $end_state = $this->getState($data['target_sid']);
         }
       }
       else {
         $start_state = $saved_states[$data['start_state']];
         $end_state = $saved_states[$data['end_state']];
       }
-
+      $name = WorkflowConfigTransition::machineName($start_state->getName(), $end_state->getName());
       if (isset($db_transitions[$name])) {
         $transition = $db_transitions[$name];
       }
       else {
-        $transition = $this->createTransition($start_state->sid,
-          $end_state->sid);
+        $transition = $this->createTransition($start_state->sid, $end_state->sid);
       }
 
       $transition->wid = $this->wid;
       $transition->sid = $start_state->sid;
       $transition->target_sid = $end_state->sid;
       $transition->label = $data['label'];
-      $transition->roles = $data['roles'];
-      $this->rebuildRoles($transition->roles);
+      $transition->roles = $this->rebuildRoles($data['roles']);
       $transition->save();
 
       unset($db_transitions[$name]);
@@ -709,9 +702,11 @@ class Workflow extends Entity implements WorkflowInterface {
     return array('path' => WORKFLOW_ADMIN_UI_PATH . "/manage/$wid");
   }
 
-  protected function rebuildRoles(array &$roles) {
+  protected function rebuildRoles(array $roles) {
     $new_roles = array();
 
+    // @todo: importing Roles is incomplete when user language is not English.
+    // function user_roles() translates DRUPAL_ANONYMOUS_RID, DRUPAL_AUTHENTICATED_RID
     $role_map = workflow_get_roles(NULL);
 
     // See also https://drupal.org/node/1702626 .
@@ -725,7 +720,7 @@ class Workflow extends Entity implements WorkflowInterface {
         }
       }
     }
-    $roles = $new_roles;
+    return $new_roles;
   }
 
 }
