@@ -162,10 +162,17 @@ class Workflow extends Entity implements WorkflowInterface {
       if (is_numeric($name)) {
         //$start_state = $saved_states[$saved_state_names[$data['sid']]];
         //$end_state = $saved_states[$saved_state_names[$data['target_sid']]];
-        $start_state = $saved_states[$data['sid']];      // #2876303
-        $end_state = $saved_states[$data['target_sid']]; // #2876303
-        $name = WorkflowConfigTransition::machineName($start_state->getName(),
-          $end_state->getName());
+        if (isset($saved_states[$data['sid']]) && isset($saved_states[$data['target_sid']])) {
+          $start_state = $saved_states[$data['sid']];      // #2876303
+          $end_state = $saved_states[$data['target_sid']]; // #2876303
+          $name = WorkflowConfigTransition::machineName($start_state->getName(), $end_state->getName());
+        }
+        else {
+          // Error
+          $start_state = $saved_states[$data['sid']];      // #2876303
+          $end_state = $saved_states[$data['target_sid']]; // #2876303
+          $name = WorkflowConfigTransition::machineName($start_state->getName(), $end_state->getName());
+        }
       }
       else {
         $start_state = $saved_states[$data['start_state']];
@@ -703,13 +710,11 @@ class Workflow extends Entity implements WorkflowInterface {
   }
 
   protected function rebuildRoles(array &$roles) {
-    $role_map = isset($this->system_roles) ? $this->system_roles : array();
-    if (!$role_map) {
-      return;
-    }
+    $new_roles = array();
+
+    $role_map = workflow_get_roles(NULL);
 
     // See also https://drupal.org/node/1702626 .
-    $new_roles = array();
     foreach ($roles as $key => $rid) {
       if ($rid == WORKFLOW_ROLE_AUTHOR_RID) {
         $new_roles[$rid] = $rid;
