@@ -51,7 +51,7 @@ class WorkflowConfigTransition extends Entity {
   }
 
   protected function defaultLabel() {
-    return $this->label;
+    return isset($this->label) ? $this->label : '';
   }
 
   protected function defaultUri() {
