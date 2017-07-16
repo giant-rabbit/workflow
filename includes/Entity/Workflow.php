@@ -543,19 +543,7 @@ class Workflow extends Entity implements WorkflowInterface {
   }
 
   /**
-   * Loads all allowed ConfigTransitions for this workflow.
-   *
-   * @param mixed $tids
-   *   Array of Transitions IDs. If FALSE, show all transitions.
-   * @param array $conditions
-   *   $conditions['sid'] : if provided, a 'from' State ID.
-   *   $conditions['target_sid'] : if provided, a 'to' state ID.
-   *   $conditions['roles'] : if provided, an array of roles, or 'ALL'.
-   * @param bool $reset
-   *   Indicator to reset the cache.
-   *
-   * @return array
-   *   An array of keyed transitions.
+   * @inheritdoc
    */
   public function getTransitions($tids = FALSE, array $conditions = array(), $reset = FALSE) {
     $config_transitions = array();

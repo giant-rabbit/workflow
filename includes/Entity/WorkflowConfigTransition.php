@@ -97,11 +97,16 @@ class WorkflowConfigTransition extends Entity {
    * - In permissions;
    * - By permission hooks, implemented by other modules.
    *
+   * @param string|array $user_roles
+   *   The string 'ALL' to force allowing the transition, or an array of role
+   *   IDs to compare against the roles allowed for the transition.
+   *
    * @return bool
-   *   TRUE if OK, else FALSE.
+   *   If the transition is allowed, this function returns TRUE. Otherwise, it
+   *   returns FALSE.
    */
   public function isAllowed($user_roles) {
-    if ($user_roles == 'ALL') {
+    if ($user_roles === 'ALL') {
       // Superuser.
       return TRUE;
     }
