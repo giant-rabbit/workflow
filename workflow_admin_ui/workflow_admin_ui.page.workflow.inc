@@ -248,6 +248,7 @@ function workflow_admin_ui_edit_form_submit($form, &$form_state) {
     $workflow->tab_roles = array_filter($form_state['values']['tab_roles']);
     $workflow->options = array(
       'name_as_title' => $form_state['values']['name_as_title'],
+      'fieldset' => $form_state['values']['fieldset'],
       'options' => $form_state['values']['options'],
       'schedule' => $form_state['values']['schedule'],
       'schedule_timezone' => $form_state['values']['schedule_timezone'],
