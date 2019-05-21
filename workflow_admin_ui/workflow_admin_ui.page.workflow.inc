@@ -221,7 +221,7 @@ function workflow_admin_ui_edit_form_validate($form, &$form_state) {
 
   // Make sure workflow name is not a duplicate.
   foreach (workflow_load_multiple() as $stored_workflow) {
-    if ($name == check_plain($stored_workflow->getName()) && $workflow->wid != $stored_workflow->wid) {
+    if ($name == $stored_workflow->name && $workflow->wid != $stored_workflow->wid) {
       form_set_error('name', t('A workflow with the name %name already exists. Please enter another name for this workflow.',
         array('%name' => $name)));
       break;
