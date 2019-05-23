@@ -532,7 +532,7 @@ class WorkflowState extends Entity {
    * Mimics Entity API functions.
    */
   protected function defaultLabel() {
-    return isset($this->state) ? t('@state', ['@state' => $this->state]) : '';
+    return isset($this->state) ? t('@state', array('@state' => $this->state)) : '';
   }
 
   public function getName() {

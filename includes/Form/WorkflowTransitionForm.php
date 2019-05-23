@@ -318,7 +318,7 @@ class WorkflowTransitionForm { // extends FormBase {
         // '#name' => $workflow_label,
         // '#parents' => array('workflow'),
         '#default_value' => $default_value,
-        '#description' => t('@help', ['@help' => $help_text]),
+        '#description' => t('@help', array('@help' => $help_text)),
       );
     }
 
