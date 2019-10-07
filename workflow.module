@@ -574,12 +574,13 @@ function workflow_execute_transition($entity_type, $entity, $field_name, $transi
  * @return array
  *   Array of role names keyed by role ID, including the 'author' role.
  */
-function workflow_get_roles($permission = 'participate in workflow') {
+function workflow_get_roles($permission = 'participate in workflow', $translate_roles = TRUE) {
   static $roles = NULL;
   if (!$roles[$permission]) {
-    $roles[$permission][WORKFLOW_ROLE_AUTHOR_RID] =  '(' . t(WORKFLOW_ROLE_AUTHOR_NAME) . ')';
+    $role_author_name = $translate_roles ? t(WORKFLOW_ROLE_AUTHOR_NAME) : WORKFLOW_ROLE_AUTHOR_NAME;
+    $roles[$permission][WORKFLOW_ROLE_AUTHOR_RID] =  '(' . $role_author_name . ')';
     foreach (user_roles(FALSE, $permission) as $rid => $role_name) {
-      $roles[$permission][$rid] = check_plain(t($role_name));
+      $roles[$permission][$rid] = $translate_roles ? check_plain(t($role_name)) : $role_name;
     }
   }
   return $roles[$permission];

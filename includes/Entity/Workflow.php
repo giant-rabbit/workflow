@@ -15,6 +15,7 @@ class Workflow extends Entity implements WorkflowInterface {
   public $tab_roles = array();
   public $options = array();
   protected $creation_sid = 0;
+  protected $rebuilding = FALSE;
 
   // Attached States.
   public $states = NULL;
@@ -101,6 +102,12 @@ class Workflow extends Entity implements WorkflowInterface {
    * Rebuild internals that get saved separately.
    */
   protected function rebuildInternals() {
+    // Avoid recursive rebuilding.
+    if ($this->rebuilding) {
+      return;
+    }
+    $this->rebuilding = TRUE;
+
     // Insert the type_map when building from Features.
     if (isset($this->typeMap)) {
       foreach ($this->typeMap as $node_type) {
@@ -204,6 +211,7 @@ class Workflow extends Entity implements WorkflowInterface {
     $this->states = $this->transitions = NULL;
     $this->getStates(TRUE, TRUE);
     $this->getTransitions(FALSE, array(), TRUE);
+    $this->rebuilding = FALSE;
   }
 
   /**
@@ -695,7 +703,7 @@ class Workflow extends Entity implements WorkflowInterface {
 
     // @todo: importing Roles is incomplete when user language is not English.
     // function user_roles() translates DRUPAL_ANONYMOUS_RID, DRUPAL_AUTHENTICATED_RID
-    $role_map = workflow_get_roles(NULL);
+    $role_map = workflow_get_roles(NULL, FALSE);
 
     // See also https://drupal.org/node/1702626 .
     foreach ($roles as $key => $rid) {
