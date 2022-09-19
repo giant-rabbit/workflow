@@ -680,7 +680,7 @@ class WorkflowTransition extends Entity {
 
   public function uri() {
     return array(
-      'path' => 'Workflow*Transition/' . $this->sid,
+      'path' => 'WorkflowTransition/' . $this->sid,
     );
   }
 
@@ -695,7 +695,7 @@ class WorkflowTransition extends Entity {
    * Implements EntityInterface::entityType().
    */
   public function entityType() {
-    return 'Workflow*Transition';
+    return 'WorkflowTransition';
   }
 
   /**
