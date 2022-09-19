@@ -9,17 +9,18 @@
  * Settings form.
  */
 function workflow_notify_settings_form($form, &$form_state, Workflow $workflow) {
+  $config = config('workflow_notify.settings');
   // If we don't have a workflow that goes with this, return to the admin pg.
   if (!is_object($workflow)) {
-    drupal_set_message(t('Improper worklow ID provided.'), 'error');
-    drupal_goto(WORKFLOW_ADMIN_UI_PATH);
+    backdrop_set_message(t('Improper worklow ID provided.'), 'error');
+    backdrop_goto(WORKFLOW_ADMIN_UI_PATH);
   }
 
   // @todo: Let's get a better page title.
-  drupal_set_title(t('@name Notifications', array('@name' => $workflow->label())));
+  backdrop_set_title(t('@name Notifications', array('@name' => $workflow->label())));
 
   // Let's add some breadcrumbs.
- // workflow_admin_ui_breadcrumbs($workflow);
+  // workflow_admin_ui_breadcrumbs($workflow);
 
   $form['#tree'] = TRUE;
   $form['#wid'] = $wid = $workflow->getWorkflowId();
@@ -59,7 +60,7 @@ function workflow_notify_settings_form($form, &$form_state, Workflow $workflow) 
       'site' => t('Site email address'),
       'changer' => t('Current user'),
     ),
-    '#default_value' => variable_get("workflow_notify_from_address_$wid", 'site'),
+    '#default_value' => $config->get("workflow_notify_from_address_$wid"),
     '#attributes' => array('class' => array('container-inline')),
     '#description' => t('Determines whether to use the site address or the address of the person
         causing the state change.'),
@@ -75,7 +76,7 @@ function workflow_notify_settings_form($form, &$form_state, Workflow $workflow) 
     '#title' => t('Filter format to use on message'),
     '#type' => 'radios',
     '#options' => $formats,
-    '#default_value' => variable_get("workflow_notify_filter_format_$wid", 'filtered_html'),
+    '#default_value' => $config->get("workflow_notify_filter_format_$wid"),
     '#attributes' => array('class' => array('container-inline')),
     '#description' => t('The message body will be processed using this filter format
         in order to ensure security.'),
@@ -104,7 +105,7 @@ function workflow_notify_settings_form($form, &$form_state, Workflow $workflow) 
   $form['#columns']['subject'] = t('Subject');
   $form['#columns']['body'] = t('Body');
 
-  $notify = variable_get('workflow_notify_roles', array());
+  $notify = $config->get('workflow_notify_roles');
 
   foreach ($states as $sid => $state) {
     // Allow modules to insert state operations.
@@ -115,33 +116,31 @@ function workflow_notify_settings_form($form, &$form_state, Workflow $workflow) 
         '#type' => 'markup',
         '#markup' => filter_xss($state->state),
       ),
-
       'roles' => array(
         '#type' => 'checkboxes',
         '#options' => $roles,
         '#default_value' => (isset($notify[$sid]) ? $notify[$sid] : array()),
         '#attributes' => array('class' => array('state-roles')),
       ),
-
       'subject' => array(
         '#type' => 'textarea',
         '#rows' => 5,
-        '#default_value' => variable_get('workflow_notify_subject_' . $sid,
-          '[node:title] is now "[node:field_workflow_state:new-state:label]"'),
+        '#default_value' => $config->get('workflow_notify_subject_' . $sid),
         '#attributes' => array('class' => array('subject')),
       ),
-
       'body' => array(
         '#type' => 'textarea',
         '#rows' => 5,
-        '#default_value' => variable_get('workflow_notify_body_' . $sid,
-          '<a href="[node:url:absolute]">[node:title]</a> is now "[node:field_workflow_state:new-state:label]".'),
+        '#default_value' => $config->get('workflow_notify_body_' . $sid),
         '#attributes' => array('class' => array('body')),
       ),
     );
   }
 
-  $form['submit'] = array('#type' => 'submit', '#value' => t('Save configuration'));
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save configuration'),
+  );
 
   return $form;
 }
@@ -154,14 +153,17 @@ function theme_workflow_notify_settings_form($variables) {
   $output = '';
   $table_id = 'workflow-notify-settings';
 
-  $output .= drupal_render($form['from_address']);
-  $output .= drupal_render($form['filter']);
-  $output .= drupal_render($form['tokens']);
+  $output .= backdrop_render($form['from_address']);
+  $output .= backdrop_render($form['filter']);
+  $output .= backdrop_render($form['tokens']);
 
   $table = array(
     'rows' => array(),
-    'header' => array(),    // To be filled in.
-    'attributes' => array('id' => $table_id, 'style' => 'width: 100%; margin-top: 1em;'),
+    'header' => array(), // To be filled in.
+    'attributes' => array(
+      'id' => $table_id,
+      'style' => 'width: 100%; margin-top: 1em;',
+    ),
   );
 
   $columns = $form['#columns'];
@@ -180,8 +182,8 @@ function theme_workflow_notify_settings_form($variables) {
 
     foreach ($columns as $field => $title) {
       $row[] = array(
-        'data' => drupal_render($form['states'][$id][$field]),
-        'class' => array(drupal_html_class($field)),
+        'data' => backdrop_render($form['states'][$id][$field]),
+        'class' => array(backdrop_html_class($field)),
       );
     }
 
@@ -191,23 +193,27 @@ function theme_workflow_notify_settings_form($variables) {
 
   $output .= theme('table', $table);
 
-  $output .= drupal_render($form['explain']);
+  $output .= backdrop_render($form['explain']);
 
   // And then render any remaining form elements (such as our submit button)
-  $output .= drupal_render_children($form);
+  $output .= backdrop_render_children($form);
 
   return $output;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function workflow_notify_settings_form_submit($form, &$form_state) {
   $wid = $form['#wid'];
   $workflow = $form['#workflow'];
-  $roles = variable_get('workflow_notify_roles', array());
+  $roles = config_get('workflow_notify.settings', 'workflow_notify_roles');
 
   $form_state['redirect'] = WORKFLOW_ADMIN_UI_PATH;
 
-  variable_set("workflow_notify_from_address_$wid" , $form_state['values']['from_address']);
-  variable_set("workflow_notify_filter_format_$wid" , $form_state['values']['filter']);
+  config_set('workflow_notify.settings', "workflow_notify_from_address_$wid", $form_state['values']['from_address']);
+  config_set('workflow_notify.settings', "workflow_notify_filter_format_$wid", $form_state['values']['filter']);
 
   foreach ($form_state['values']['states'] as $sid => $values) {
     $selected = array_filter($values['roles']);
@@ -220,11 +226,11 @@ function workflow_notify_settings_form_submit($form, &$form_state) {
       unset($roles[$sid]);
     }
 
-    variable_set("workflow_notify_subject_$sid", $values['subject']);
-    variable_set("workflow_notify_body_$sid", $values['body']);
+    config_set('workflow_notify.settings', "workflow_notify_subject_$sid", $values['subject']);
+    config_set('workflow_notify.settings', "workflow_notify_body_$sid", $values['body']);
   }
 
-  variable_set('workflow_notify_roles', $roles);
+  config_set('workflow_notify.settings', 'workflow_notify_roles', $roles);
 
-  drupal_set_message(t('The notification settings have been saved.'));
+  backdrop_set_message(t('The notification settings have been saved.'));
 }

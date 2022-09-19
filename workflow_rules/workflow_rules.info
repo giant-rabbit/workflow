@@ -1,7 +1,8 @@
 name = Workflow Rules
 description = Provides additional, workflow-specific Rules integration.
 package = Workflow
-core = 7.x
+backdrop = 1.x
+type = module
 
 dependencies[] = rules
 dependencies[] = workflow

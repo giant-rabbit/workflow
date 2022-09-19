@@ -1,0 +1,6 @@
+[WorkflowExampleTestCase]
+name = Workflow
+description = Ensure that the Workflow API works as expected.
+group = Workflow
+file = includes/Test/WorkflowUnitTest.test
+

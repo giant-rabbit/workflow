@@ -18,7 +18,7 @@ function workflow_access_menu() {
     'title' => 'Access settings',
     'file' => 'workflow_access.pages.inc',
     'access arguments' => array('administer workflow'),
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('workflow_access_priority_form'),
     'type' => MENU_LOCAL_ACTION,
   );
@@ -26,7 +26,7 @@ function workflow_access_menu() {
     'title' => 'Access',
     'file' => 'workflow_access.pages.inc',
     'access arguments' => array('administer workflow'),
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('workflow_access_form', $id_count + 1),
     'type' => MENU_CALLBACK,
   );
@@ -50,7 +50,10 @@ function workflow_access_workflow_operations($op, $workflow = NULL, $state = NUL
           'workflow_access_form' => array(
             'title' => t('Access'),
             'href' => "$admin_path/manage/$wid/access",
-            'attributes' => array('alt' => $alt, 'title' => $alt),
+            'attributes' => array(
+              'alt' => $alt,
+              'title' => $alt,
+            ),
           ),
         );
       }
@@ -86,6 +89,7 @@ function workflow_access_help($path, $arg) {
         $help .= '<br>';
         $help .= t('WARNING: Organic Groups (OG) is present and may interfere
          with these settings.');
+        // TODO This variable was probably removed in Backdrop without replacement.
         if (variable_get('og_node_access_strict', TRUE)) {
           $help .= ' ';
           $help .= t('In particular, <a href="!url">Strict node access
@@ -109,7 +113,7 @@ function workflow_access_features_api() {
   return array(
     'workflow_access' => array(
       'name' => t('Workflow access'),
-      'file' => drupal_get_path('module', 'workflow_access') . '/workflow_access.features.inc',
+      'file' => backdrop_get_path('module', 'workflow_access') . '/workflow_access.features.inc',
       'default_hook' => 'workflow_access_features_default_settings',
       'default_file' => FEATURES_DEFAULTS_INCLUDED,
       'feature_source' => TRUE,
@@ -128,6 +132,17 @@ function workflow_access_node_grants($account, $op) {
     'workflow_access' => array_keys($account->roles),
     'workflow_access_owner' => array($account->uid),
   );
+}
+
+/**
+ * Implements hook_config_info().
+ */
+function workflow_access_config_info() {
+  $prefixes['workflow_access.settings'] = array(
+    'label' => t('Workflow API settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
 }
 
 /**
@@ -185,7 +200,7 @@ function workflow_access_node_access_records($node) {
     }
 
     $field_name = $transition->field_name;
-    $priority = variable_get('workflow_access_priority', 0);
+    $priority = config_get('workflow_access.settings', 'workflow_access_priority');
 
     if ($current_sid = workflow_node_current_state($node, 'node', $field_name)) {
       foreach (workflow_access_get_workflow_access_by_sid($current_sid) as $grant) {
@@ -271,5 +286,5 @@ function workflow_access_delete_workflow_access_by_sid($sid) {
 function workflow_access_insert_workflow_access_by_sid(&$data) {
   $data = (object) $data;
   workflow_access_delete_workflow_access_by_sid_rid($data->sid, $data->rid);
-  drupal_write_record('workflow_access', $data);
+  backdrop_write_record('workflow_access', $data);
 }

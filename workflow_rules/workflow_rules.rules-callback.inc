@@ -30,7 +30,7 @@ function _workflow_rules_token_replace($field_name) {
  */
 function _workflow_rules_workflow_get_options($data) {
   // This is a poorman's effort to convert a token into a field name.
-  $field_name = isset($data->settings['field:select']) ? _workflow_rules_token_replace($data->settings['field:select']) : '';
+  $field_name = isset($data->settings['field:select'])?_workflow_rules_token_replace($data->settings['field:select']) : '';
   $field = _workflow_info_field($field_name, NULL);
 
   $options['ANY'] = 'ANY state';
@@ -77,8 +77,7 @@ function _workflow_rules_node_check_transition($node, array $old_sids, array $ne
   $old_sid = $last_transition->old_sid;
   $new_sid = $last_transition->new_sid;
 
-  return
-    _workflow_rules_workflow_check_given_state($old_sid, $old_sids) &&
+  return _workflow_rules_workflow_check_given_state($old_sid, $old_sids) &&
     _workflow_rules_workflow_check_given_state($new_sid, $new_sids);
 }
 
@@ -130,11 +129,11 @@ function _workflow_rules_set_state(array $parameters, RulesAction $action) {
 
   // Warning: keep this action in line between Workflow Field and Workflow Node.
   // "$parameters['node']" is for backwards compatibility: can be any entity_type.
-  $entity = $parameters['node']->value(); // $parameters['entity'] is an EntityDrupalWrapper.
+  $entity = $parameters['node']->value(); // $parameters['entity'] is an EntityBackdropWrapper.
   $entity_type = $parameters['node']->type();
 
   // This is a poorman's effort to convert a token into a field name.
-  $field_name = isset($parameters['settings']['field:select']) ? _workflow_rules_token_replace($parameters['settings']['field:select']) : '';
+  $field_name = isset($parameters['settings']['field:select'])?_workflow_rules_token_replace($parameters['settings']['field:select']) : '';
   $old_sid = workflow_node_current_state($entity, $entity_type, $field_name);
 
   // Select the last state on the list.

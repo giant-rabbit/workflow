@@ -84,13 +84,13 @@ function workflow_menu_alter(&$items) {
     // %workflow_transition maps to function workflow_transition_load()
     'title' => 'Edit workflow log comment',
     'description' => 'Edit workflow transition comment.',
-//    'page callback' => 'drupal_get_form',
-//    'page arguments' => array('workflow_transition_form_wrapper', 1),
-    'page callback'        => 'entity_ui_get_form',
+    //    'page callback' => 'backdrop_get_form',
+    //    'page arguments' => array('workflow_transition_form_wrapper', 1),
+    'page callback' => 'entity_ui_get_form',
     // @todo: below parameter should be the machine_name of the entity type.
-    'page arguments'    => array('WorkflowTransition', 1),
+    'page arguments' => array('WorkflowTransition', 1),
     'access arguments' => array('edit workflow comment'),
-//    'file' => 'workflow.transition.page.inc',
+    //    'file' => 'workflow.transition.page.inc',
     'menu wildcard' => '%workflow_transition',
   );
 
@@ -103,7 +103,7 @@ function workflow_menu_alter(&$items) {
       'access callback' => 'workflow_tab_access',
       'access arguments' => array($type, 1),
       'file' => 'workflow.pages.inc',
-      'file path' => drupal_get_path('module', 'workflow'),
+      'file path' => backdrop_get_path('module', 'workflow'),
       'weight' => 2,
       'type' => MENU_LOCAL_TASK,
       'module' => 'workflow',
@@ -119,7 +119,7 @@ function workflow_menu_alter(&$items) {
     'page callback' => 'workflow_tab_page',
     'access callback' => 'workflow_tab_access',
     'file' => 'workflow.pages.inc',
-    'file path' => drupal_get_path('module', 'workflow'),
+    'file path' => backdrop_get_path('module', 'workflow'),
     'weight' => 2,
     'type' => MENU_LOCAL_TASK,
     'module' => 'workflow',
@@ -139,10 +139,10 @@ function workflow_menu_alter(&$items) {
           $entity_position = substr_count($admin_path, '/') + 2;
           $wildcard = (isset($entity_info['admin ui']['menu wildcard']) ? $entity_info['admin ui']['menu wildcard'] : '%entity_object');
           $items["$admin_path/manage/$wildcard/workflow"] = $menu_item + array(
-              'page arguments' => array($type, $entity_position),
-              'access arguments' => array($type, $entity_position),
-              'load arguments' => array($type),
-            );
+            'page arguments' => array($type, $entity_position),
+            'access arguments' => array($type, $entity_position),
+            'load arguments' => array($type),
+          );
         }
 
         // We can only continue if the entity relies on a ENTITY_TYPE_load() load hook.
@@ -174,9 +174,9 @@ function workflow_menu_alter(&$items) {
 
                   if ($entity_position) {
                     $items[$uri . '/workflow'] = $menu_item + array(
-                        'page arguments' => array($type, $entity_position),
-                        'access arguments' => array($type, $entity_position),
-                      );
+                      'page arguments' => array($type, $entity_position),
+                      'access arguments' => array($type, $entity_position),
+                    );
                   }
                 }
               }
@@ -290,7 +290,7 @@ function workflow_features_api() {
   return array(
     'workflow' => array(
       'name' => t('Workflow'),
-      'file' => drupal_get_path('module', 'workflow') . '/workflow.features.inc',
+      'file' => backdrop_get_path('module', 'workflow') . '/workflow.features.inc',
       'default_hook' => 'workflow_default_workflows',
       'feature_source' => TRUE,
     ),
@@ -473,7 +473,7 @@ function workflow_state_formatter($entity_type, $entity, $field = array(), $inst
     $current_sid = ($default_value == NULL) ? $current_sid : $default_value;
     $current_state = workflow_state_load_single($current_sid);
     $args = array(
-      'state' => $current_state ? workflow_get_sid_label($current_sid) : 'unknown state',
+      'state' => $current_state?workflow_get_sid_label($current_sid) : 'unknown state',
       'state_system_name' => $current_state ? $current_state->getName() : 'unknown state',
       'sid' => $current_sid,
     );
@@ -505,7 +505,7 @@ function workflow_entity_field_save($entity_type, $entity, $field_name, $langcod
     $entity->{$field_name}[$langcode][0]['workflow'] = $value;
   }
 
-  //  entity_save($entity_type, $entity);
+//  entity_save($entity_type, $entity);
   field_attach_presave($entity_type, $entity);
   field_attach_update($entity_type, $entity);
   if ($entity_type == 'node') {
@@ -575,12 +575,12 @@ function workflow_execute_transition($entity_type, $entity, $field_name, $transi
  *   Array of role names keyed by role ID, including the 'author' role.
  */
 function workflow_get_roles($permission = 'participate in workflow', $translate_roles = TRUE) {
-  static $roles = NULL;
-  if (!$roles[$permission]) {
-    $role_author_name = $translate_roles ? t(WORKFLOW_ROLE_AUTHOR_NAME) : WORKFLOW_ROLE_AUTHOR_NAME;
+  static $roles = array();
+  if (empty($roles[$permission])) {
+    $role_author_name = $translate_roles?t(WORKFLOW_ROLE_AUTHOR_NAME) : WORKFLOW_ROLE_AUTHOR_NAME;
     $roles[$permission][WORKFLOW_ROLE_AUTHOR_RID] =  '(' . $role_author_name . ')';
     foreach (user_roles(FALSE, $permission) as $rid => $role_name) {
-      $roles[$permission][$rid] = $translate_roles ? check_plain(t($role_name)) : $role_name;
+      $roles[$permission][$rid] = $translate_roles?check_plain(t($role_name)) : $role_name;
     }
   }
   return $roles[$permission];
@@ -614,9 +614,9 @@ function workflow_get_workflow_state_names($wid = 0, $grouped = FALSE, $all = FA
   global $user;
 
   /* @var $workflows Workflow[] */
-  $workflows = workflow_load_multiple($wid ? array($wid) : FALSE);
+  $workflows = workflow_load_multiple($wid?array($wid) : FALSE);
   // Do not group if only 1 Workflow is configured or selected.
-  $grouped = count($workflows) == 1 ? FALSE : $grouped;
+  $grouped = count($workflows) == 1?FALSE : $grouped;
   foreach ($workflows as $workflow) {
     $state = new WorkflowState(array('wid' => $workflow->wid));
     $workflow_options = $state->getOptions('', NULL, '', $user, FALSE);
@@ -673,10 +673,10 @@ function workflow_get_sid_label($sid) {
  * The performance is OK, and the cache gives problems when using Rules.
  *
  * @param object $entity
- *   The entity to check. May be an EntityDrupalWrapper.
+ *   The entity to check. May be an EntityBackdropWrapper.
  * @param string $entity_type
  *   The entity_type of the entity to check.
- *   May be empty in case of an EntityDrupalWrapper.
+ *   May be empty in case of an EntityBackdropWrapper.
  * @param string $field_name
  *   The name of the field of the entity to check.
  *   If NULL, the field_name is determined on the spot. This must be avoided,
@@ -945,10 +945,10 @@ function workflow_delete_workflow_node_by_sid($sid) {
 function workflow_update_workflow_node($data) {
   $data = (object) $data;
   if (isset($data->nid) && workflow_get_workflow_node_by_nid($data->nid)) {
-    drupal_write_record('workflow_node', $data, 'nid');
+    backdrop_write_record('workflow_node', $data, 'nid');
   }
   else {
-    drupal_write_record('workflow_node', $data);
+    backdrop_write_record('workflow_node', $data);
   }
 }
 
@@ -993,7 +993,7 @@ function _workflow_get_workflow_creation_sid($entity_type, $entity, $field_name)
     $sid = $workflow->getCreationSid();
   }
   else {
-    drupal_set_message(t('Workflow !wid cannot be loaded. Contact your system administrator.', array('!wid' => $wid)), 'error');
+    backdrop_set_message(t('Workflow !wid cannot be loaded. Contact your system administrator.', array('!wid' => $wid)), 'error');
   }
   return $sid;
 }
@@ -1033,10 +1033,10 @@ function workflow_get_field_name($entity, $entity_type, $field_name = NULL, $ent
 
   // If $field_name is not known, yet, determine it.
   if (!$entity_id) {
-    list($entity_id, , ) = entity_extract_ids($entity_type, $entity);
+    list($entity_id, ,   ) = entity_extract_ids($entity_type, $entity);
   }
 
-  $field_names = &drupal_static(__FUNCTION__);
+  $field_names = &backdrop_static(__FUNCTION__);
   if (isset($field_names[$entity_type][$entity_id])) {
     $field_name = $field_names[$entity_type][$entity_id]['field_name'];
   }
@@ -1081,7 +1081,7 @@ function _workflow_info_fields($entity = NULL, $entity_type = '', $entity_bundle
   $field_info = array();
 
   // Unwrap the entity.
-  if ($entity instanceof EntityDrupalWrapper) {
+  if ($entity instanceof EntityBackdropWrapper) {
     $entity_type = $entity->type();
     $entity = $entity->value();
     list(, , $entity_bundle) = entity_extract_ids($entity_type, $entity);
@@ -1101,20 +1101,20 @@ function _workflow_info_fields($entity = NULL, $entity_type = '', $entity_bundle
     $field_info[$field_name] = $field;
   }
   else {
-    // In Drupal 7.22, function field_info_field_map() was added, which is more
+    // In Backdrop 7.22, function field_info_field_map() was added, which is more
     // memory-efficient in certain cases than field_info_fields().
     // @see https://drupal.org/node/1915646
     $field_map_available = version_compare(VERSION, '7.22', '>=');
-    $field_list = $field_map_available ? field_info_field_map() : field_info_fields();
+    $field_list = $field_map_available?field_info_field_map() : field_info_fields();
     // Get the bundle, if not provided yet.
     if ($entity && !$entity_bundle) {
       list(, , $entity_bundle) = entity_extract_ids($entity_type, $entity);
     }
     foreach ($field_list as $field_name => $data) {
       if (($data['type'] == 'workflow')
-        && (!$entity_type || array_key_exists($entity_type, $data['bundles']))
-        && (!$entity_bundle || in_array($entity_bundle, $data['bundles'][$entity_type]))) {
-        $field_info[$field_name] = $field_map_available ? field_info_field($field_name) : $data;
+          && (!$entity_type || array_key_exists($entity_type, $data['bundles']))
+          && (!$entity_bundle || in_array($entity_bundle, $data['bundles'][$entity_type]))) {
+        $field_info[$field_name] = $field_map_available?field_info_field($field_name) : $data;
       }
     }
   }
@@ -1219,7 +1219,7 @@ function workflow_debug($class_name, $function_name, $line = '', $value1 = '', $
     return;
   }
 
-  $class_name_elements = explode( "\\" , $class_name);
+  $class_name_elements = explode( "\\", $class_name);
   $output = 'Testing... function ' . end($class_name_elements) . '::' . $function_name . '/' . $line;
   if ($value1) {
     $output .= ' = ' . $value1;
@@ -1227,5 +1227,29 @@ function workflow_debug($class_name, $function_name, $line = '', $value1 = '', $
   if ($value2) {
     $output .= ' > ' . $value2;
   }
-  drupal_set_message($output, 'warning');
+  backdrop_set_message($output, 'warning');
+}
+
+/**
+ * Implements hook_autoload_info().
+ */
+function workflow_autoload_info() {
+  return array(
+    'Workflow' => 'includes/Entity/Workflow.php',
+    'WorkflowController' => 'includes/Entity/Workflow.php',
+    'WorkflowConfigTransition' => 'includes/Entity/WorkflowConfigTransition.php',
+    'WorkflowConfigTransitionController' => 'includes/Entity/WorkflowConfigTransition.php',
+    'WorkflowInterface' => 'includes/Entity/WorkflowInterface.php',
+    'WorkflowScheduledTransition' => 'includes/Entity/WorkflowScheduledTransition.php',
+    'WorkflowState' => 'includes/Entity/WorkflowState.php',
+    'WorkflowStateController' => 'includes/Entity/WorkflowState.php',
+    'WorkflowTransition' => 'includes/Entity/WorkflowTransition.php',
+    'WorkflowTransitionController' => 'includes/Entity/WorkflowTransition.php',
+    'WorkflowTransitionController' => 'includes/Entity/WorkflowTransitionController.php',
+    'WorkflowD7Base' => 'includes/Field/WorkflowD7Base.php',
+    'WorkflowDefaultWidget' => 'includes/Field/WorkflowDefaultWidget.php',
+    'WorkflowItem' => 'includes/Field/WorkflowItem.php',
+    'WorkflowTransitionForm' => 'includes/Form/WorkflowTransitionForm.php',
+    'WorkflowFeaturesController' => 'workflow.features.inc',
+  );
 }

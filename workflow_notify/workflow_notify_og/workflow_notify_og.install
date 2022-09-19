@@ -15,15 +15,26 @@ function workflow_notify_og_install() {
     ->condition('name', 'workflow_notify_og')
     ->condition('type', 'module')
     ->execute();
+  // Dynamically generated variable data was detected on the following lines.
+}
+
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
+function workflow_notify_og_update_7000() { }
+
+/**
+ * Implements hook_update_last_removed().
+ */
+function workflow_notify_og_update_last_removed() {
+  return 7000;
 }
 
 /**
- * Set weight for Workflow_Notify_OG.
+ * Migrate workflow_notify_og variables to config.
  */
-function workflow_notify_og_update_7000() {
-  db_update('system')
-    ->fields(array('weight' => -1))
-    ->condition('name', 'workflow_notify_og')
-    ->condition('type', 'module')
-    ->execute();
+function workflow_notify_og_update_1000() {
+  $config = config('workflow_notify_og.settings');
+  $config->set('workflow_notify_og', update_variable_get('workflow_notify_og', array()));
+  $config->save();
+
+  update_variable_del('workflow_notify_og');
 }

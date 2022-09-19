@@ -104,11 +104,11 @@ function _workflowfield_metadata_property_get($entity, array $options, $name, $e
       // So we need to reload the entity to extract the correct value.
       if (!$sid && isset($data['workflow'])) {
         // $new_entity = $entity->original; // is NULL :-(
-        list($entity_id, , ) = entity_extract_ids($entity_type, $entity);
+        list($entity_id, ,  ) = entity_extract_ids($entity_type, $entity);
         if (!empty($entity_id)) {
-          $new_entity = entity_load_single($entity_type, $entity_id);
+          $new_entity = entity_load($entity_type, $entity_id);
           $workflow = $new_entity->{$name}[$langcode][$delta];
-          $sid = isset($workflow['value']) ? (int)$workflow['value'] : 0;
+          $sid = isset($workflow['value']) ? (int) $workflow['value'] : 0;
         }
       }
 
@@ -117,7 +117,7 @@ function _workflowfield_metadata_property_get($entity, array $options, $name, $e
     }
   }
   // For an empty single-valued field, we have to return NULL.
-  return $field['cardinality'] == 1 ? ($values ? reset($values) : NULL) : $values;
+  return $field['cardinality'] == 1 ? ($values?reset($values) : NULL) : $values;
 }
 
 /**
@@ -128,7 +128,7 @@ function _workflowfield_metadata_property_set($entity, $name, $value, $langcode,
   $field = field_info_field($name);
   $columns = array_keys($field['columns']);
   $langcode = entity_metadata_field_get_language($entity_type, $entity, $field, $langcode);
-  $values = $field['cardinality'] == 1 ? array($value) : (array) $value;
+  $values = $field['cardinality'] == 1?array($value) : (array) $value;
 }
 
 
@@ -166,8 +166,8 @@ function workflowfield_field_widget_info_alter(&$info) {
  * since $nid is needed, but not yet known at this moment.
  */
 /*
-// function workflowfield_field_presave($entity_type, $entity, $field, $instance, $langcode, &$items) {
-// }
+ // function workflowfield_field_presave($entity_type, $entity, $field, $instance, $langcode, &$items) {
+ // }
  */
 
 /**
@@ -195,7 +195,7 @@ function workflowfield_field_update($entity_type, $entity, array $field, $instan
     $referenced_entity_type = 'node'; // Comments only exist on nodes.
     $referenced_entity_id = $entity->nid;
     // Load the node again, since the passed node doesn't contain proper 'type' field.
-    $referenced_entity = entity_load_single($referenced_entity_type, $referenced_entity_id);
+    $referenced_entity = entity_load($referenced_entity_type, $referenced_entity_id);
     // Normalize the contents of the workflow field.
     $items[0]['value'] = _workflow_get_sid_by_items($items);
 
@@ -227,7 +227,7 @@ function workflowfield_field_update($entity_type, $entity, array $field, $instan
  */
 function workflowfield_field_prepare_view($entity_type, $entities, $field, $instances, $langcode, &$items) {
   // I guess Preview mode is only with 1 entity at a time.
-  if (count ( $items ) !== 1) {
+  if (count( $items ) !== 1) {
     return;
   }
 
@@ -267,8 +267,8 @@ function workflowfield_field_is_empty($item, $field) {
  * @todo: implement functionality from workflow_node_delete().
  */
 /*
-// function workflowfield_field_delete_field($entity_type, $entity, $field, $instance, $langcode, &$items) {
-// }
+ // function workflowfield_field_delete_field($entity_type, $entity, $field, $instance, $langcode, &$items) {
+ // }
  */
 
 /**

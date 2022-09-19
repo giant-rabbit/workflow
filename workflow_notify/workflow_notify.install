@@ -1,0 +1,43 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the workflow_notify module.
+ *
+ */
+
+
+/**
+ * Migrate workflow_notify variables to config.
+ */
+function workflow_notify_update_1000() {
+  $config = config('workflow_notify.settings');
+  $config->set('workflow_notify_roles', update_variable_get('workflow_notify_roles', array()));
+  $config->set('workflow_notify_filter_format_wid', update_variable_get('workflow_notify_filter_format_wid', 'dynamic variable in file /workflow/workflow_notify/workflow_notify.pages.inc line 78'));
+  $config->set('workflow_notify_subject_new_state', update_variable_get('workflow_notify_subject_new_state', 'dynamic variable in file /workflow/workflow_notify/workflow_notify.module line 314'));
+  $config->set('workflow_notify_body_new_state', update_variable_get('workflow_notify_body_new_state', 'dynamic variable in file /workflow/workflow_notify/workflow_notify.module line 317'));
+  $config->set('workflow_notify_from_address_wid', update_variable_get('workflow_notify_from_address_wid', 'dynamic variable in file /workflow/workflow_notify/workflow_notify.pages.inc line 62'));
+  $config->set('workflow_notify_subject_sid', update_variable_get('workflow_notify_subject_sid', 'dynamic variable in file /workflow/workflow_notify/workflow_notify.pages.inc line 129'));
+  $config->set('workflow_notify_body_sid', update_variable_get('workflow_notify_body_sid', 'dynamic variable in file /workflow/workflow_notify/workflow_notify.pages.inc line 137'));
+  $config->save();
+
+  update_variable_del('workflow_notify_roles');
+  update_variable_del('workflow_notify_filter_format_wid');
+  update_variable_del('workflow_notify_subject_new_state');
+  update_variable_del('workflow_notify_body_new_state');
+  update_variable_del('workflow_notify_from_address_wid');
+  update_variable_del('workflow_notify_subject_sid');
+  update_variable_del('workflow_notify_body_sid');
+}
+
+/**
+ * Implements hook_install().
+ */
+function workflow_notify_install() {
+  // Dynamically generated variable data was detected.
+  // /workflow/workflow_notify/workflow_notify.pages.inc line 78
+  // /workflow/workflow_notify/workflow_notify.module line 314
+  // /workflow/workflow_notify/workflow_notify.module line 317
+  // /workflow/workflow_notify/workflow_notify.pages.inc line 62
+  // /workflow/workflow_notify/workflow_notify.pages.inc line 129
+  // /workflow/workflow_notify/workflow_notify.pages.inc line 137
+}

@@ -1,0 +1,6 @@
+[WorkflowNamedTransitionsTest]
+name = Workflow Named Transitions Test
+description = This tests whether the Edit Labels tab exists in the workflow area.
+group = Workflow
+file = includes/Test/workflow_named_transitions.test
+

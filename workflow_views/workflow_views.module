@@ -51,7 +51,7 @@ function workflow_views_views_api() {
     'api' => 3,
     // The views.inc files are already in the root directory,
     // as required in D8.
-    // 'path' => drupal_get_path('module', 'workflow_views'),
+    // 'path' => backdrop_get_path('module', 'workflow_views'),
   );
 }
 
@@ -60,8 +60,8 @@ function workflow_views_views_api() {
  *
  * Loads all Views, custom made by this module, as stored in files xxx.view.inc.
  *
- * @see http://www.deckfifty.com/blog/2012-02/using-drupal-views-code
- * @see http://mc-kenna.com/drupal/2009/05/managing-drupal-views-the-proper-way
+ * @see http://www.deckfifty.com/blog/2012-02/using-backdrop-views-code
+ * @see http://mc-kenna.com/backdrop/2009/05/managing-backdrop-views-the-proper-way
  * @see http://www.chapterthree.com/blog/matt_cheney/howto_best_practices_embedding_views_code
  *
  *   https://api.drupal.org/api/views/views.api.php/function/hook_views_default_views/7
@@ -77,7 +77,7 @@ function workflow_views_views_default_views() {
   $modulename = 'workflow_views';
 
   // Find views in this directory, and the 'views' subdirectory.
-  $dir = drupal_get_path('module', $modulename) . '/';
+  $dir = backdrop_get_path('module', $modulename) . '/';
   $regex = '/\.view\.inc$/';
   $files = array();
   $files += file_scan_directory($dir, $regex, array('recurse' => FALSE));
@@ -90,4 +90,19 @@ function workflow_views_views_default_views() {
   }
 
   return $views;
+}
+
+/**
+ * Implements hook_autoload_info().
+ */
+function workflow_views_autoload_info() {
+  return array(
+    'views_handler_argument_workflow_state' => 'handlers/workflow_views_handler_argument_state.inc',
+    'workflow_views_handler_field_comment_link_edit' => 'handlers/workflow_views_handler_field_comment_link_edit.inc',
+    'workflow_views_handler_field_node_link_workflow' => 'handlers/workflow_views_handler_field_node_link_workflow.inc',
+    'workflow_views_handler_field_sid' => 'handlers/workflow_views_handler_field_sid.inc',
+    'workflow_views_handler_field_state' => 'handlers/workflow_views_handler_field_state.inc',
+    'workflow_views_handler_field_username' => 'handlers/workflow_views_handler_field_username.inc',
+    'workflow_views_handler_filter_sid' => 'handlers/workflow_views_handler_filter_sid.inc',
+  );
 }

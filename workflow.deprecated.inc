@@ -101,10 +101,10 @@ function workflow_get_creation_state_by_wid($wid) {
 //  }
 //
 //  if (isset($data->wid) && workflow_load_single($data->wid)) {
-//    drupal_write_record('workflows', $data, 'wid');
+//    backdrop_write_record('workflows', $data, 'wid');
 //  }
 //  else {
-//    drupal_write_record('workflows', $data);
+//    backdrop_write_record('workflows', $data);
 //    if ($create_creation_state) {
 //      $state_data = array(
 //        'wid' => $data->wid,
@@ -307,7 +307,7 @@ function workflow_get_workflow_states_by_wid($wid, $options = array()) {
  */
 function workflow_get_workflow_by_sid($sid) {
   return db_query("SELECT w.wid, w.name, w.tab_roles, w.options FROM {workflow_states} s
-    INNER JOIN {workflows} w ON w.wid=s.wid WHERE sid = :sid ",
+    INNER JOIN {workflows} w ON w.wid=s.wid WHERE sid = :sid ", 
     array(':sid' => $sid))->fetchObject();
 }
 
@@ -373,10 +373,10 @@ function workflow_update_workflow_states(&$data) {
     $data->status = 1;
   }
   if (isset($data->sid) && workflow_state_load_single($data->sid)) {
-    drupal_write_record('workflow_states', $data, 'sid');
+    backdrop_write_record('workflow_states', $data, 'sid');
   }
   else {
-    drupal_write_record('workflow_states', $data);
+    backdrop_write_record('workflow_states', $data);
   }
 }
 
@@ -397,7 +397,7 @@ function workflow_get_workflow_transitions_by_wid($wid) {
       . 'INNER JOIN {workflow_states} s1 ON t.sid=s1.sid '
       . 'INNER JOIN {workflow_states} s2 ON t.target_sid=s2.sid '
       . 'WHERE s1.wid = :wid AND s2.wid = :wid';
-    $transitions[$wid] = db_query('SELECT t.*, s1.wid FROM {workflow_transitions} AS t INNER JOIN {workflow_states} AS s1 ON t.sid=s1.sid INNER JOIN {workflow_states} AS s2 ON t.target_sid=s2.sid WHERE s1.wid = :wid AND s2.wid = :wid',
+    $transitions[$wid] = db_query('SELECT t.*, s1.wid FROM {workflow_transitions} AS t INNER JOIN {workflow_states} AS s1 ON t.sid=s1.sid INNER JOIN {workflow_states} AS s2 ON t.target_sid=s2.sid WHERE s1.wid = :wid AND s2.wid = :wid', 
       array(':wid' => $wid))->fetchAll();
   }
   return $transitions[$wid];
@@ -409,7 +409,7 @@ function workflow_get_workflow_transitions_by_wid($wid) {
 function workflow_get_workflow_transitions_by_tid($tid) {
   static $transitions;
   if (!isset($transitions[$tid])) {
-    $transitions[$tid] = db_query('SELECT tid, sid, target_sid, roles FROM {workflow_transitions} WHERE tid = :tid',
+    $transitions[$tid] = db_query('SELECT tid, sid, target_sid, roles FROM {workflow_transitions} WHERE tid = :tid', 
       array(':tid' => $tid))->fetchObject();
   }
   return $transitions[$tid];
@@ -511,11 +511,11 @@ function workflow_delete_workflow_transitions_by_roles($roles) {
 //      }
 //    }
 //    $transition->roles = implode(',', $roles);
-//    drupal_write_record('workflow_transitions', $transition, 'tid');
+//    backdrop_write_record('workflow_transitions', $transition, 'tid');
 //    $data = $transition;
 //  }
 //  else {
-//    drupal_write_record('workflow_transitions', $data);
+//    backdrop_write_record('workflow_transitions', $data);
 //  }
 //}
 
@@ -621,7 +621,7 @@ function workflow_delete_workflow_transitions_by_roles($roles) {
  * @deprecated: workflow_transition_allowed => WorkflowConfigTransition::isAllowed
  */
 function workflow_transition_allowed($tid, $role = NULL) {
-  $config_transitions = entity_load('WorkflowConfigTransition', array($tid));
+  $config_transitions = entity_load_multiple('WorkflowConfigTransition', array($tid));
   $config_transition = reset($config_transitions);
 
   if ($role) {
@@ -666,7 +666,7 @@ function workflow_get_workflow_scheduled_transition_by_between($start = 0, $end 
 function workflow_insert_workflow_scheduled_transition($data) {
   $data = (object) $data;
   workflow_delete_workflow_scheduled_transition_by_nid($data->nid);
-  drupal_write_record('workflow_scheduled_transition', $data);
+  backdrop_write_record('workflow_scheduled_transition', $data);
 }
 
 /**
@@ -734,5 +734,5 @@ function workflow_insert_workflow_node_history($data) {
       return;
     }
   }
-  drupal_write_record('workflow_node_history', $data);
+  backdrop_write_record('workflow_node_history', $data);
 }

@@ -50,7 +50,7 @@ class WorkflowFeaturesController extends EntityDefaultFeaturesController {
 
     foreach ($data as $identifier) {
       // Clone workflow to make sure changes are not propagated to original.
-      if ($workflow = entity_load_single($this->type, $identifier)) {
+      if ($workflow = entity_load($this->type, $identifier)) {
         $this->export_render_workflow($workflow, $identifier, $code);
       }
     }

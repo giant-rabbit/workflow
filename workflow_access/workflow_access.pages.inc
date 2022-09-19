@@ -21,12 +21,15 @@ function workflow_access_priority_form($form, $form_state) {
     '#type' => 'weight',
     '#delta' => 10,
     '#title' => t('Workflow Access Priority'),
-    '#default_value' => variable_get('workflow_access_priority', 0),
+    '#default_value' => config_get('workflow_access.settings', 'workflow_access_priority'),
     '#description' => t('This sets the node access priority. Changing this
       setting can be dangerous. If there is any doubt, leave it at 0. 
-      <a href="@url">Read the manual.</a>', array('@url' => url('https://api.drupal.org/api/drupal/modules!node!node.api.php/function/hook_node_access_records/7'))),
+      <a href="@url">Read the manual.</a>', array('@url' => url('https://api.drupal.org/api/backdrop/modules!node!node.api.php/function/hook_node_access_records/7'))),
   );
-  $form['submit'] = array('#type' => 'submit', '#value' => t('Save'));
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save'),
+  );
 
   return $form;
 }
@@ -35,7 +38,7 @@ function workflow_access_priority_form($form, $form_state) {
  * Submit handler.
  */
 function workflow_access_priority_form_submit($form, &$form_state) {
-  variable_set('workflow_access_priority', $form_state['values']['workflow_access']['workflow_access_priority']);
+  config_set('workflow_access.settings', 'workflow_access_priority', $form_state['values']['workflow_access']['workflow_access_priority']);
   $form_state['redirect'] = WORKFLOW_ADMIN_UI_PATH;
 }
 
@@ -49,12 +52,12 @@ function workflow_access_priority_form_submit($form, &$form_state) {
 function workflow_access_form($form, $form_state, Workflow $workflow) {
   // If we don't have a workflow that goes with this, return to the admin pg.
   if (!is_object($workflow)) {
-    drupal_set_message(t('Improper worklow ID provided.'), 'error');
-    drupal_goto(WORKFLOW_ADMIN_UI_PATH);
+    backdrop_set_message(t('Improper worklow ID provided.'), 'error');
+    backdrop_goto(WORKFLOW_ADMIN_UI_PATH);
   }
 
   // @todo: Let's get a better page title.
-  drupal_set_title(t('@name Access', array('@name' => $workflow->label())));
+  backdrop_set_title(t('@name Access', array('@name' => $workflow->label())));
 
   $form['#tree'] = TRUE;
   $form['#wid'] = $wid = $workflow->getWorkflowId();
@@ -85,7 +88,7 @@ function workflow_access_form($form, $form_state, Workflow $workflow) {
     // Allow view grants by default for anonymous and authenticated users,
     // if no grants were set up earlier.
     if (!$count) {
-      $view = array(DRUPAL_ANONYMOUS_RID, DRUPAL_AUTHENTICATED_RID);
+      $view = array(BACKDROP_ANONYMOUS_RID, BACKDROP_AUTHENTICATED_RID);
     }
     // @todo: better tables using a #theme function instead of direct #prefixing.
     $form[$state->sid] = array(
@@ -122,7 +125,10 @@ function workflow_access_form($form, $form_state, Workflow $workflow) {
     );
   }
 
-  $form['submit'] = array('#type' => 'submit', '#value' => t('Save configuration'));
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save configuration'),
+  );
 
   return $form;
 }
@@ -154,6 +160,6 @@ function workflow_access_form_submit($form, &$form_state) {
     node_access_needs_rebuild(TRUE);
   }
 
-  drupal_set_message(t('Workflow access permissions updated.'));
+  backdrop_set_message(t('Workflow access permissions updated.'));
   $form_state['redirect'] = WORKFLOW_ADMIN_UI_PATH;
 }

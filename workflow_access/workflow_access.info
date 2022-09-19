@@ -1,7 +1,8 @@
 name = Workflow access
 description = Content access control based on workflows and roles. Depends on the node_access system, so only works for entities of type 'node'.
 package = Workflow
-core = 7.x
+backdrop = 1.x
+type = module
 
 dependencies[] = workflow
 

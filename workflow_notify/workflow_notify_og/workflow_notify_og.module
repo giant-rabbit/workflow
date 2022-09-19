@@ -6,6 +6,17 @@
  */
 
 /**
+ * Implements hook_config_info().
+ */
+function workflow_notify_og_config_info() {
+  $prefixes['workflow_notify_og.settings'] = array(
+    'label' => t('Workflow API settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
+}
+
+/**
  * Implements hook_workflow_notify().
  *
  * @param $op - The operation (columns, users).
@@ -26,7 +37,7 @@ function workflow_notify_og_workflow_notify($op, &$args) {
       break;
 
     case 'users':
-      $limit = variable_get('workflow_notify_og', array());
+      $limit = config_get('workflow_notify_og.settings', 'workflow_notify_og');
       // Is this a state we care about?
       if (isset($limit[$args['state']]) && $limit[$args['state']]) {
         // Yes, so get the node's groups and make sure it has some.
@@ -55,7 +66,7 @@ function workflow_notify_og_workflow_notify($op, &$args) {
 
     case 'tokens':
       $groups = field_get_items('node', $args['node'], 'og_group_ref');
-      
+
       $query = "SELECT g.entity_id AS gid, n.title AS name "
         . "FROM {field_data_group_group} g "
         . "INNER JOIN {node} n ON n.nid = g.entity_id "
@@ -79,9 +90,9 @@ function workflow_notify_og_workflow_notify($op, &$args) {
  * Add a column for limiting user groups by OG group.
  */
 function workflow_notify_og_form_alter(&$form, &$form_state, $form_id) {
-  switch($form_id) {
+  switch ($form_id) {
     case 'workflow_notify_settings_form':
-      $limit = variable_get('workflow_notify_og', array());
+      $limit = config_get('workflow_notify_og.settings', 'workflow_notify_og');
       if (!empty($form['states'])) {
         // Add a group limit flag to each state.
         foreach ($form['states'] as $sid => $element) {
@@ -103,7 +114,7 @@ function workflow_notify_og_form_alter(&$form, &$form_state, $form_id) {
  */
 function workflow_notify_og_form_submit(&$form, &$form_state) {
   $workflow = $form['#workflow'];
-  $limit = variable_get('workflow_notify_og', array());
+  $limit = config_get('workflow_notify_og.settings', 'workflow_notify_og');
 
   // Check each state for limit flags.
   foreach ($form_state['values']['states'] as $sid => $values) {
@@ -111,5 +122,5 @@ function workflow_notify_og_form_submit(&$form, &$form_state) {
   }
 
   // Save the new limit flags.
-  variable_set('workflow_notify_og', $limit);
+  config_set('workflow_notify_og.settings', 'workflow_notify_og', $limit);
 }

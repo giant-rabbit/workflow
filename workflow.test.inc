@@ -33,10 +33,10 @@ function _workflow_test_entity_workflow_crud() {
   $count3 = count($ws);
 
   if ($count1 === $count3 && ($count2 - $count1) == 1) {
-    drupal_set_message(t('workflow->create/save/delete OK'));
+    backdrop_set_message(t('workflow->create/save/delete OK'));
   }
-  else  {
-    drupal_set_message(t('workflow->create/save/delete: error'));
+  else {
+    backdrop_set_message(t('workflow->create/save/delete: error'));
   }
 
   $workflow = workflow_create('test' . REQUEST_TIME);
@@ -126,7 +126,7 @@ function _workflow_test_entity2() {
   dpm($w->getTransitions());
   return;
 
-  $ts = entity_load('WorkflowConfigTransition', array(6));
+  $ts = entity_load_multiple('WorkflowConfigTransition', array(6));
   $t = reset($ts);
   $t->roles += array(3 => 3);
   entity_save('WorkflowConfigTransition', $t);
@@ -135,7 +135,7 @@ function _workflow_test_entity2() {
 function _workflow_test_entity3() {
   $workflow = workflow_load_single(1);
   dpm($workflow->getStates());
-dpm($workflow->loadTransitions());
+  dpm($workflow->loadTransitions());
 //  $t1 = $workflow->createTransition($s1->sid, $s2->sid);
 //  $t1->save();
 //  dpm($t1);
@@ -144,9 +144,9 @@ dpm($workflow->loadTransitions());
 //  dpm($t2);
 //  dpm($t->uri());
 //  dpm($t->label());
-// $workflow->delete();
+  // $workflow->delete();
 
-//  $ts = entity_load('WorkflowConfigTransition', array(6));
+//  $ts = entity_load_multiple('WorkflowConfigTransition', array(6));
 //  $t = reset($ts);
 //  $t->roles += array(3 => 3);
 //  entity_save('WorkflowConfigTransition', $t);
@@ -172,9 +172,9 @@ function _workflow_test_entity_allowable() {
   $t->save();
   $t3 = $t = $workflow->createTransition('open', 'closed');
   $t->roles = $roles;
-DPM($t3);
+  DPM($t3);
   $t->save();
-DPM($t3);
+  DPM($t3);
   $t4 = $t = $workflow->createTransition('closed', 'open');
   $t->roles = $roles;
   $t->save();
@@ -203,57 +203,57 @@ function _workflow_test_metadata() {
   // Find the first, arbitrary workflow.
   $workflows = workflow_load_multiple();
   $workflow = reset($workflows);
-dpm($workflow);
+  dpm($workflow);
 
   // Add a Workflow wrapper;
   $wrapper = $workflow_wrapper = entity_metadata_wrapper('Workflow', $workflow);
-dpm(t('---- Workflow: showing objects ---'));
-dpm($wrapper);
+  dpm(t('---- Workflow: showing objects ---'));
+  dpm($wrapper);
 
   // Get properties of the Workflow.
-dpm(t('---- Workflow: showing getters ---'));
-dpm($wrapper->wid->label() . ' => ' . $wrapper->wid->value() );
-dpm($wrapper->name->label() . ' => ' . $wrapper->name->value() );
-dpm($wrapper->label->label() . ' => ' . $wrapper->label->value() );
-dpm($wrapper->status->value() );
-dpm($wrapper->tab_roles->value() );
-//dpm($wrapper->states->value() );
-dpm($wrapper->states->optionsList() );
-//dpm($wrapper->transitions->value() );
-dpm($wrapper->options->optionsList() );
+  dpm(t('---- Workflow: showing getters ---'));
+  dpm($wrapper->wid->label() . ' => ' . $wrapper->wid->value() );
+  dpm($wrapper->name->label() . ' => ' . $wrapper->name->value() );
+  dpm($wrapper->label->label() . ' => ' . $wrapper->label->value() );
+  dpm($wrapper->status->value() );
+  dpm($wrapper->tab_roles->value() );
+  //dpm($wrapper->states->value() );
+  dpm($wrapper->states->optionsList() );
+  //dpm($wrapper->transitions->value() );
+  dpm($wrapper->options->optionsList() );
   // Set properties of the Workflow.
   //dpm($wrapper->label->set('ssdfdss') );
   // ...
 
   // Get properties of States.
-dpm(t('---- start of WorkflowState getters ---'));
+  dpm(t('---- start of WorkflowState getters ---'));
   $states = $workflow->getStates();
   $state = reset($states);
   $state_wrapper = entity_metadata_wrapper('WorkflowState', $state);
-dpm($states);
-dpm(  $state_wrapper->sid->value()  );
-dpm(  $state_wrapper->wid->value()  );
-dpm(  $state_wrapper->weight->value()  );
-//dpm(  $state_wrapper->state->value()  );
-dpm(  $state_wrapper->status->value()  );
+  dpm($states);
+  dpm(  $state_wrapper->sid->value()  );
+  dpm(  $state_wrapper->wid->value()  );
+  dpm(  $state_wrapper->weight->value()  );
+  //dpm(  $state_wrapper->state->value()  );
+  dpm(  $state_wrapper->status->value()  );
 
   //dpm(  $wrapper->author->mail->value()  );
   //dpm(  $wrapper->title->value(array('sanitize' => TRUE))  );
 
   // Get the transitions.
-dpm(t('---- start of WorkflowConfigTransition getters ---'));
+  dpm(t('---- start of WorkflowConfigTransition getters ---'));
   $transitions = $state->getTransitions();
-dpm($transitions);
+  dpm($transitions);
   $options = $state->getOptions('', NULL, '', NULL);
-dpm($options);
+  dpm($options);
   $transition = reset($transitions);
-dpm($transition);
+  dpm($transition);
 
   $transition_wrapper = entity_metadata_wrapper('WorkflowConfigTransition', $transition);
-dpm(  $transition_wrapper  );
-//dpm(  $transition_wrapper->old_sid->value()  );
-dpm(  $transition_wrapper->old_state->value()  );
-dpm(  $transition_wrapper->old_state->value()->sid  );
+  dpm(  $transition_wrapper  );
+  //dpm(  $transition_wrapper->old_sid->value()  );
+  dpm(  $transition_wrapper->old_state->value()  );
+  dpm(  $transition_wrapper->old_state->value()->sid  );
 
 }
 
@@ -263,10 +263,10 @@ dpm(  $transition_wrapper->old_state->value()->sid  );
 function _workflow_test_tokens($entity_id = 76, $entity_type = 'node', $field_name = NULL) {
   global $user;
 
-// $entity_id = 76;
+  // $entity_id = 76;
 
   if ($entity_id) {
-    $node = entity_load_single($entity_type, $entity_id);
+    $node = entity_load($entity_type, $entity_id);
   }
   else {
     // Create a node.
@@ -280,7 +280,7 @@ function _workflow_test_tokens($entity_id = 76, $entity_type = 'node', $field_na
     $node->promote = 0; //(1 or 0): promoted to front page
     $node->comment = 1; // 0 = comments disabled, 1 = read only, 2 = read/write
 //  // Term reference (taxonomy) field
-  $node->field_workflow[$node->language][]['value'] = 1;
+    $node->field_workflow[$node->language][]['value'] = 1;
 //  // Entity reference field
 //  $node->field_customer_nid[$node->language][] = array(
 //    'target_id' => $form_state['values']['entity id'],
@@ -368,13 +368,13 @@ function _workflow_test_tokens($entity_id = 76, $entity_type = 'node', $field_na
 
   ';
 
-// This text is to test only a few tokens, for better inspection.
+  // This text is to test only a few tokens, for better inspection.
   $t_node_sub = '
  <br />	User	 = 	[node:last-transition:user]	    	The user that executed the transition.
  <br />	label    	 = 	[node:last-transition:label]	    	Workflow executed transition "label" property.
   ';
 
-// todo : test old-state
+  // todo : test old-state
   $data = array();
   $data['node'] = $node;
   $data['entity'] = $node;
@@ -394,7 +394,7 @@ function _workflow_test_tokens_term($entity_id = '2', $entity_type = 'taxonomy_t
   global $user;
 
   if ($entity_id) {
-    $node = entity_load_single($entity_type, $entity_id);
+    $node = entity_load($entity_type, $entity_id);
   }
   else {
     // Create a term.
@@ -476,7 +476,7 @@ function _workflow_test_tokens_term($entity_id = '2', $entity_type = 'taxonomy_t
  <br />	  Workflow executed transition ID	 = 	[term:last-transition:hid]	    	The unique ID of the workflow executed transition.
   ';
 
-// This text is to test only a few tokens, for better inspection.
+  // This text is to test only a few tokens, for better inspection.
   $t_node_sub = '
  <br />	Workflow	 = 	[term:last-transition:Workflow]	    	Workflow the state belongs to.
   ';
@@ -490,8 +490,8 @@ function _workflow_test_tokens_term($entity_id = '2', $entity_type = 'taxonomy_t
   $options['sanitize'] = FALSE;
   $options['clear'] = TRUE;
   $options['language'] = NULL;
-//dpm($node);
-//dpm($data);
+  //dpm($node);
+  //dpm($data);
   // Display the tokenized text.
 //  dpm(token_replace($t_greetings, $data));
   dpm(token_replace($t_node_all, $data, $options));
@@ -501,87 +501,87 @@ function _workflow_test_tokens_term($entity_id = '2', $entity_type = 'taxonomy_t
  * Test, taken from CommentTokenReplaceTestCase::testCommentTokenReplacement
  */
 /*
-function WorkflowCommentTokenReplacement() {
-  global $language;
-  $url_options = array(
-    'absolute' => TRUE,
-    'language' => $language,
-  );
+ function WorkflowCommentTokenReplacement() {
+ global $language;
+ $url_options = array(
+ 'absolute' => TRUE,
+ 'language' => $language,
+ );
 
-  $this->drupalLogin($this->admin_user);
+ $this->backdropLogin($this->admin_user);
 
-  // Set comment variables.
-  $this->setCommentSubject(TRUE);
+ // Set comment variables.
+ $this->setCommentSubject(TRUE);
 
-  // Create a node and a comment.
-  $node = $this->drupalCreateNode(array('type' => 'article'));
-  $parent_comment = $this->postComment($node, $this->randomName(), $this->randomName(), TRUE);
+ // Create a node and a comment.
+ $node = $this->backdropCreateNode(array('type' => 'article'));
+ $parent_comment = $this->postComment($node, $this->randomName(), $this->randomName(), TRUE);
 
-  // Post a reply to the comment.
-  $this->drupalGet('comment/reply/' . $node->nid . '/' . $parent_comment->id);
-  $child_comment = $this->postComment(NULL, $this->randomName(), $this->randomName());
-  $comment = comment_load($child_comment->id);
-  $comment->homepage = 'http://example.org/';
+ // Post a reply to the comment.
+ $this->backdropGet('comment/reply/' . $node->nid . '/' . $parent_comment->id);
+ $child_comment = $this->postComment(NULL, $this->randomName(), $this->randomName());
+ $comment = comment_load($child_comment->id);
+ $comment->homepage = 'http://example.org/';
 
-  // Add HTML to ensure that sanitation of some fields tested directly.
-  $comment->subject = '<blink>Blinking Comment</blink>';
-  $instance = field_info_instance('comment', 'body', 'comment_body');
+ // Add HTML to ensure that sanitation of some fields tested directly.
+ $comment->subject = '<blink>Blinking Comment</blink>';
+ $instance = field_info_instance('comment', 'body', 'comment_body');
 
-  // Generate and test sanitized tokens.
-  $tests = array();
-  $tests['[comment:cid]'] = $comment->cid;
-  $tests['[comment:hostname]'] = check_plain($comment->hostname);
-  $tests['[comment:name]'] = filter_xss($comment->name);
-  $tests['[comment:mail]'] = check_plain($this->admin_user->mail);
-  $tests['[comment:homepage]'] = check_url($comment->homepage);
-  $tests['[comment:title]'] = filter_xss($comment->subject);
-  $tests['[comment:body]'] = _text_sanitize($instance, LANGUAGE_NONE, $comment->comment_body[LANGUAGE_NONE][0], 'value');
-  $tests['[comment:url]'] = url('comment/' . $comment->cid, $url_options + array('fragment' => 'comment-' . $comment->cid));
-  $tests['[comment:edit-url]'] = url('comment/' . $comment->cid . '/edit', $url_options);
-  $tests['[comment:created:since]'] = format_interval(REQUEST_TIME - $comment->created, 2, $language->language);
-  $tests['[comment:changed:since]'] = format_interval(REQUEST_TIME - $comment->changed, 2, $language->language);
-  $tests['[comment:parent:cid]'] = $comment->pid;
-  $tests['[comment:parent:title]'] = check_plain($parent_comment->subject);
-  $tests['[comment:node:nid]'] = $comment->nid;
-  $tests['[comment:node:title]'] = check_plain($node->title);
-  $tests['[comment:author:uid]'] = $comment->uid;
-  $tests['[comment:author:name]'] = check_plain($this->admin_user->name);
+ // Generate and test sanitized tokens.
+ $tests = array();
+ $tests['[comment:cid]'] = $comment->cid;
+ $tests['[comment:hostname]'] = check_plain($comment->hostname);
+ $tests['[comment:name]'] = filter_xss($comment->name);
+ $tests['[comment:mail]'] = check_plain($this->admin_user->mail);
+ $tests['[comment:homepage]'] = check_url($comment->homepage);
+ $tests['[comment:title]'] = filter_xss($comment->subject);
+ $tests['[comment:body]'] = _text_sanitize($instance, LANGUAGE_NONE, $comment->comment_body[LANGUAGE_NONE][0], 'value');
+ $tests['[comment:url]'] = url('comment/' . $comment->cid, $url_options + array('fragment' => 'comment-' . $comment->cid));
+ $tests['[comment:edit-url]'] = url('comment/' . $comment->cid . '/edit', $url_options);
+ $tests['[comment:created:since]'] = format_interval(REQUEST_TIME - $comment->created, 2, $language->language);
+ $tests['[comment:changed:since]'] = format_interval(REQUEST_TIME - $comment->changed, 2, $language->language);
+ $tests['[comment:parent:cid]'] = $comment->pid;
+ $tests['[comment:parent:title]'] = check_plain($parent_comment->subject);
+ $tests['[comment:node:nid]'] = $comment->nid;
+ $tests['[comment:node:title]'] = check_plain($node->title);
+ $tests['[comment:author:uid]'] = $comment->uid;
+ $tests['[comment:author:name]'] = check_plain($this->admin_user->name);
 
-  // Test to make sure that we generated something for each token.
-  $this->assertFalse(in_array(0, array_map('strlen', $tests)), 'No empty tokens generated.');
+ // Test to make sure that we generated something for each token.
+ $this->assertFalse(in_array(0, array_map('strlen', $tests)), 'No empty tokens generated.');
 
-  foreach ($tests as $input => $expected) {
-    $output = token_replace($input, array('comment' => $comment), array('language' => $language));
-    $this->assertEqual($output, $expected, format_string('Sanitized comment token %token replaced.', array('%token' => $input)));
-  }
+ foreach ($tests as $input => $expected) {
+ $output = token_replace($input, array('comment' => $comment), array('language' => $language));
+ $this->assertEqual($output, $expected, format_string('Sanitized comment token %token replaced.', array('%token' => $input)));
+ }
 
-  // Generate and test unsanitized tokens.
-  $tests['[comment:hostname]'] = $comment->hostname;
-  $tests['[comment:name]'] = $comment->name;
-  $tests['[comment:mail]'] = $this->admin_user->mail;
-  $tests['[comment:homepage]'] = $comment->homepage;
-  $tests['[comment:title]'] = $comment->subject;
-  $tests['[comment:body]'] = $comment->comment_body[LANGUAGE_NONE][0]['value'];
-  $tests['[comment:parent:title]'] = $parent_comment->subject;
-  $tests['[comment:node:title]'] = $node->title;
-  $tests['[comment:author:name]'] = $this->admin_user->name;
+ // Generate and test unsanitized tokens.
+ $tests['[comment:hostname]'] = $comment->hostname;
+ $tests['[comment:name]'] = $comment->name;
+ $tests['[comment:mail]'] = $this->admin_user->mail;
+ $tests['[comment:homepage]'] = $comment->homepage;
+ $tests['[comment:title]'] = $comment->subject;
+ $tests['[comment:body]'] = $comment->comment_body[LANGUAGE_NONE][0]['value'];
+ $tests['[comment:parent:title]'] = $parent_comment->subject;
+ $tests['[comment:node:title]'] = $node->title;
+ $tests['[comment:author:name]'] = $this->admin_user->name;
 
-  foreach ($tests as $input => $expected) {
-    $output = token_replace($input, array('comment' => $comment), array('language' => $language, 'sanitize' => FALSE));
-    $this->assertEqual($output, $expected, format_string('Unsanitized comment token %token replaced.', array('%token' => $input)));
-  }
+ foreach ($tests as $input => $expected) {
+ $output = token_replace($input, array('comment' => $comment), array('language' => $language, 'sanitize' => FALSE));
+ $this->assertEqual($output, $expected, format_string('Unsanitized comment token %token replaced.', array('%token' => $input)));
+ }
 
-  // Load node so comment_count gets computed.
-  $node = node_load($node->nid);
+ // Load node so comment_count gets computed.
+ $node = node_load($node->nid);
 
-  // Generate comment tokens for the node (it has 2 comments, both new).
-  $tests = array();
-  $tests['[node:comment-count]'] = 2;
-  $tests['[node:comment-count-new]'] = 2;
+ // Generate comment tokens for the node (it has 2 comments, both new).
+ $tests = array();
+ $tests['[node:comment-count]'] = 2;
+ $tests['[node:comment-count-new]'] = 2;
 
-  foreach ($tests as $input => $expected) {
-    $output = token_replace($input, array('node' => $node), array('language' => $language));
-    $this->assertEqual($output, $expected, format_string('Node comment token %token replaced.', array('%token' => $input)));
-  }
-}
+ foreach ($tests as $input => $expected) {
+ $output = token_replace($input, array('node' => $node), array('language' => $language));
+ $this->assertEqual($output, $expected, format_string('Node comment token %token replaced.', array('%token' => $input)));
+ }
+ }
  */

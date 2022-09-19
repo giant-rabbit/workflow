@@ -1,7 +1,8 @@
 name = Workflow Clean Up
 description = Cleans up Workflow cruft.
 package = Workflow
-core = 7.x
+backdrop = 1.x
+type = module
 
 dependencies[] = workflow
 

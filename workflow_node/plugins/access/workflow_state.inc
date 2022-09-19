@@ -75,8 +75,8 @@ function workflow_state_ctools_settings($form, &$form_state, $conf) {
 function workflow_state_ctools_summary($conf, $context) {
   $state = workflow_get_workflow_states_by_sid($conf['workflow_state']);
   return t('Nodes that have the workflow state "@state" in workflow "@workflow"', array(
-      '@state' => $state->state,
-      '@workflow' => $state->name,
-    )
+    '@state' => $state->state,
+    '@workflow' => $state->name,
+  )
   );
 }

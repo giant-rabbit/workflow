@@ -68,7 +68,7 @@ function workflowfield_field_widget_form(&$form, &$form_state, $field, $instance
       }
 
       // Build a new $element.
-      // Do not use drupal_get_form() or you'll have a form in a form.
+      // Do not use backdrop_get_form() or you'll have a form in a form.
       $element = array();
       $widget = new WorkflowTransitionForm($field, $instance, $entity_type, $entity);
       $element = $widget->buildForm($element, $form_state);

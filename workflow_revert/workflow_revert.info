@@ -1,6 +1,7 @@
 name = Workflow Revert
 description = Adds a 'Revert' link to the first workflow history row.
 package = Workflow
-core = 7.x
+backdrop = 1.x
+type = module
 
 dependencies[] = workflow

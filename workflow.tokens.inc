@@ -15,20 +15,20 @@
  */
 
 /**
- * Implements drupal_alter('token_field_info', $info) from token.tokens.inc.
+ * Implements backdrop_alter('token_field_info', $info) from token.tokens.inc.
  *
  * It would be nice if this would work! But it doesn't...
  */
 /*
-// function workflow_token_field_info_alter(&$info) {
-//   $workflow_field_info = _workflow_info_fields();
-//   foreach($workflow_field_info as $field_name => $field_info) {
-//     if (array_key_exists($field_name, $info)) {
-//       $info[$field_name]['type'] = 'WorkflowLastTransition';
-//       $info[$field_name]['module'] = 'workflow';
-//     }
-//   }
-// }
+ // function workflow_token_field_info_alter(&$info) {
+ //   $workflow_field_info = _workflow_info_fields();
+ //   foreach($workflow_field_info as $field_name => $field_info) {
+ //     if (array_key_exists($field_name, $info)) {
+ //       $info[$field_name]['type'] = 'WorkflowLastTransition';
+ //       $info[$field_name]['module'] = 'workflow';
+ //     }
+ //   }
+ // }
  */
 
 /**
@@ -194,8 +194,8 @@ function workflow_tokens($type, $tokens, array $data = array(), array $options =
         $wrapper = entity_metadata_wrapper($data['workflow_token_type'], $data[$data['workflow_token_type']]);
         $property_name = str_replace('-', '_', $name);
         try {
-          if ($name == 'workflow' ||
-            $name == 'states' ||
+          if ($name == 'workflow' || 
+            $name == 'states' || 
             $name == 'transitions'
           ) {
             $replacement = _workflow_token_get_token($wrapper->$property_name, $options);
@@ -206,7 +206,8 @@ function workflow_tokens($type, $tokens, array $data = array(), array $options =
           if (isset($replacement)) {
             $replacements[$original] = $replacement;
           }
-        } catch (EntityMetadataWrapperException $e) {
+        }
+        catch (EntityMetadataWrapperException $e) {
           // dpm('token not found: ' . $name);
           // If tokens for not existing values are requested, just do nothing.
         }
@@ -230,8 +231,8 @@ function workflow_tokens($type, $tokens, array $data = array(), array $options =
       $name_parts = explode(':', $name, 2);
       $field_name = reset($name_parts);
       if ($field_name != 'created'
-          && isset($entity->{$field_name})
-          && $sub_tokens = token_find_with_prefix($tokens, $field_name)
+           && isset($entity->{$field_name})
+           && $sub_tokens = token_find_with_prefix($tokens, $field_name)
       ) {
         $transition = _workflow_tokens_get_transition($entity_type, $entity, $field_name);
         $sub_data = array(
@@ -369,7 +370,7 @@ function _workflow_tokens_get_transition($entity_type, $entity, $field_name) {
     }
 
     $old_sid = FALSE;
-    $new_sid = $found_name ? _workflow_get_sid_by_items($entity->{$found_name}[$langcode]) : $entity->workflow_sid;
+    $new_sid = $found_name?_workflow_get_sid_by_items($entity->{$found_name}[$langcode]) : $entity->workflow_sid;
 
     if (!isset($entity_id)) {
       // Creating an entity.

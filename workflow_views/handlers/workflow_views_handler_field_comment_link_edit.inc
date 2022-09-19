@@ -43,7 +43,7 @@ class workflow_views_handler_field_comment_link_edit extends views_handler_field
       // No link if entity has no history.
       return;
     }
-    $text = empty($this->options['text']) ? t('edit comment') : $this->options['text'];
-    return l($text, "workflow_transition/$hid/edit", array('query' => drupal_get_destination()));
+    $text = empty($this->options['text'])?t('edit comment') : $this->options['text'];
+    return l($text, "workflow_transition/$hid/edit", array('query' => backdrop_get_destination()));
   }
 }

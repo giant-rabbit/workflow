@@ -61,7 +61,6 @@ function workflow_admin_ui_states_form($form, &$form_state, $workflow, $op) {
         '#maxlength' => 255,
         '#default_value' => $label,
       ),
-
       'name' => array(
         '#type' => 'machine_name',
         '#size' => 30,
@@ -75,7 +74,6 @@ function workflow_admin_ui_states_form($form, &$form_state, $workflow, $op) {
           'replace_pattern' => '[^a-z0-9_()]+', // Added '()' characters from exclusion list since creation state has it.
         ),
       ),
-
       'weight' => array(
         '#type' => 'weight',
         '#delta' => 20,
@@ -83,28 +81,23 @@ function workflow_admin_ui_states_form($form, &$form_state, $workflow, $op) {
         '#title-display' => 'invisible',
         '#attributes' => array('class' => array('state-weight')),
       ),
-
       'status' => array(
         '#type' => 'checkbox',
         '#default_value' => $state->isActive(),
       ),
-
       // Save the original status for the validation handler.
       'orig_status' => array(
         '#type' => 'value',
         '#value' => $state->isActive(),
       ),
-
       'reassign' => array(
         '#type' => 'select',
         '#options' => $current_state_list,
       ),
-
       'count' => array(
         '#type' => 'value',
         '#value' => $count,
       ),
-
       'ops' => array(
         '#type' => 'markup',
         '#markup' => theme('links', array('links' => $links)),
@@ -138,11 +131,18 @@ function workflow_admin_ui_states_form($form, &$form_state, $workflow, $op) {
   }
 
   $form['actions'] = array('#type' => 'actions');
-  $form['actions']['submit'] = array('#type' => 'submit', '#value' => t('Save Changes'));
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save Changes'),
+  );
 
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function theme_workflow_admin_ui_states_form($variables) {
   $form = $variables['form'];
   $output = '';
@@ -156,35 +156,56 @@ function theme_workflow_admin_ui_states_form($variables) {
       t('Active'),
       t('Reassign'),
       t('Count'),
-      array('data' => t('Operations'), 'class' => 'state-ops'),
+      array(
+        'data' => t('Operations'),
+        'class' => 'state-ops',
+      ),
     ),
-    'attributes' => array('id' => $table_id, 'style' => 'width: auto;'),
+    'attributes' => array(
+      'id' => $table_id,
+      'style' => 'width: auto;',
+    ),
   );
 
   // The output needs to have the action links at the top.
-  $output .= drupal_render($form['action-links']);
+  $output .= backdrop_render($form['action-links']);
 
   // Iterate over each element in our $form['states'] array.
   foreach (element_children($form['states']) as $id) {
     // We are now ready to add each element of our $form data to the rows
     // array, so that they end up as individual table cells when rendered
-    // in the final table.  We run each element through the drupal_render()
+    // in the final table.  We run each element through the backdrop_render()
     // function to generate the final html markup for that element.
     $table['rows'][] = array(
       'data' => array(
         // Add our 'name' column.
-        // array('data' => drupal_render($form['states'][$id]['state']), 'class' => 'state-name'),
-        array('data' => drupal_render($form['states'][$id]['state']) . drupal_render($form['states'][$id]['name']), 'class' => 'state-name'),
+        // array('data' => backdrop_render($form['states'][$id]['state']), 'class' => 'state-name'),
+        array(
+          'data' => backdrop_render($form['states'][$id]['state']) . backdrop_render($form['states'][$id]['name']),
+          'class' => 'state-name',
+        ),
         // Add our 'weight' column.
-        drupal_render($form['states'][$id]['weight']),
+        backdrop_render($form['states'][$id]['weight']),
         // Add our 'status' column.
-        array('data' => drupal_render($form['states'][$id]['status']), 'class' => 'state-status'),
+        array(
+          'data' => backdrop_render($form['states'][$id]['status']),
+          'class' => 'state-status',
+        ),
         // Add our 'reassign' column.
-        array('data' => drupal_render($form['states'][$id]['reassign']), 'class' => 'state-reassign'),
+        array(
+          'data' => backdrop_render($form['states'][$id]['reassign']),
+          'class' => 'state-reassign',
+        ),
         // Add our 'count' column.
-        array('data' => $form['states'][$id]['count']['#value'], 'class' => 'state-count'),
+        array(
+          'data' => $form['states'][$id]['count']['#value'],
+          'class' => 'state-count',
+        ),
         // Add our 'operations' column.
-        array('data' => drupal_render($form['states'][$id]['ops']), 'class' => 'state-ops'),
+        array(
+          'data' => backdrop_render($form['states'][$id]['ops']),
+          'class' => 'state-ops',
+        ),
       ),
       // To support the tabledrag behavior, we need to assign each row of the
       // table a class attribute of 'draggable'. This will add the 'draggable'
@@ -197,9 +218,9 @@ function theme_workflow_admin_ui_states_form($variables) {
   $output .= theme('table', $table);
 
   // And then render any remaining form elements (such as our submit button).
-  $output .= drupal_render_children($form);
+  $output .= backdrop_render_children($form);
 
-  // We now call the drupal_add_tabledrag() function in order to add the
+  // We now call the backdrop_add_tabledrag() function in order to add the
   // tabledrag.js goodness onto our page.
   //
   // For a basic sortable table, we need to pass it:
@@ -207,7 +228,7 @@ function theme_workflow_admin_ui_states_form($variables) {
   // - the $action to be performed on our form items ('order'),
   // - a string describing where $action should be applied ('siblings'),
   // - and the class of the element containing our 'weight' element.
-  drupal_add_tabledrag($table_id, 'order', 'sibling', 'state-weight');
+  backdrop_add_tabledrag($table_id, 'order', 'sibling', 'state-weight');
 
   return $output;
 }
@@ -232,7 +253,7 @@ function workflow_admin_ui_states_form_validate($form, &$form_state) {
           $message = 'Since you are deleting the last available workflow state
             in this workflow, all content items which are in that state will have their
             workflow state removed.';
-          drupal_set_message(t($message, $args), 'warning');
+          backdrop_set_message(t($message, $args), 'warning');
         }
         else {
           $message = 'The %state state has content; you must reassign the content to another state.';
@@ -264,7 +285,7 @@ function workflow_admin_ui_states_form_submit($form, &$form_state) {
     }
 
     // Reload $state from db, in case the states were changed by anyone else. And it is just as fast.
-    $state = ($sid) ? workflow_state_load_single($sid) : $workflow->createState('');
+    $state = ($sid)?workflow_state_load_single($sid) : $workflow->createState('');
 
     // Does user want to deactivate the state (reassign current nodes)?
     if ($sid > 0 && $item['status'] == 0 && $state->isActive()) {
@@ -281,12 +302,12 @@ function workflow_admin_ui_states_form_submit($form, &$form_state) {
         if ($form['#last_mohican']) {
           $new_sid = NULL; // Do not reassign to new state.
           $message = 'Removing workflow states from content in the %workflow.';
-          drupal_set_message(t($message, $args));
+          backdrop_set_message(t($message, $args));
         }
         else {
           // Prepare the state delete function.
           $message = 'Reassigning content from %old_state to %new_state.';
-          drupal_set_message(t($message, $args));
+          backdrop_set_message(t($message, $args));
         }
       }
       // Delete the old state without orphaning nodes, move them to the new state.
@@ -294,7 +315,7 @@ function workflow_admin_ui_states_form_submit($form, &$form_state) {
 
       $message = 'Deactivated workflow state %old_state in %workflow.';
       watchdog('workflow', $message, $args);
-      drupal_set_message(t($message, $args));
+      backdrop_set_message(t($message, $args));
     }
 
     $state->state = $item['state'];
@@ -304,7 +325,7 @@ function workflow_admin_ui_states_form_submit($form, &$form_state) {
     $state->save();
   }
 
-  drupal_set_message(t('The workflow was updated.'));
+  backdrop_set_message(t('The workflow was updated.'));
   // $form_state['redirect'] = WORKFLOW_ADMIN_UI_PATH;
 }
 

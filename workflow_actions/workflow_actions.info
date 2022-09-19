@@ -1,7 +1,8 @@
 name = Workflow Trigger
 description = Enables actions to be fired upon a Workflow State change.
 package = Workflow
-core = 7.x
+backdrop = 1.x
+type = module
 
 dependencies[] = trigger
 dependencies[] = workflow

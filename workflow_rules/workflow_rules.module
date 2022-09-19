@@ -10,7 +10,7 @@
  *
  * This file is intentionally left blanc.
  * The code is in the workflow_rules.workflow.inc file.
- * Drupal 7 requires a .module file, even if it is empty.
+ * Backdrop 7 requires a .module file, even if it is empty.
  */
 
 require_once dirname(__FILE__) . '/workflow_rules.rules-callback.inc';

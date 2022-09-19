@@ -67,11 +67,14 @@ function workflow_cleanup_form($form, &$form_state) {
 
     $form['inactive'][$sid]['wf'] = array(
       '#type' => 'markup',
-      '#markup' => (!empty($sid)) ? check_plain($states[$sid]->getWorkflow()->getName()) : '',
+      '#markup' => (!empty($sid))?check_plain($states[$sid]->getWorkflow()->getName()) : '',
     );
   }
 
-  $form['submit'] = array('#type' => 'submit', '#value' => t('Delete selected states'));
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Delete selected states'),
+  );
 
   return $form;
 }
@@ -87,8 +90,8 @@ function theme_workflow_cleanup_form($variables) {
   $rows = array();
   foreach (element_children($form['no_workflow']) as $sid) {
     $rows[] = array(
-      drupal_render($form['no_workflow'][$sid]['check']),
-      drupal_render($form['no_workflow'][$sid]['name']),
+      backdrop_render($form['no_workflow'][$sid]['check']),
+      backdrop_render($form['no_workflow'][$sid]['name']),
     );
   }
 
@@ -105,25 +108,25 @@ function theme_workflow_cleanup_form($variables) {
   $rows = array();
   foreach (element_children($form['inactive']) as $sid) {
     $rows[] = array(
-      drupal_render($form['inactive'][$sid]['check']),
-      drupal_render($form['inactive'][$sid]['name']),
-      drupal_render($form['inactive'][$sid]['wf']),
+      backdrop_render($form['inactive'][$sid]['check']),
+      backdrop_render($form['inactive'][$sid]['name']),
+      backdrop_render($form['inactive'][$sid]['wf']),
     );
   }
 
   $output .= '<h3>' . $form['inactive']['#title'] . '</h3>';
   $output .= '<div class="description">' . $form['inactive']['#description'] . '</div>';
   $output .= theme(
-    'table',
+    'table', 
     array(
-      'header' => $header,
-      'rows' => $rows,
-      'empty' => 'All states are fine',
-      'attributes' => array('style' => 'width: auto;'),
-    )
+    'header' => $header,
+    'rows' => $rows,
+    'empty' => 'All states are fine',
+    'attributes' => array('style' => 'width: auto;'),
+  )
   );
 
-  $output .= drupal_render_children($form);
+  $output .= backdrop_render_children($form);
   return $output;
 }
 
@@ -145,20 +148,20 @@ function workflow_cleanup_form_submit($form, $form_state) {
         $trans_del = db_delete('workflow_transitions')->condition('target_sid', $sid)->execute();
         $trans_del += db_delete('workflow_transitions')->condition('sid', $sid)->execute();
         if ($trans_del) {
-          drupal_set_message(t('@count transitions for the "@state" state have been deleted.',
+          backdrop_set_message(t('@count transitions for the "@state" state have been deleted.', 
             array('@state' => $state_name, '@count' => $trans_del)));
         }
 
         // Remove history records too.
         $hist_del = db_delete('workflow_node_history')->condition('sid', $sid)->execute();
         if ($hist_del) {
-          drupal_set_message(t('@count history records for the "@state" state have been deleted.',
+          backdrop_set_message(t('@count history records for the "@state" state have been deleted.', 
             array('@state' => $state_name, '@count' => $hist_del)));
         }
 
         // Go ahead and delete the state.
         db_delete('workflow_states')->condition('sid', $sid)->execute();
-        drupal_set_message(t('The "@state" state has been deleted.',
+        backdrop_set_message(t('The "@state" state has been deleted.', 
           array('@state' => $state_name)));
       }
     }

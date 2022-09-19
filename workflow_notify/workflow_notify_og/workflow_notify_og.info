@@ -1,7 +1,8 @@
 name = Workflow Notify OG
 description = Notify roles by OG groups of Workflow transitions.
 package = Workflow
-core = 7.x
+backdrop = 1.x
+type = module
 
 dependencies[] = workflow_notify
 

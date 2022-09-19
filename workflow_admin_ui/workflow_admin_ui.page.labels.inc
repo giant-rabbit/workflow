@@ -19,7 +19,7 @@
  * http://zme.amazon.com/exec/varzea/pay/T2EOCSRRDQ9CL2
  *
  * Paypal donation:
- * https://www.paypal.com/us/cgi-bin/webscr?cmd=_xclick&business=paypal@deekayen.net&item_name=Drupal%20contribution&currency_code=USD&amount=20.00
+ * https://www.paypal.com/us/cgi-bin/webscr?cmd=_xclick&business=paypal@deekayen.net&item_name=Backdrop%20contribution&currency_code=USD&amount=20.00
  */
 
 /**
@@ -32,9 +32,9 @@
  */
 function workflow_admin_ui_labels_form($form, &$form_state, $workflow, $op) {
   if (!is_object($workflow)) {
-    drupal_set_message(t('Improper worklow ID provided.'), 'error');
+    backdrop_set_message(t('Improper worklow ID provided.'), 'error');
     watchdog('workflow_named_transitions', 'Improper worklow ID provided.');
-    drupal_goto(WORKFLOW_ADMIN_UI_PATH);
+    backdrop_goto(WORKFLOW_ADMIN_UI_PATH);
   }
 
   $headers = array(
@@ -96,5 +96,5 @@ function workflow_admin_ui_labels_form_submit($form, &$form_state) {
     $config_transition->label = trim($form_state['input']['label_' . $config_transition->tid]);
     $config_transition->save();
   }
-  drupal_set_message(t('The transition labels have been saved.'));
+  backdrop_set_message(t('The transition labels have been saved.'));
 }

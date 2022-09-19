@@ -119,20 +119,23 @@ function workflow_actions_trigger_info() {
   // Removed: it is confusing.
   $trigger_page = FALSE;
   $wid = 0;
-/*
-  if (drupal_substr($_GET['q'], 0, 32) == 'admin/structure/trigger/workflow') {
-    $trigger_page = TRUE;
-    $wid = arg(4);
-  }
- */
-  $workflows = workflow_load_multiple($wid ? array($wid) : FALSE);
+  /*
+   if (backdrop_substr($_GET['q'], 0, 32) == 'admin/structure/trigger/workflow') {
+   $trigger_page = TRUE;
+   $wid = arg(4);
+   }
+   */
+  $workflows = workflow_load_multiple($wid?array($wid) : FALSE);
 
   // Get the mapping for Node API.
   // Build an array of Wid => array of types.
-  $workflow_node_type_map = module_exists('workflownode') ? workflow_get_workflow_type_map() : array();
+  $workflow_node_type_map = module_exists('workflownode')?workflow_get_workflow_type_map() : array();
   foreach ($workflow_node_type_map as $type => $wid) {
     $group = 'workflow';
-    $type_map[$wid][] = array('entity_type' => 'node', 'bundle' => $type, $group);
+    $type_map[$wid][] = array(
+      'entity_type' => 'node',
+      'bundle' => $type, $group,
+    );
   }
 
   // Get the mapping for Field API.
@@ -143,9 +146,15 @@ function workflow_actions_trigger_info() {
         foreach ($bundles as $bundle) {
           // Add the trigger to the approriate Tab on admin/structure/trigger.
           switch ($entity_type) {
-            case 'node':          $group = $entity_type; break;
-            case 'taxonomy_term': $group = 'taxonomy';   break;
-            default:              $group = 'workflow';   break;
+            case 'node':
+              $group = $entity_type;
+              break;
+            case 'taxonomy_term':
+              $group = 'taxonomy';
+              break;
+            default:
+              $group = 'workflow';
+              break;
           }
           $type_map[$field['settings']['wid']][] = array(
             'entity_type' => $entity_type,
@@ -176,14 +185,14 @@ function workflow_actions_trigger_info() {
           // Add the trigger to the appropriate Tab on admin/structure/trigger.
           $group = isset($type_bundle['group']) ? $type_bundle['group'] : 'workflow';
 
-          $label = t('When @entity_type %bundle moves %workflow from %state to %target_state',
+          $label = t('When @entity_type %bundle moves %workflow from %state to %target_state', 
             array(
-              '@entity_type' => $type_bundle['entity_type'],
-              '%bundle' => $type_bundle['bundle'],
-              '%workflow' => $workflow->label(),
-              '%state' => $state->label(),
-              '%target_state' => $target_state->label(),
-            )
+            '@entity_type' => $type_bundle['entity_type'],
+            '%bundle' => $type_bundle['bundle'],
+            '%workflow' => $workflow->label(),
+            '%state' => $state->label(),
+            '%target_state' => $target_state->label(),
+          )
           );
           $pseudohooks[$group]['workflow-' . $type_bundle['entity_type'] 
                                      . '-' . $type_bundle['bundle']
@@ -202,7 +211,7 @@ function workflow_actions_trigger_info() {
     return $pseudohooks;
   }
   elseif ($trigger_page) {
-    drupal_set_message(t('Either no transitions have been set up or this
+    backdrop_set_message(t('Either no transitions have been set up or this
       workflow has not yet been assigned to a content type. To enable the
       assignment of actions, edit the workflow to assign permissions for roles
       to do transitions. After that is completed, transitions will appear here
@@ -215,7 +224,7 @@ function workflow_actions_trigger_info() {
 }
 
 /**
- * Implements hook_drupal_alter().
+ * Implements hook_backdrop_alter().
  */
 function workflow_actions_action_info_alter(&$info) {
   $triggers = workflow_actions_trigger_info();
@@ -235,7 +244,7 @@ function workflow_actions_action_info_alter(&$info) {
 
 /**
  * Helper function, that triggers actions.
- * 
+ *
  * @param $transition.
  *   A Workflow Transition object.
  */
@@ -311,7 +320,7 @@ function _workflow_actions_remove($tid, $aid) {
   foreach ($hooks as $hook) {
     _workflow_actions_delete_trigger_assignments_by_aid_op($aid, $hook);
     foreach (_workflow_actions_get_actions_by_aid($aid) as $action) {
-      watchdog('workflow', 'Action %action has been unassigned.',
+      watchdog('workflow', 'Action %action has been unassigned.', 
         array('%action' => $action->description));
     }
   }

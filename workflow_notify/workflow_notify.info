@@ -1,7 +1,8 @@
 name = Workflow Notify
 description = Notify roles of Workflow transitions.
 package = Workflow
-core = 7.x
+backdrop = 1.x
+type = module
 
 dependencies[] = token
 dependencies[] = workflow

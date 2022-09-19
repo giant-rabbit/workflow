@@ -15,7 +15,7 @@ define('MARK_STATE_IS_DELETED', '*');
  *      'Workflow history per entity' instead!
  */
 function workflow_tab_page($entity_type, $entity = NULL) {
-  drupal_set_title(entity_label($entity_type, $entity));
+  backdrop_set_title(entity_label($entity_type, $entity));
 
   $form = array();
   $field_name = NULL;
@@ -44,15 +44,15 @@ function workflow_tab_page($entity_type, $entity = NULL) {
   }
 
   $form_id = implode('_', array('workflow_transition_form', $entity_type, $entity_id, $field_id));
-  $form += drupal_get_form($form_id, $field, $instance, $entity_type, $entity);
+  $form += backdrop_get_form($form_id, $field, $instance, $entity_type, $entity);
 
-  $output = drupal_render($form);
+  $output = backdrop_render($form);
 
 
   // Show the history table.
   $rows = array();
   $current_themed = FALSE;
-  $limit = variable_get('workflow_states_per_page', 20);
+  $limit = config_get('workflow.settings', 'workflow_states_per_page');
   // Get the history for any field_name.
   foreach (workflow_transition_load_multiple($entity_type, array($entity_id), NULL, $limit) as $history) {
     $old_state_name = $new_state_name = '';
@@ -122,8 +122,7 @@ function workflow_tab_page($entity_type, $entity = NULL) {
     $variables = array(
       'transition' => $history, // @todo D8: pass this WorkflowTransition as only variable. It contains everything.
       'extra' => '',
-
-      'history' => $history,  // @todo D8: remove, as this is the same as 'transition'.
+      'history' => $history, // @todo D8: remove, as this is the same as 'transition'.
       'old_sid' => $history->old_sid, // @todo D8: remove this redundant property.
       'sid' => $history->new_sid, // @todo D8: remove this redundant property.
       'uid' => $history->uid, // @todo D8: remove this redundant property.
@@ -133,7 +132,7 @@ function workflow_tab_page($entity_type, $entity = NULL) {
 
     // Allow other modules to modify the row.
     // $todo D8: pass only a $transition object.
-    drupal_alter('workflow_history', $variables);
+    backdrop_alter('workflow_history', $variables);
 
     $rows[] = theme('workflow_history_table_row', $variables);
   }
@@ -175,12 +174,30 @@ function theme_workflow_history_table_row($variables) {
   $transition = $variables['transition'];
   $row = array(
     'data' => array(
-      array('data' => format_date($transition->stamp), 'class' => array('timestamp')),
-      array('data' => $transition->field_name, 'class' => array('field-name')),
-      array('data' => $old_state_name, 'class' => array('previous-state-name')),
-      array('data' => $state_name, 'class' => array('state-name')),
-      array('data' => theme('username', array('account' => $transition->getUser())), 'class' => array('user-name')),
-      array('data' => filter_xss($transition->comment), 'class' => array('log-comment')),
+      array(
+        'data' => format_date($transition->stamp),
+        'class' => array('timestamp'),
+      ),
+      array(
+        'data' => $transition->field_name,
+        'class' => array('field-name'),
+      ),
+      array(
+        'data' => $old_state_name,
+        'class' => array('previous-state-name'),
+      ),
+      array(
+        'data' => $state_name,
+        'class' => array('state-name'),
+      ),
+      array(
+        'data' => theme('username', array('account' => $transition->getUser())),
+        'class' => array('user-name'),
+      ),
+      array(
+        'data' => filter_xss($transition->comment),
+        'class' => array('log-comment'),
+      ),
       $variables['extra'],
     ),
     'class' => array('workflow_history_row'),

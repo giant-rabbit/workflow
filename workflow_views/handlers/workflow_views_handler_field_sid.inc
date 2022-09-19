@@ -11,7 +11,10 @@ class workflow_views_handler_field_sid extends views_handler_field {
 
   function option_definition() {
     $options = parent::option_definition();
-    $options['value'] = array('default' => FALSE, 'bool' => TRUE);
+    $options['value'] = array(
+      'default' => FALSE,
+      'bool' => TRUE,
+    );
     return $options;
   }
 
@@ -33,7 +36,7 @@ class workflow_views_handler_field_sid extends views_handler_field {
   function render($values) {
     $sid = $values->{$this->field_alias};
     if ($this->options['value'] == '1') {
-      return (empty($sid)) ? NULL : $sid;
+      return (empty($sid))?NULL : $sid;
     }
     elseif ($this->options['value'] == 'count') {
       $state = workflow_state_load_single($sid);

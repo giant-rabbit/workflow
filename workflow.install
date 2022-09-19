@@ -11,23 +11,23 @@
 function workflow_enable() {
   $message = t('Thanks for using Workflow. To maintain workflows, enable the
     <a href="!url_ui">Workflow UI module</a>. To add a Workflow Field to your
-    entity, enable the <a href="!url_field">Workflow Field module</a>.',
+    entity, enable the <a href="!url_field">Workflow Field module</a>.',  
     array(
-      '!url_ui' => url('admin/config/modules'),
-      '!url_field' => url('admin/config/modules'),
-    )
+    '!url_ui' => url('admin/config/modules'),
+    '!url_field' => url('admin/config/modules'),
+  )
   );
-  drupal_set_message($message);
+  backdrop_set_message($message);
 }
 
 /**
  * Implements hook_uninstall().
  */
 function workflow_uninstall() {
-  variable_del('workflow_states_per_page');
+  config_clear('workflow.settings', 'workflow_states_per_page');
   // Delete type-workflow mapping variables.
   foreach (node_type_get_types() as $type => $name) {
-    variable_del('workflow_' . $type);
+    config_clear('workflow.settings', 'workflow_' . $type);
   }
 }
 
@@ -504,320 +504,19 @@ function workflow_schema() {
 }
 
 /**
- * Require highest 6.x release.
+ * Migrate workflow variables to config.
  */
-function workflow_update_last_removed() {
-  return 6101;
+function workflow_update_1000() {
+  $config = config('workflow.settings');
+  $config->set('workflow_states_per_page', update_variable_get('workflow_states_per_page', '20'));
+  $config->save();
+
+  update_variable_del('workflow_states_per_page');
 }
 
 /**
- * Table update from 6 to 7.
- *
- * Adding a unique key for fields (already held unique in code).
+ * Implements hook_install().
  */
-function workflow_update_7000() {
-  if (!db_index_exists('workflows', 'name')) {
-    db_add_unique_key('workflows', 'name', array('name'));
-  }
-  if (!db_index_exists('workflow_states', 'wid_state')) {
-    db_add_unique_key('workflow_states', 'wid_state', array('wid', 'state'));
-  }
-}
-
-/**
- * Add userid to scheduled transition table.
- */
-function workflow_update_7002() {
-  db_add_field('workflow_scheduled_transition', 'uid', array(
-    'description' => 'The user who scheduled this state transition.',
-    'type' => 'int',
-    'unsigned' => TRUE,
-    'not null' => TRUE,
-    'default' => 0,
-    'disp-width' => '10',
-    'initial' => 0,
-    ));
-}
-
-/**
- * Add Entity field capabilities to workflow_scheduled_transition table.
- */
-function workflow_update_7003() {
-  $field = array(
-    'description' => 'The type of entity this transition belongs to.',
-    'type' => 'varchar',
-    'length' => 255,
-    'not null' => TRUE,
-    'default' => '',
-  );
-  if (!db_field_exists('workflow_scheduled_transition', 'entity_type')) {
-    db_add_field('workflow_scheduled_transition', 'entity_type', $field);
-  }
-  if (!db_field_exists('workflow_node_history', 'entity_type')) {
-    db_add_field('workflow_node_history', 'entity_type', $field);
-  }
-
-  $field = array(
-    'description' => 'The name of the field the transition relates to.',
-    'type' => 'varchar',
-    'length' => 32,
-    'not null' => TRUE,
-    'default' => '',
-  );
-  if (!db_field_exists('workflow_scheduled_transition', 'field_name')) {
-    db_add_field('workflow_scheduled_transition', 'field_name', $field);
-  }
-  if (!db_field_exists('workflow_node_history', 'field_name')) {
-    db_add_field('workflow_node_history', 'field_name', $field);
-  }
-
-  $field = array(
-    'description' => 'The {languages}.language of the entity.',
-    'type' => 'varchar',
-    'length' => 32,
-    'not null' => TRUE,
-    'default' => '',
-  );
-  if (!db_field_exists('workflow_scheduled_transition', 'language')) {
-    db_add_field('workflow_scheduled_transition', 'language', $field);
-  }
-  if (!db_field_exists('workflow_node_history', 'language')) {
-    db_add_field('workflow_node_history', 'language', $field);
-  }
-
-  $field = array(
-    'description' => 'The sequence number for this data item, used for multi-value fields',
-    'type' => 'int',
-    'unsigned' => TRUE,
-    'not null' => TRUE,
-    'default' => 0,
-  );
-  if (!db_field_exists('workflow_scheduled_transition', 'delta')) {
-    db_add_field('workflow_scheduled_transition', 'delta', $field);
-  }
-  if (!db_field_exists('workflow_node_history', 'delta')) {
-    db_add_field('workflow_node_history', 'delta', $field);
-  }
-
-  db_drop_index('workflow_scheduled_transition', 'nid');
-  db_drop_index('workflow_scheduled_transition', 'entity_id');
-  db_drop_index('workflow_scheduled_transition', 'entity_type');
-  db_add_index('workflow_scheduled_transition', 'entity_id', array('entity_type', 'nid'));
-  db_add_index('workflow_scheduled_transition', 'entity_type', array('entity_type'));
-
-  db_drop_index('workflow_node_history', 'nid');
-  db_drop_index('workflow_node_history', 'sid');
-  db_add_index('workflow_node_history', 'sid', array('entity_type', 'nid', 'sid'));
-}
-
-/**
- * Update scheduled state transitions with no association to "node".
- */
-function workflow_update_7004() {
-  db_update('workflow_scheduled_transition')
-    ->fields(array(
-      'entity_type' => 'node',
-      'language' => LANGUAGE_NONE,
-      'delta' => '0',
-      )
-    )
-    ->execute();
-}
-
-/**
- * Enable Workflow Node module. See https:\/\/drupal.org\/node\/2122541 .
- */
-function workflow_update_7005() {
-  module_enable(array('workflownode'));
-}
-
-/**
- * Set historical records with no associated entity to "node".
- *
- * Otherwise, they won't show up in the Workflow tab.
- */
-function workflow_update_7006() {
-  db_update('workflow_node_history')
-    ->fields(array(
-      'entity_type' => 'node',
-      )
-    )
-    ->condition('entity_type', '')
-    ->execute();
-}
-
-/**
- * Convert roles to entity-like arrays.
- */
-function workflow_update_7007() {
-  // For this update, do not use the Workflow API, since some table fields are
-  // not present yet. Also, do not move to the 'floating' hook_update_N().
-
-  $schema = workflow_schema();
-  // Change length from 60 to 255, to create a 'standard' Roles field,
-  // like workflow_transitions-roles.
-  $table = 'workflows';
-  $fields = $schema[$table]['fields'];
-  db_change_field($table, 'tab_roles', 'tab_roles', $fields['tab_roles']);
-
-  // Save field workflows-tab_roles in serialized array (using explode for the last time).
-  $query = "SELECT * FROM {workflows} w ";
-  $result = db_query($query);
-  foreach ($result as $record) {
-
-    // Replace role ID 'author' by '-1'.
-    // Update workflow->tab_roles to serializable array.
-    $roles = $record->tab_roles;
-    // Allow reprocessing this hook, by checking if this is an array.
-    if (!(strpos($roles, 'a:') === 0)) {
-      $roles = str_replace('author', '-1', $roles);
-      $record->tab_roles = empty($roles) ? array() : explode(',', $roles);
-      $num_updated = db_update('workflows')
-        ->fields(array(
-          'tab_roles' => serialize($record->tab_roles),
-        ))
-        ->condition('wid', $record->wid, '=')
-        ->execute();
-    }
-  }
-
-  // Save field workflow_transitions-roles in serialized array (using explode for the last time).
-  // Replace role ID 'author' by '-1'.
-  $query = "SELECT wt.tid, wt.roles FROM {workflow_transitions} wt";
-  $result = db_query($query);
-  foreach ($result as $record) {
-    $roles = $record->roles;
-    // Allow reprocessing this hook, by checking if this is an array.
-    if (!(strpos($roles, 'a:') === 0)) {
-      $roles = str_replace('author', '-1', $roles);
-      $record->roles = empty($roles) ? array() : explode(',', $roles);
-      $num_updated = db_update('workflow_transitions')
-        ->fields(array(
-          'roles' => serialize($record->roles),
-        ))
-        ->condition('tid', $record->tid, '=')
-        ->execute();
-    }
-  }
-}
-
-/**
- * Add Revision to workflow history table.
- *
- * There is no update for current states.
- */
-// function workflow_update_7008() {
-//   // This is moved to the general hook_update_N().
-// }
-
-
-/**
- * Remove invalid transitions.
- */
-function workflow_update_7014() {
-  // Some error in cloning Workflows generated superfluous, invalid Transitions.
-  $num_deleted = db_delete('workflow_transitions')
-    ->condition('sid', 0)
-    ->execute();
-}
-
-/**
- * Add database fields. Make Workflow entity-aware, exportable.
- */
-function workflow_update_7015() {
-  $schema = workflow_schema();
-
-  // Update the Workflow table.
-  $table = 'workflows';
-  $fields = $schema[$table]['fields'];
-  if (!db_field_exists($table, 'label')) {
-    db_add_field($table, 'label', $fields['label']);
-  }
-  if (!db_field_exists($table, 'status')) {
-    db_add_field($table, 'status', $fields['status']);
-  }
-  if (!db_field_exists($table, 'module')) {
-    db_add_field($table, 'module', $fields['module']);
-  }
-
-  // Update the WorkflowConfigTransitions table.
-  $table = 'workflow_transitions';
-  $fields = $schema[$table]['fields'];
-  if (!db_field_exists($table, 'label')) {
-    db_add_field($table, 'label', $fields['label']);
-  }
-  if (!db_field_exists($table, 'name')) {
-    db_add_field($table, 'name', $fields['name']);
-  }
-
-  // Update the WorkflowStates table.
-  $table = 'workflow_states';
-  $fields = $schema[$table]['fields'];
-  if (!db_field_exists($table, 'name')) {
-    db_add_field($table, 'name', $fields['name']);
-  }
-
-  // Update the WorkflowHistory table.
-  $table = 'workflow_node_history';
-  $fields = $schema[$table]['fields'];
-  // This is moved from hook_update_7008().
-  if (!db_field_exists($table, 'revision_id')) {
-    db_add_field($table, 'revision_id', $fields['revision_id']);
-  }
-
-  // Load&save workflows, to populate the label.
-  // Do this after all db-updates!!
-  // Do not use workflow_*() functions.
-  foreach (entity_load('Workflow') as $workflow) {
-    $workflow->save();
-    // Load&save workflow states, to populate the state name.
-    foreach ($workflow->getStates(TRUE, TRUE) as $state) {
-      $state->save();
-    }
-  }
-
-  // The update system is going to flush all caches,
-  // including the updated Rules Action, so nothing to do here.
-}
-
-/**
- * Add an index to {workflow_node_history}.nid.
- */
-function workflow_update_7016() {
-  if (db_field_exists('workflow_node_history', 'nid') && !db_index_exists('workflow_node_history', 'nid')) {
-    db_add_index('workflow_node_history', 'nid', array('nid'));
-  }
-}
-
-/**
- * Add/correct a primary key to {workflow_scheduled_transition}.
- */
-function workflow_update_7017() {
-  // Drop existing primary key.
-  db_drop_primary_key('workflow_scheduled_transition');
-
-  // Add new primary key.
-  $spec = array(
-    'type' => 'serial',
-    'not null' => TRUE,
-  );
-  $keys_new =  array(
-    'primary key' => array('tid'),
-  );
-
-  if (!db_field_exists('workflow_scheduled_transition', 'tid') ) {
-    db_add_field('workflow_scheduled_transition', 'tid', $spec, $keys_new);
-  }
-  else {
-    db_change_field('workflow_scheduled_transition', 'tid', 'tid', $spec, $keys_new);
-  }
-
-  return t('Added tid primary key to {workflow_scheduled_transition}');
-}
-
-/**
- * Enable the List module, newly added as a dependency.
- */
-function workflow_update_7200() {
-  module_enable(array('list'));
+function workflow_install() {
+  // Dynamically generated variable data was detected.
 }

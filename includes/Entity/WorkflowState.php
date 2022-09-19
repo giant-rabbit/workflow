@@ -190,7 +190,7 @@ class WorkflowState extends Entity {
       foreach (workflow_get_workflow_node_by_sid($current_sid) as $workflow_node) {
         // @todo: add Field support in 'state delete', by using workflow_node_history or reading current field.
         $entity_type = 'node';
-        $entity = entity_load_single('node', $workflow_node->nid);
+        $entity = entity_load('node', $workflow_node->nid);
         $field_name = '';
         $transition = new WorkflowTransition();
         $transition->setValues($entity_type, $entity, $field_name, $current_sid, $new_sid, $user->uid, REQUEST_TIME, $comment);
@@ -210,7 +210,7 @@ class WorkflowState extends Entity {
             continue;
           }
           foreach ($entities as $entity_id => $entity) {
-            $entity = entity_load_single($entity_type, $entity_id);
+            $entity = entity_load($entity_type, $entity_id);
             /* @var $transition WorkflowTransition */
             $transition = new WorkflowTransition();
             $transition->setValues($entity_type, $entity, $field_name, $current_sid, $new_sid, $user->uid, REQUEST_TIME, $comment, TRUE);
@@ -555,9 +555,37 @@ class WorkflowState extends Entity {
       $workflow->save();
     }
   }
+
+  public function uri() {
+    return array(
+      'path' => 'workflow_state/' . $this->sid,
+    );
+  }
+
+  /**
+   * Implements EntityInterface::id().
+   */
+  public function id() {
+    return $this->sid;
+  }
+
+  /**
+   * Implements EntityInterface::entityType().
+   */
+  public function entityType() {
+    return 'WorkflowState';
+  }
+
+  /**
+   * Implements EntityInterface::label().
+   */
+  public function label() {
+    return $this->state;
+  }
+
 }
 
-class WorkflowStateController extends EntityAPIController {
+class WorkflowStateController extends EntityPlusController {
 
   public function save($entity, DatabaseTransaction $transaction = NULL) {
     // Create the machine_name.

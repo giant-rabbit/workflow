@@ -8,7 +8,7 @@
 /**
  * Implements hook_action_info().
  *
- * Registers custom VBO actions as Drupal actions.
+ * Registers custom VBO actions as Backdrop actions.
  */
 function workflow_vbo_next_action_info() {
   return array(
@@ -22,7 +22,7 @@ function workflow_vbo_next_action_info() {
 }
 
 /**
- * Implements a Drupal action. Move a node to the next state in the workflow.
+ * Implements a Backdrop action. Move a node to the next state in the workflow.
  *
  * @param $entity
  * @param array $context
@@ -37,7 +37,7 @@ function workflow_vbo_next_state_action($entity, array $context) {
   }
   else {
     // In an Advanced Action.
-    $entity_type = str_replace(array('_insert', '_update' , '_delete'), '', $context['hook']);
+    $entity_type = str_replace(array('_insert', '_update', '_delete'), '', $context['hook']);
   }
   // Change the state of latest revision, not current revision.
   if (isset($context[$entity_type])) {
@@ -67,14 +67,14 @@ function workflow_vbo_next_state_action($entity, array $context) {
   // Get the node's new State Id (which is the next available state).
   $workflow = workflow_get_workflows_by_type($entity_bundle, $entity_type);
   if (!$workflow) {
-    watchdog('workflow_vbo', 'Unable to get current workflow of entity %id.',
+    watchdog('workflow_vbo', 'Unable to get current workflow of entity %id.', 
       array('%id' => $entity_id));
     return;
   }
 
   $new_sid = $workflow->getNextSid($entity_type, $entity, $field_name, $user, $force);
   if (!$new_sid) {
-    watchdog('workflow_vbo', 'Unable to get current workflow state of entity %id.',
+    watchdog('workflow_vbo', 'Unable to get current workflow state of entity %id.', 
       array('%id' => $entity_id));
     return;
   }

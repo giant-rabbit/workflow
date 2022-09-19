@@ -96,12 +96,13 @@ function workflownode_token_info() {
  * - some evaluations may not be correct.
  */
 function workflownode_tokens($type, $tokens, array $data = array(), array $options = array()) {
+  $config = config('workflownode.settings');
   $replacements = array();
   $sanitize = !empty($options['sanitize']);
   $langcode = !empty($options['language']->language) ? $options['language']->language : LANGUAGE_NONE;
   $date = REQUEST_TIME;
 
-  if (($type == 'node' || $type == 'workflow') && !empty($data['node'])  && !empty($data['node']->nid)) {
+  if (($type == 'node' || $type == 'workflow') && !empty($data['node'])   && !empty($data['node']->nid)) {
     $node = $data['node'];
     $entity_id = $node->nid;
     $entity_type = 'node'; // @todo: support other entity types in workflow_tokens().
@@ -123,7 +124,7 @@ function workflownode_tokens($type, $tokens, array $data = array(), array $optio
         $account = user_load($uid);
         $new_sid = $node->workflow;
         $old_sid = isset($last_history->old_sid) ? $last_history->old_sid : $workflow->getCreationSid();
-        $user_name = ($uid && isset($node->name)) ? $node->name : variable_get('anonymous', 'Anonymous');
+        $user_name = ($uid && isset($node->name)) ? $node->name : config_get('system.performance', 'anonymous');
         $mail = ($uid && isset($node->user_mail)) ? $node->user_mail : '';
         $comment = isset($node->workflow_comment) ? $node->workflow_comment : '';
       }
@@ -141,7 +142,7 @@ function workflownode_tokens($type, $tokens, array $data = array(), array $optio
             // will be no choices. What to choose?
             $new_sid = workflow_node_current_state($node, $entity_type, $field_name);
           }
-          $user_name = ($uid && isset($node->name)) ? $node->name : variable_get('anonymous', 'Anonymous');
+          $user_name = ($uid && isset($node->name)) ? $node->name : config_get('system.performance', 'anonymous');
           $mail = ($uid && isset($node->user_mail)) ? $node->user_mail : '';
           $comment = isset($node->workflow_comment) ? $node->workflow_comment : '';
         }
@@ -168,7 +169,7 @@ function workflownode_tokens($type, $tokens, array $data = array(), array $optio
 
           $account = user_load($uid);
           // Default to the most recent transition data in the workflow history table.
-          $user_name = $account->uid ? $account->name : variable_get('anonymous', 'Anonymous');
+          $user_name = $account->uid ? $account->name : config_get('system.performance', 'anonymous');
           $mail = $account->uid ? $account->mail : '';
           $comment = $last_history->comment;
         }
@@ -181,17 +182,17 @@ function workflownode_tokens($type, $tokens, array $data = array(), array $optio
             break;
 
           case 'workflow-current-state-name':
-            $replacements[$original] = $sanitize ? check_plain($states[$new_sid]->getName()) : $states[$new_sid]->getName();
+            $replacements[$original] = $sanitize?check_plain($states[$new_sid]->getName()) : $states[$new_sid]->getName();
             break;
 
           case 'workflow-old-state-name':
             $old_state_name = (!empty($states[$old_sid])) ? $states[$old_sid]->getName() : 'Deleted state';
-            $replacements[$original] = $sanitize ? check_plain($old_state_name) : $old_state_name;
+            $replacements[$original] = $sanitize?check_plain($old_state_name) : $old_state_name;
             break;
 
           case 'workflow-current-state-updating-user-name':
-            $name = format_username($account);
-            $replacements[$original] = $sanitize ? check_plain($name) : $name;
+            $name = user_format_name($account);
+            $replacements[$original] = $sanitize?check_plain($name) : $name;
             break;
 
           case 'workflow-current-state-updating-user-link':
@@ -204,7 +205,7 @@ function workflownode_tokens($type, $tokens, array $data = array(), array $optio
             break;
 
           case 'workflow-current-state-updating-user-mail':
-            $replacements[$original] = $sanitize ? check_plain($account->mail) : $account->mail;
+            $replacements[$original] = $sanitize?check_plain($account->mail) : $account->mail;
             break;
 
           case 'workflow-current-state-updating-user-mailto':
@@ -212,7 +213,7 @@ function workflownode_tokens($type, $tokens, array $data = array(), array $optio
             break;
 
           case 'workflow-current-state-log-entry':
-            $replacements[$original] = $sanitize ? check_markup($comment, filter_default_format(), $langcode) : $comment;
+            $replacements[$original] = $sanitize?check_markup($comment, filter_default_format(), $langcode) : $comment;
             break;
 
           case 'workflow-current-state-date-iso':
@@ -220,7 +221,7 @@ function workflownode_tokens($type, $tokens, array $data = array(), array $optio
             break;
 
           case 'workflow-current-state-date-tstamp':
-            $replacements[$original] = $sanitize ? check_plain($date) : $date;
+            $replacements[$original] = $sanitize?check_plain($date) : $date;
             break;
 
           case 'workflow-current-state-date-formatted':

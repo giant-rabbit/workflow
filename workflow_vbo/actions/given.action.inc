@@ -8,7 +8,7 @@
 /**
  * Implements hook_action_info().
  *
- * Registers custom VBO actions as Drupal actions.
+ * Registers custom VBO actions as Backdrop actions.
  */
 function workflow_vbo_given_action_info() {
   return array(
@@ -17,45 +17,44 @@ function workflow_vbo_given_action_info() {
       'label' => t('Change workflow state of post to new state'),
       'configurable' => TRUE,
       'triggers' => array('any'),
-//      'aggregate' => TRUE,
-//      'pass rows' => TRUE, // you will have $context['views row'] as the current selected row.
+      //      'aggregate' => TRUE, //      'pass rows' => TRUE, // you will have $context['views row'] as the current selected row.
     ),
   );
 }
 
 /**
- * Implements a Drupal action. Move a node to a specified state in the workflow.
+ * Implements a Backdrop action. Move a node to a specified state in the workflow.
  * @param $entity
  * @param array $context
  */
 function workflow_vbo_given_state_action($entity, array $context) {
   global $user;
 
-// As advanced action with Trigger 'node':
-// - $entity is empty;
-// - $context['group'] = 'node'
-// - $context['hook'] = 'node_insert / _update / _delete'
-// - $context['node'] = (Object) stdClass
-// - $context['entity_type'] = NULL
+  // As advanced action with Trigger 'node':
+  // - $entity is empty;
+  // - $context['group'] = 'node'
+  // - $context['hook'] = 'node_insert / _update / _delete'
+  // - $context['node'] = (Object) stdClass
+  // - $context['entity_type'] = NULL
 
-// As advanced action with Trigger 'taxonomy':
-// - $entity is (Object) stdClass;
-// - $context['type'] = 'entity'
-// - $context['group'] = 'taxonomy'
-// - $context['hook'] = 'taxonomy_term_insert / _update / _delete'
-// - $context['node'] = (Object) stdClass
-// - $context['entity_type'] = NULL
+  // As advanced action with Trigger 'taxonomy':
+  // - $entity is (Object) stdClass;
+  // - $context['type'] = 'entity'
+  // - $context['group'] = 'taxonomy'
+  // - $context['hook'] = 'taxonomy_term_insert / _update / _delete'
+  // - $context['node'] = (Object) stdClass
+  // - $context['entity_type'] = NULL
 
-// As advanced action with Trigger 'workflow API':
-// ...
+  // As advanced action with Trigger 'workflow API':
+  // ...
 
-// As VBO action:
-// - $entity is (Object) stdClass;
-// - $context['type'] = NULL
-// - $context['group'] = NULL
-// - $context['hook'] = NULL
-// - $context['node'] = (Object) stdClass
-// - $context['entity_type'] = 'node'
+  // As VBO action:
+  // - $entity is (Object) stdClass;
+  // - $context['type'] = NULL
+  // - $context['group'] = NULL
+  // - $context['hook'] = NULL
+  // - $context['node'] = (Object) stdClass
+  // - $context['entity_type'] = 'node'
 
   // Get the entity type, entity and entity ID.
   if (isset($context['entity_type'])) {
@@ -64,7 +63,7 @@ function workflow_vbo_given_state_action($entity, array $context) {
   }
   else {
     // In an Advanced Action.
-    $entity_type = str_replace(array('_insert', '_update' , '_delete'), '', $context['hook']);
+    $entity_type = str_replace(array('_insert', '_update', '_delete'), '', $context['hook']);
   }
   // Change the state of latest revision, not current revision.
   if (isset($context[$entity_type])) {
@@ -91,7 +90,7 @@ function workflow_vbo_given_state_action($entity, array $context) {
   $field_name = NULL;
   $current_sid = workflow_node_current_state($entity, $entity_type, $field_name);
   if (!$current_sid) {
-    watchdog('workflow_vbo', 'Unable to get current workflow state of entity %id.',
+    watchdog('workflow_vbo', 'Unable to get current workflow state of entity %id.', 
       array('%id' => $entity_id));
     return;
   }
@@ -106,10 +105,10 @@ function workflow_vbo_given_state_action($entity, array $context) {
   // Get the Comment. Parse the $comment variables.
   $comment_string = $form_state['input']['workflow_comment'];
   $comment = t($comment_string, array(
-      '%title' => entity_label($entity_type, $entity), // "@" and "%" will automatically run check_plain().
-      '%state' => workflow_get_sid_label($new_sid),
-      '%user' => $user->name,
-    )
+    '%title' => entity_label($entity_type, $entity), // "@" and "%" will automatically run check_plain().
+    '%state' => workflow_get_sid_label($new_sid),
+    '%user' => $user->name,
+  )
   );
 
   // Fire the transition.
@@ -159,7 +158,7 @@ function workflow_vbo_given_state_action_form(array $context) {
     // We could fetch it from the array, like this: $entity = $entity_data->_field_data[$entity_key]['entity'];
     // But this is not reliable, if you have no fields to show.
     // So, last resort, just fetch from database/cache.
-    $entity = entity_load_single($entity_type, $entity_data->{$entity_key});
+    $entity = entity_load($entity_type, $entity_data->{$entity_key});
     $field_name = NULL;
     $current_sid = workflow_node_current_state($entity, $entity_type, $field_name);
     $state = workflow_state_load_single($current_sid);
@@ -168,7 +167,7 @@ function workflow_vbo_given_state_action_form(array $context) {
     }
     elseif ($wid && $state && $wid <> $state->wid) {
       watchdog('workflow', 'Multiple workflows found in VBO action.', WATCHDOG_ERROR);
-      drupal_set_message(t('Error: the selection contains more then one workflow.'), 'error');
+      backdrop_set_message(t('Error: the selection contains more then one workflow.'), 'error');
 
       return $form; // <--- exit !!
     }
@@ -182,7 +181,7 @@ function workflow_vbo_given_state_action_form(array $context) {
   $entity_bundle = '';
 
   // Get the common Workflow, or create a dummy Workflow.
-  $workflow = $wid ? workflow_load($wid) : workflow_create('dummy VBO');
+  $workflow = $wid?workflow_load($wid) : workflow_create('dummy VBO');
   // Show the current state and the Workflow form to allow state changing.
   // N.B. This part is replicated in hook_node_view, workflow_tab_page, workflow_vbo.
   if ($workflow) {
@@ -209,7 +208,7 @@ function workflow_vbo_given_state_action_form(array $context) {
   // Ultimately, this is a wrapper for WorkflowDefaultWidget.
   // $form['workflow_current_state'] = workflow_state_formatter($entity_type, $entity, $field, $instance);
   $form_id = implode('_', array('workflow_transition_form', $entity_type, $entity_id, $field_id));
-  $form += drupal_get_form($form_id, $field, $instance, $entity_type, $entity);
+  $form += backdrop_get_form($form_id, $field, $instance, $entity_type, $entity);
 
   if (!$entity) {
     // For the Advanced actions form on admin/config/system/actions, 

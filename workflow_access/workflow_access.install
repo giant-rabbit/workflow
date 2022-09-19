@@ -58,28 +58,33 @@ function workflow_access_disable() {
   node_access_needs_rebuild(TRUE);
 }
 
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
+function workflow_access_update_7001() { }
+
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
+function workflow_access_update_7002() { }
+
 /**
- * Correct field type of field 'sid' in workflow_access table.
+ * Implements hook_update_last_removed().
  */
-function workflow_access_update_7001() {
-  db_drop_primary_key('workflow_access');
-  db_add_primary_key('workflow_access', array('sid', 'rid'));
-  db_drop_index('workflow_access', 'sid');
-  db_drop_index('workflow_access', 'rid');
-
-  db_change_field('workflow_access', 'sid', 'sid', array(
-    'type' => 'int',
-    'not null' => TRUE,
-  ));
-
-  db_drop_primary_key('workflow_access');
-  db_add_primary_key('workflow_access', array('sid', 'rid'));
-  db_add_index('workflow_access', 'rid', array('rid'));
+function workflow_access_update_last_removed() {
+  return 7002;
 }
 
 /**
- * Force rebuild of node access.
+ * Migrate workflow_access variables to config.
  */
-function workflow_access_update_7002() {
-  node_access_needs_rebuild(TRUE);
+function workflow_access_update_1000() {
+  $config = config('workflow_access.settings');
+  $config->set('workflow_access_priority', update_variable_get('workflow_access_priority', '0'));
+  $config->save();
+
+  update_variable_del('workflow_access_priority');
+}
+
+/**
+ * Implements hook_install().
+ */
+function workflow_access_install() {
+  // Dynamically generated variable data was detected.
 }

@@ -122,7 +122,7 @@ class Workflow extends Entity implements WorkflowInterface {
       $db_states[$state->getName()] = $state;
     }
     $db_transitions = array();
-    foreach (entity_load('WorkflowConfigTransition') as $transition) {
+    foreach (entity_load_multiple('WorkflowConfigTransition') as $transition) {
       if ($transition->wid == $this->wid) {
         $start_name = $db_name_map[$transition->sid]->getName();
         $end_name = $db_name_map[$transition->target_sid]->getName();
@@ -525,7 +525,7 @@ class Workflow extends Entity implements WorkflowInterface {
     }
 
     // First check if this transition already exists.
-    if ($transitions = entity_load('WorkflowConfigTransition', FALSE, $values)) {
+    if ($transitions = entity_load_multiple('WorkflowConfigTransition', FALSE, $values)) {
       $transition = reset($transitions);
     }
     else {
@@ -569,7 +569,7 @@ class Workflow extends Entity implements WorkflowInterface {
     if ($this->transitions === NULL) {
       $this->transitions = array();
       // Get all transitions. (Even from other workflows. :-( )
-      $config_transitions = entity_load('WorkflowConfigTransition', $tids, array(), $reset);
+      $config_transitions = entity_load_multiple('WorkflowConfigTransition', $tids, array(), $reset);
       foreach ($config_transitions as &$config_transition) {
         if (isset($states[$config_transition->sid])) {
           $config_transition->setWorkflow($this);
@@ -719,6 +719,33 @@ class Workflow extends Entity implements WorkflowInterface {
     return $new_roles;
   }
 
+  public function uri() {
+    return array(
+      'path' => 'workflow/' . $this->wid,
+    );
+  }
+
+  /**
+   * Implements EntityInterface::id().
+   */
+  public function id() {
+    return $this->wid;
+  }
+
+  /**
+   * Implements EntityInterface::entityType().
+   */
+  public function entityType() {
+    return 'Workflow';
+  }
+
+  /**
+   * Implements EntityInterface::label().
+   */
+  public function label() {
+    return $this->name;
+  }
+
 }
 
 /**
@@ -748,7 +775,7 @@ function _workflow_transitions_sort_by_weight($a, $b) {
 /**
  * Implements a controller class for Workflow.
  */
-class WorkflowController extends EntityAPIControllerExportable {
+class WorkflowController extends EntityPlusControllerExportable {
 
   // public function create(array $values = array()) {    return parent::create($values);  }
   // public function load($ids = array(), $conditions = array()) { }

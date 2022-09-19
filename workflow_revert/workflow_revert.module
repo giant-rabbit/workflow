@@ -27,7 +27,7 @@ function workflow_revert_menu() {
     'title' => 'Workflow Undo',
     'file' => 'workflow_revert.pages.inc',
     'access arguments' => array('revert workflow'),
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('workflow_revert_form'),
     'type' => MENU_CALLBACK,
   );
@@ -100,7 +100,7 @@ function workflow_revert_workflow_history_alter(array &$variables) {
       // Stop if a module says so.
       if (!in_array(FALSE, $permitted, TRUE)) {
         // If not vetoed, mark it.
-        $options = array('query' => array('token' => drupal_get_token('workflow_revert ' . $old_sid)));
+        $options = array('query' => array('token' => backdrop_get_token('workflow_revert ' . $old_sid)));
         $path = 'workflow_revert/' . $entity_type . '/' . $id . '/' . $field_name . '/' . $old_sid;
 
         // If you want to add additional data, place it in the 'extra' value.

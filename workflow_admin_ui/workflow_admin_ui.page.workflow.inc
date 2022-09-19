@@ -16,7 +16,11 @@
  */
 function workflow_admin_ui_edit_form($form, &$form_state, $workflow = NULL, $op) {
   $noyes = array(t('No'), t('Yes'));
-  $fieldset_options = array(0 => t('No fieldset'), 1 => t('Collapsible fieldset'), 2 => t('Collapsed fieldset'));
+  $fieldset_options = array(
+    0 => t('No fieldset'),
+    1 => t('Collapsible fieldset'),
+    2 => t('Collapsed fieldset'),
+  );
 
   $form = array();
 
@@ -215,14 +219,14 @@ function workflow_admin_ui_edit_form_validate($form, &$form_state) {
 
   // Make sure workflow name is not numeric.
   if (ctype_digit($name)) {
-    form_set_error('name', t('Please choose a non-numeric name for your workflow.',
+    form_set_error('name', t('Please choose a non-numeric name for your workflow.', 
       array('%name' => $name)));
   }
 
   // Make sure workflow name is not a duplicate.
   foreach (workflow_load_multiple() as $stored_workflow) {
     if ($name == $stored_workflow->name && $workflow->wid != $stored_workflow->wid) {
-      form_set_error('name', t('A workflow with the name %name already exists. Please enter another name for this workflow.',
+      form_set_error('name', t('A workflow with the name %name already exists. Please enter another name for this workflow.', 
         array('%name' => $name)));
       break;
     }
@@ -266,10 +270,10 @@ function workflow_admin_ui_edit_form_submit($form, &$form_state) {
       '@url' => url(WORKFLOW_ADMIN_UI_PATH . "/edit/$workflow->wid"),
     );
     watchdog('workflow', 'Created workflow %name', $args);
-    drupal_set_message(t('The workflow %name was created. Please maintain the states and transitions.', $args), 'status');
+    backdrop_set_message(t('The workflow %name was created. Please maintain the states and transitions.', $args), 'status');
   }
   else {
-    drupal_set_message(t('The workflow was updated.'));
+    backdrop_set_message(t('The workflow was updated.'));
   }
   // This redirect is needed, when changing the workflow name, with name in URL.
   // Also for cloning a workflow.

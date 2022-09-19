@@ -1,0 +1,10 @@
+{
+    "_config_name": "workflow_notify.settings",
+    "workflow_notify_roles": [],
+    "workflow_notify_filter_format_wid": "dynamic variable in file /workflow/workflow_notify/workflow_notify.pages.inc line 78",
+    "workflow_notify_subject_new_state": "dynamic variable in file /workflow/workflow_notify/workflow_notify.module line 314",
+    "workflow_notify_body_new_state": "dynamic variable in file /workflow/workflow_notify/workflow_notify.module line 317",
+    "workflow_notify_from_address_wid": "dynamic variable in file /workflow/workflow_notify/workflow_notify.pages.inc line 62",
+    "workflow_notify_subject_sid": "dynamic variable in file /workflow/workflow_notify/workflow_notify.pages.inc line 129",
+    "workflow_notify_body_sid": "dynamic variable in file /workflow/workflow_notify/workflow_notify.pages.inc line 137"
+}

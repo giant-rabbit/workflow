@@ -35,7 +35,10 @@ function workflow_admin_ui_transitions_form($form, &$form_state, $workflow, $op)
       '#value' => $workflow,
     );
     $form['transitions'] = _workflow_admin_ui_transition_grid_form($form, $form_state, $workflow);
-    $form['submit'] = array('#type' => 'submit', '#value' => t('Save'));
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Save'),
+    );
 
     return $form;
   }
@@ -105,7 +108,7 @@ function theme_workflow_admin_ui_transitions_form($variables) {
   $workflow = $form['workflow']['#value'];
 
   if ($workflow) {
-    drupal_set_title(t('Edit workflow %name transitions', array('%name' => $workflow->getName())), PASS_THROUGH);
+    backdrop_set_title(t('Edit workflow %name transitions', array('%name' => $workflow->getName())), PASS_THROUGH);
 
     $states = $workflow->getStates($all = 'CREATION');
     if ($states) {
@@ -131,7 +134,7 @@ function theme_workflow_admin_ui_transitions_form($variables) {
             $to = $nested_state->sid;
             $cell = '';
             foreach ($roles as $rid => $role_name) {
-              $cell .= drupal_render($form['transitions'][$from][$to][$rid]);
+              $cell .= backdrop_render($form['transitions'][$from][$to][$rid]);
             }
             $row[] = array('data' => $cell);
           }
@@ -147,7 +150,7 @@ function theme_workflow_admin_ui_transitions_form($variables) {
       $output = t('There are no states defined for this workflow.');
     }
 
-    $output .= drupal_render_children($form);
+    $output .= backdrop_render_children($form);
     return $output;
   }
 }
@@ -174,7 +177,7 @@ function workflow_admin_ui_transitions_form_validate($form, $form_state) {
   }
   $state_count = db_query('SELECT COUNT(sid) FROM {workflow_states} WHERE wid = :wid', array(':wid' => $wid))->fetchField();
   if (empty($author_has_permission) && $state_count > 1) {
-    form_set_error('transitions', t('Please give the author permission to go from %creation to at least one state!',
+    form_set_error('transitions', t('Please give the author permission to go from %creation to at least one state!', 
       array('%creation' => $creation_state->label())));
   }
 }
@@ -217,6 +220,6 @@ function workflow_admin_ui_transitions_form_submit($form, &$form_state) {
     }
   }
 
-  drupal_set_message(t('The workflow was updated.'));
+  backdrop_set_message(t('The workflow was updated.'));
   // $form_state['redirect'] = WORKFLOW_ADMIN_UI_PATH;
 }

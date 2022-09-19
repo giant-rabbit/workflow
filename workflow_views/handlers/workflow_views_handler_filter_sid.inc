@@ -27,7 +27,7 @@ class workflow_views_handler_filter_sid extends views_handler_filter_in_operator
       // Count the workflows to determine grouping.
       // Even if $wid is not set, we may only have 1 workflow.
       $grouped = FALSE;
-      $workflows = workflow_load_multiple($wid ? array($wid) : FALSE);
+      $workflows = workflow_load_multiple($wid?array($wid) : FALSE);
       $count = count($workflows);
       if ($count > 1) {
         $states += array('' => t('No state'));
@@ -73,7 +73,10 @@ class workflow_views_handler_filter_sid extends views_handler_filter_in_operator
     $options = parent::option_definition();
 
     $options['expose']['contains']['workflow_reduce_wid'] = array('default' => '');
-    $options['expose']['contains']['workflow_include_all'] = array('default' => FALSE, 'bool' => TRUE);
+    $options['expose']['contains']['workflow_include_all'] = array(
+      'default' => FALSE,
+      'bool' => TRUE,
+    );
 
     return $options;
   }
@@ -108,7 +111,7 @@ class workflow_views_handler_filter_sid extends views_handler_filter_in_operator
 
       // Remove every element which is not known.
       foreach ($this->value as $value) {
-        if (!isset($options_sids[$value])) {// !!! Unlike views_handler_filter_in_operator class.
+        if (!isset($options_sids[$value])) { // !!! Unlike views_handler_filter_in_operator class.
           unset($this->value[$value]);
         }
       }
@@ -124,7 +127,7 @@ class workflow_views_handler_filter_sid extends views_handler_filter_in_operator
 
         $keys = $this->value;
         $value = array_shift($keys);
-        if (isset($options_sids[$value])) {// !!! Unlike views_handler_filter_in_operator class.
+        if (isset($options_sids[$value])) { // !!! Unlike views_handler_filter_in_operator class.
           $values = check_plain($options_sids[$value]);
         }
         else {
@@ -136,11 +139,11 @@ class workflow_views_handler_filter_sid extends views_handler_filter_in_operator
           if ($values !== '') {
             $values .= ', ';
           }
-          if (drupal_strlen($values) > 8) {
+          if (backdrop_strlen($values) > 8) {
             $values .= '...';
             break;
           }
-          if (isset($options_sids[$value])) {// !!! Unlike views_handler_filter_in_operator class.
+          if (isset($options_sids[$value])) { // !!! Unlike views_handler_filter_in_operator class.
             $values .= check_plain($options_sids[$value]);
           }
         }
@@ -151,7 +154,7 @@ class workflow_views_handler_filter_sid extends views_handler_filter_in_operator
   }
 
   function query() {
-    $value = $this->is_a_group() && !$this->options['expose']['multiple'] ? drupal_array_merge_deep_array($this->value) : $this->value;
+    $value = $this->is_a_group() && !$this->options['expose']['multiple']?backdrop_array_merge_deep_array($this->value) : $this->value;
     if (empty($value)) {
       return;
     }

@@ -143,18 +143,18 @@ function workflow_views_views_data_alter(&$data) {
 
       // @todo: these joins need extra join on revision_id,field_name,language.
       $data['workflow_node_history']['table']['join'][$base_table] = array(
-          'table' => 'workflow_node_history',
-          'field' => 'nid',
-          'left_table' => $base_table,
-          'left_field' => $entity_id_key,
-          'extra' => array(
-            array(
-              'field' => 'entity_type',
-              'value' => $entity_type,
-              'table' => 'workflow_node_history',
-            ),
+        'table' => 'workflow_node_history',
+        'field' => 'nid',
+        'left_table' => $base_table,
+        'left_field' => $entity_id_key,
+        'extra' => array(
+          array(
+            'field' => 'entity_type',
+            'value' => $entity_type,
+            'table' => 'workflow_node_history',
           ),
-        );
+        ),
+      );
 
       $data['workflow_scheduled_transition']['table']['join'][$base_table] = array(
         'table' => 'workflow_scheduled_transition',
@@ -177,10 +177,10 @@ function workflow_views_views_data_alter(&$data) {
       );
 
       $data['workflow_node_current']['table']['join']['node_revision'] = array(
-          'table' => $rightTableRevision,
-          'field' => 'revision_id',
-          'left_table' => 'node_revision',
-          'left_field' => 'vid',
+        'table' => $rightTableRevision,
+        'field' => 'revision_id',
+        'left_table' => 'node_revision',
+        'left_field' => 'vid',
       );
     }
   }

@@ -62,7 +62,7 @@ function workflowfield_field_formatter_view($entity_type, $entity, $field, $inst
   // Ultimately, this is a wrapper for WorkflowDefaultWidget.
   $entity_id = entity_id($entity_type, $entity);
   $form_id = implode('_', array('workflow_transition_form', $entity_type, $entity_id, $field_id));
-  $element = drupal_get_form($form_id, $field, $instance, $entity_type, $entity);
+  $element = backdrop_get_form($form_id, $field, $instance, $entity_type, $entity);
 
   return $element;
 }

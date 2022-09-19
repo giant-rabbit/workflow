@@ -1,8 +1,8 @@
 name = Workflow Node Search API
 description = Adds Workflow Node's state information to Search API index.
 package = Workflow
-core = 7.x
+backdrop = 1.x
+type = module
 
-dependencies[] = entity
 dependencies[] = workflow
 dependencies[] = workflownode

@@ -30,7 +30,7 @@ function workflow_get_workflow_type_map() {
 function workflow_get_workflow_type_map_by_type($type) {
   static $map = array();
   if (!isset($map[$type])) {
-    $results = db_query('SELECT type, wid FROM {workflow_type_map} WHERE type = :type AND wid <> 0',
+    $results = db_query('SELECT type, wid FROM {workflow_type_map} WHERE type = :type AND wid <> 0', 
       array(':type' => $type));
     $map[$type] = $results->fetchObject();
   }
@@ -43,7 +43,7 @@ function workflow_get_workflow_type_map_by_type($type) {
 function workflow_get_workflow_type_map_by_wid($wid) {
   static $map = array();
   if (!isset($map[$wid])) {
-    $results = db_query('SELECT type, wid FROM {workflow_type_map} WHERE wid = :wid',
+    $results = db_query('SELECT type, wid FROM {workflow_type_map} WHERE wid = :wid', 
       array(':wid' => $wid));
     $map[$wid] = $results->fetchAll();
   }
@@ -87,6 +87,6 @@ function workflow_insert_workflow_type_map($node_type, $wid) {
   // Be sure we have a clean insert. There should never be more than one map for a type.
   workflow_delete_workflow_type_map_by_type($type_map->type);
   if ($type_map->wid) {
-    drupal_write_record('workflow_type_map', $type_map);
+    backdrop_write_record('workflow_type_map', $type_map);
   }
 }

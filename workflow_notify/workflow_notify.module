@@ -18,7 +18,7 @@ function workflow_notify_menu() {
     'title' => 'Notifications',
     'file' => 'workflow_notify.pages.inc',
     'access arguments' => array('administer workflow'),
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('workflow_notify_settings_form', $id_count + 1),
     'type' => MENU_CALLBACK,
   );
@@ -42,7 +42,10 @@ function workflow_notify_workflow_operations($op, Workflow $workflow = NULL) {
           'workflow_notify_settings' => array(
             'title' => t('Notifications'),
             'href' => "$admin_path/manage/$wid/notify",
-            'attributes' => array('alt' => $alt, 'title' => $alt),
+            'attributes' => array(
+              'alt' => $alt,
+              'title' => $alt,
+            ),
           ),
         );
       }
@@ -106,7 +109,7 @@ function workflow_notify_hook_info() {
 
 /**
  * Implements hook_workflow().
- * Calls drupal_mail via _workflow_notify() for Workflow Field;
+ * Calls backdrop_mail via _workflow_notify() for Workflow Field;
  *
  * @param $op
  *   The current workflow operation: 'transition permitted', 'transition pre', or 'transition post'.
@@ -134,7 +137,7 @@ function workflow_notify_workflow($op, $old_state, $new_state, $entity, $force, 
 
 /**
  * Implements hook_entity_insert().
- * Calls drupal_mail via _workflow_notify() for Workflow Field;
+ * Calls backdrop_mail via _workflow_notify() for Workflow Field;
  *
  * @param $entity
  * @param $entity_type
@@ -145,7 +148,7 @@ function workflow_notify_entity_insert($entity, $entity_type) {
 
 /**
  * Implements hook_entity_update().
- * Calls drupal_mail via _workflow_notify() for Workflow Field;
+ * Calls backdrop_mail via _workflow_notify() for Workflow Field;
  *
  * @param $entity
  * @param $entity_type
@@ -155,7 +158,7 @@ function workflow_notify_entity_update($entity, $entity_type) {
 }
 
 /**
- * Calls drupal_mail via _workflow_notify() for Workflow Field;
+ * Calls backdrop_mail via _workflow_notify() for Workflow Field;
  *
  * @param $entity
  * @param $entity_type
@@ -189,20 +192,31 @@ function workflow_notify_mail($key, &$message, $params) {
       $message['subject'] = filter_xss(token_replace($params['context']['subject'], $params['data'], $params));
       $message['body'][] = check_markup(token_replace($params['context']['body'], $params['data'], $params), $filter);
 
-      watchdog('workflow_notify',
+      watchdog('workflow_notify', 
         '<ul><li>Subject: @subject</li><li>Body: @body</li><li>To: @to</li><li>From: @from</li></ul>', array(
-          '@subject' => $message['subject'],
-          '@body' => implode('<br />', $message['body']),
-          '@to' => $message['to'],
-          '@from' => $message['from'],
-        ),
+        '@subject' => $message['subject'],
+        '@body' => implode('<br />', $message['body']),
+        '@to' => $message['to'],
+        '@from' => $message['from'],
+      ), 
         WATCHDOG_INFO, l(t('view'), $entity_uri['path']));
       return;
   }
 }
 
 /**
- * Calls drupal_mail() to notify users.
+ * Implements hook_config_info().
+ */
+function workflow_notify_config_info() {
+  $prefixes['workflow_notify.settings'] = array(
+    'label' => t('Workflow API settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
+}
+
+/**
+ * Calls backdrop_mail() to notify users.
  *
  * @param $new_state
  * @param $entity
@@ -213,16 +227,17 @@ function workflow_notify_mail($key, &$message, $params) {
  * @throws EntityMalformedException
  */
 function _workflow_notify($new_state, $entity, $entity_type = '', $field_name = '', $transition = NULL, $user = NULL) {
+  $config = config('workflow_notify.settings');
   global $user;
 
   // See if this is a state that we notify for.
-  $notify = variable_get('workflow_notify_roles', array());
+  $notify = $config->get('workflow_notify_roles');
   if (!isset($notify[$new_state])) {
     return;
   }
 
   // The name of the person making the change.
-  $changer = format_username($user);
+  $changer = user_format_name($user);
   $changer_mail = $user->mail;
 
   // Okay, we are notifying someone of this change.
@@ -263,7 +278,7 @@ function _workflow_notify($new_state, $entity, $entity_type = '', $field_name = 
   }
 
   // Load all the user entities, making sure there are no duplicates.
-  $accounts = entity_load('user', array_unique($users, SORT_NUMERIC));
+  $accounts = entity_load_multiple('user', array_unique($users, SORT_NUMERIC));
 
   // Call all modules that want to limit the list.
   $args = array(
@@ -274,7 +289,7 @@ function _workflow_notify($new_state, $entity, $entity_type = '', $field_name = 
     'workflow' => $workflow,
   );
   // Preparing for entities, keeping backward compatibility.
-  $args += $entity_type == 'node' ? array('node' => $entity) : array('entity' => $entity);
+  $args += $entity_type == 'node'?array('node' => $entity) : array('entity' => $entity);
   foreach (module_implements('workflow_notify') as $module) {
     $function = $module . '_workflow_notify';
     $function('users', $args);
@@ -284,18 +299,18 @@ function _workflow_notify($new_state, $entity, $entity_type = '', $field_name = 
   $accounts = $args['users'];
   // Just quit if there are no users.
   if (empty($accounts)) {
-    watchdog('workflow_notify', 'No recipients - email skipped.', array(),
+    watchdog('workflow_notify', 'No recipients - email skipped.', array(), 
       WATCHDOG_DEBUG, l(t('view'), $entity_uri['path']));
     return;
   }
   $addr_list = array();
   foreach ($accounts as $uid => $account) {
-    $addr_list[] = format_username($account) . ' <' . $account->mail . '>';
+    $addr_list[] = user_format_name($account) . ' <' . $account->mail . '>';
   }
-  // The to-parameter to drupal_mail is a string, not an array, separated by commas.
+  // The to-parameter to backdrop_mail is a string, not an array, separated by commas.
   $to = implode(', ', $addr_list);
 
-  // Retrieve the params parameter for drupal_mail.
+  // Retrieve the params parameter for backdrop_mail.
   $params = array(
     'clear' => TRUE,
     'sanitize' => FALSE,
@@ -303,24 +318,22 @@ function _workflow_notify($new_state, $entity, $entity_type = '', $field_name = 
       'user' => $user,
       'entity_type' => $entity_type,
     ),
-    'filter' => variable_get('workflow_notify_filter_format_' . $wid, 'filtered_html'),
+    'filter' => $config->get('workflow_notify_filter_format_' . $wid),
   );
   // Preparing for entities, keeping backward compatibility.
-  $params['data'] += $entity_type == 'node' ? array('node' => $entity) : array('entity' => $entity);
+  $params['data'] += $entity_type == 'node'?array('node' => $entity) : array('entity' => $entity);
 
   // Build the subject and body of the mail.
   // Token replacement occurs in hook_mail().
   // @todo: Currently no translation occurs.
-  $params['context']['subject'] = variable_get("workflow_notify_subject_$new_state",
-    '[node:title] is now "[workflow:workflow-current-state-name]"');
+  $params['context']['subject'] = $config->get("workflow_notify_subject_$new_state");
 
-  $params['context']['body'] = variable_get("workflow_notify_body_$new_state",
-    '<a href="[node:url:absolute]">[node:title]</a> is now "@state".');
+  $params['context']['body'] = $config->get("workflow_notify_body_$new_state");
 
   // Retrieve the from-address.
-  switch (variable_get('workflow_notify_from_address_' . $wid, 'site')) {
+  switch ($config->get('workflow_notify_from_address_' . $wid)) {
     case 'site':
-      $from = variable_get('site_mail', ini_get('sendmail_from'));
+      $from = config_get('system.performance', 'site_mail');
       break;
 
     case 'changer':
@@ -334,15 +347,15 @@ function _workflow_notify($new_state, $entity, $entity_type = '', $field_name = 
   $module = 'workflow_notify';
   $key = 'workflow_notify';
   $language = language_default();
-  // https://api.drupal.org/api/drupal/includes!mail.inc/function/drupal_mail/7.x
-  $result = drupal_mail($module, $key, $to, $language, $params, $from);
+  // https://api.drupal.org/api/backdrop/includes!mail.inc/function/backdrop_mail/7.x
+  $result = backdrop_mail($module, $key, $to, $language, $params, $from);
   /*
-  if ($result['result'] == TRUE) {
-    drupal_set_message(t('Your message has been sent.'));
-  }
-  else {
-    drupal_set_message(t('There was a problem sending your message and it was not sent.'), 'error');
-  }
+   if ($result['result'] == TRUE) {
+   backdrop_set_message(t('Your message has been sent.'));
+   }
+   else {
+   backdrop_set_message(t('There was a problem sending your message and it was not sent.'), 'error');
+   }
    */
 
 }

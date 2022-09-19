@@ -44,9 +44,9 @@ function workflow_admin_ui_help($path, $arg) {
       if (module_exists('workflownode') && module_exists('workflowfield')) {
         $m = t('Do not enable Workfow Node and Workflow Field submodules at the
           same time (unless you are in a migration phase). Visit the <a href=
-          "@url">modules</a> page.', array('@url' => url('admin/modules',
+          "@url">modules</a> page.', array('@url' => url('admin/modules',  
           array('fragment' => 'Workflow'))));
-        drupal_set_message($m, 'warning');
+        backdrop_set_message($m, 'warning');
       }
       return;
 
@@ -76,9 +76,10 @@ function workflow_admin_ui_help($path, $arg) {
       . '<br /><i>'
       . t("If not all roles are in the list, please review which roles may
         'participate in workflows' <a href='!url'> on the Permissions page</a>.
-        </i>",
+        </i>",  
         array('!url' => url('admin/people/permissions', array(
-          'fragment' => 'module-workflow'))));
+          'fragment' => 'module-workflow',
+        ))));
 
     case WORKFLOW_ADMIN_UI_PATH . '/manage/%/labels':
       return t('You can add labels to transitions if you don\'t like the
@@ -169,5 +170,14 @@ function workflow_admin_ui_breadcrumbs($workflow, $extra = NULL) {
   if ($extra) {
     $bc[] = $extra;
   }
-  drupal_set_breadcrumb($bc);
+  backdrop_set_breadcrumb($bc);
+}
+
+/**
+ * Implements hook_autoload_info().
+ */
+function workflow_admin_ui_autoload_info() {
+  return array(
+    'EntityWorkflowUIController' => 'includes/Entity/EntityWorkflowUIController.php',
+  );
 }

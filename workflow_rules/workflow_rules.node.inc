@@ -121,14 +121,14 @@ function _workflownode_rules_action_info() {
         'description' => t('The node to set the current workflow state of.'),
         // 'save' => TRUE,
       ),
-/*
-      //'field' => array(
-      //  'type' => 'text', // WORKFLOWFIELD_PROPERTY_TYPE,
-      //  'label' => t('Workflow field to set'),
-      //  'description' => t('The workflow field to set.'),
-      //  'restriction' => 'selector',
-      //  'allow null' => TRUE,
-      //),
+      /*
+ //'field' => array(
+ //  'type' => 'text', // WORKFLOWFIELD_PROPERTY_TYPE,
+ //  'label' => t('Workflow field to set'),
+ //  'description' => t('The workflow field to set.'),
+ //  'restriction' => 'selector',
+ //  'allow null' => TRUE,
+ //),
  */
       'workflow_state' => array(
         'type' => 'list<integer>',

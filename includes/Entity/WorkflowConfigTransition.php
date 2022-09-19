@@ -156,6 +156,33 @@ class WorkflowConfigTransition extends Entity {
     if (function_exists('dpm')) { dpm($output, $t_string); }
   }
 
+  public function uri() {
+    return array(
+      'path' => 'WorkflowConfigTransition/' . $this->sid,
+    );
+  }
+
+  /**
+   * Implements EntityInterface::id().
+   */
+  public function id() {
+    return $this->tid;
+  }
+
+  /**
+   * Implements EntityInterface::entityType().
+   */
+  public function entityType() {
+    return 'WorkflowConfigTransition';
+  }
+
+  /**
+   * Implements EntityInterface::label().
+   */
+  public function label() {
+    return $this->label;
+  }
+
 
 }
 
@@ -164,7 +191,7 @@ class WorkflowConfigTransition extends Entity {
  *
  * The 'true' controller class is 'Workflow'.
  */
-class WorkflowConfigTransitionController extends EntityAPIController {
+class WorkflowConfigTransitionController extends EntityPlusController {
 
   /**
    * Overrides DrupalDefaultEntityController::cacheGet().

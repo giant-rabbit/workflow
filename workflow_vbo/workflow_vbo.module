@@ -15,7 +15,7 @@
 function workflow_vbo_action_info() {
   $actions = array();
 
-  $path = drupal_get_path('module', 'workflow_vbo') . '/actions/';
+  $path = backdrop_get_path('module', 'workflow_vbo') . '/actions/';
   include_once $path . 'given.action.inc';
   include_once $path . 'next.action.inc';
 

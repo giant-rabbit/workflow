@@ -21,7 +21,7 @@
 function _workflow_use_action_buttons($new_value = NULL) {
   global $_workflow_use_actions_buttons;
 
-  $old_value = $_workflow_use_actions_buttons ? TRUE : FALSE;
+  $old_value = $_workflow_use_actions_buttons?TRUE : FALSE;
   // Reset value if requested.
   if ($new_value !== NULL) {
     $_workflow_use_actions_buttons = $new_value;
@@ -124,9 +124,9 @@ function workflow_form_alter(&$form, &$form_state, $form_id) {
       // Add/Overwrite some other settings.
       $workflow_submit_action['#access'] = TRUE;
       $workflow_submit_action['#value'] = $option_name;
-      $workflow_submit_action['#attributes'] = ($same_state_button) ? array('class' => array('form-save-default-button')) : array();
+      $workflow_submit_action['#attributes'] = ($same_state_button)?array('class' => array('form-save-default-button')) : array();
       //$workflow_submit_action['#executes_submit_callback']  = TRUE;
-      $workflow_submit_action['#attributes']['class'][] = drupal_html_class('workflow_button_' . $option_name);
+      $workflow_submit_action['#attributes']['class'][] = backdrop_html_class('workflow_button_' . $option_name);
       // Append the form's #validate function, or it won't be called upon submit,
       // because the workflow buttons have its own #validate.
       if (isset($default_submit_action['#validate'])) {
@@ -190,8 +190,12 @@ function workflow_transition_wrapper_form(array $form, array &$form_state, $tran
   return workflow_transition_form($form, $form_state, array(), array(), '', NULL);
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function workflow_transition_form(array $form, array &$form_state, array $field, $instance, $entity_type, $entity) {
-  if (!isset ($instance['widget']['settings']['submit_function'])) {
+  if (!isset($instance['widget']['settings']['submit_function'])) {
     $instance['widget']['settings']['submit_function'] = 'workflow_transition_form_submit';
   }
 
@@ -280,11 +284,11 @@ function _workflow_transition_form_validate_buttons($form, &$form_state) {
   }
 
   /*
-    if (isset($form_state['triggering_element']['#submit'])) {
-      // We are on a View page or History tab. Try to fix the form_state.
-    else {
-      // We are on a Node/Entity/Comment form. Try to fix the form_state.
-    }
+   if (isset($form_state['triggering_element']['#submit'])) {
+   // We are on a View page or History tab. Try to fix the form_state.
+   else {
+   // We are on a Node/Entity/Comment form. Try to fix the form_state.
+   }
    */
 
   if ($field_name) {

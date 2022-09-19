@@ -467,7 +467,7 @@ class WorkflowTransition extends Entity {
         // Remember, this is only for nodes, and node_save() is not necessarily performed.
         unset($entity->workflow_comment);
         module_invoke_all('workflow', 'transition post', $old_sid, $new_sid, $entity, $force, $entity_type, $field_name, $this);
-        entity_get_controller('node')->resetCache(array($entity->nid)); // from entity_load(), node_save();
+        entity_get_controller('node')->resetCache(array($entity->nid)); // from entity_load_multiple(), node_save();
       }
       else {
         // module_invoke_all('workflow', 'transition post', $old_sid, $new_sid, $entity, $force, $entity_type, $field_name, $this);
@@ -534,7 +534,7 @@ class WorkflowTransition extends Entity {
     if (empty($this->entity) && $this->entity_type) {
       $entity_type = $this->entity_type;
       $entity_id = $this->entity_id;
-      $entity = entity_load_single($entity_type, $entity_id);
+      $entity = entity_load($entity_type, $entity_id);
 
       // Set the entity cache.
       $this->entity = $entity;
@@ -565,7 +565,7 @@ class WorkflowTransition extends Entity {
     if (!is_object($entity)) {
       $entity_id = $entity;
       // Use node API or Entity API to load the object first.
-      $entity = entity_load_single($entity_type, $entity_id);
+      $entity = entity_load($entity_type, $entity_id);
     }
     $this->entity = $entity;
     $this->entity_type = $entity_type;
@@ -678,6 +678,33 @@ class WorkflowTransition extends Entity {
     if (function_exists('dpm')) { dpm($output, $t_string); }
   }
 
+  public function uri() {
+    return array(
+      'path' => 'Workflow*Transition/' . $this->sid,
+    );
+  }
+
+  /**
+   * Implements EntityInterface::id().
+   */
+  public function id() {
+    return $this->hid;
+  }
+
+  /**
+   * Implements EntityInterface::entityType().
+   */
+  public function entityType() {
+    return 'Workflow*Transition';
+  }
+
+  /**
+   * Implements EntityInterface::label().
+   */
+  public function label() {
+    return $this->label;
+  }
+
 }
 
 /**
@@ -685,7 +712,7 @@ class WorkflowTransition extends Entity {
  *
  * The 'true' controller class is 'Workflow'.
  */
-class WorkflowTransitionController extends EntityAPIController {
+class WorkflowTransitionController extends EntityPlusController {
 
   /**
    * Overrides DrupalDefaultEntityController::cacheGet().

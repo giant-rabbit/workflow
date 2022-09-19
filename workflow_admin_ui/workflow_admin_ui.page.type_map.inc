@@ -20,7 +20,7 @@ function workflow_admin_ui_type_map_form(&$form) {
     }
   }
   if (count($workflows) == 1) {
-    drupal_set_message(t('You must create at least one workflow before content can be assigned to a workflow.'));
+    backdrop_set_message(t('You must create at least one workflow before content can be assigned to a workflow.'));
     return $form;
   }
 
@@ -57,6 +57,7 @@ function workflow_admin_ui_type_map_form(&$form) {
       '#default_value' => isset($type_map[$node_type]) ? $type_map[$node_type] : 0,
     );
 
+    // TODO This variable was probably removed in Backdrop without replacement.
     $form['type_map'][$node_type]['placement'] = array(
       '#type' => 'checkboxes',
       '#options' => $placement_options,
@@ -74,6 +75,8 @@ function workflow_admin_ui_type_map_form(&$form) {
       '#options' => $workflows,
       '#default_value' => isset($type_map[$node_type]) ? $type_map[$node_type] : 0,
     );
+    // TODO This variable was probably removed in Backdrop without replacement.
+    // TODO This variable was probably removed in Backdrop without replacement.
     $p = array(
       '#type' => 'checkboxes',
       '#options' => array(
@@ -89,8 +92,8 @@ function workflow_admin_ui_type_map_form(&$form) {
 
     $row = array(
       check_plain(t($name)),
-      drupal_render($w),
-      drupal_render($p_element),
+      backdrop_render($w),
+      backdrop_render($p_element),
     );
     $rows[] = $row;
 
@@ -111,6 +114,7 @@ function workflow_admin_ui_type_map_form(&$form) {
     // '#attributes' => array('style' => 'width: auto; clear: both;'),
   );
 
+  // TODO This variable was probably removed in Backdrop without replacement.
   $form['type_map']['workflow_access_priority'] = array(
     '#type' => 'weight',
     '#delta' => 10,
@@ -118,7 +122,7 @@ function workflow_admin_ui_type_map_form(&$form) {
     '#default_value' => variable_get('workflow_access_priority', 0),
     '#description' => t('This sets the node access priority. Changing this
       setting can be dangerous. If there is any doubt, leave it at 0. 
-      <a href="@url">Read the manual.</a>', array('@url' => url('https://api.drupal.org/api/drupal/modules!node!node.api.php/function/hook_node_access_records/7'))),
+      <a href="@url">Read the manual.</a>', array('@url' => url('https://api.drupal.org/api/backdrop/modules!node!node.api.php/function/hook_node_access_records/7'))),
   );
 
   $form['#submit'][] = 'workflow_admin_ui_type_map_form_submit';
@@ -142,16 +146,16 @@ function theme_workflow_admin_ui_type_map_form($variables) {
   foreach (node_type_get_names() as $node_type => $type_name) {
     $rows[] = array(
       check_plain(t($type_name)),
-      drupal_render($form[$node_type]['workflow']),
-      drupal_render($form[$node_type]['placement']),
+      backdrop_render($form[$node_type]['workflow']),
+      backdrop_render($form[$node_type]['placement']),
     );
   }
   $output .= theme('table', array(
-      'header' => $header,
-      'rows' => $rows,
-      'caption' => $caption,
-      // 'attributes' => array('style' => 'width: auto; clear: both;'),
-    )
+    'header' => $header,
+    'rows' => $rows,
+    'caption' => $caption,
+    // 'attributes' => array('style' => 'width: auto; clear: both;'),
+  )
   );
 
   return $output;
@@ -174,9 +178,11 @@ function workflow_admin_ui_type_map_form_submit($form, &$form_state) {
   $node_types = node_type_get_names();
   foreach ($node_types as $node_type => $type_name) {
     $wid = $form_values['type_map'][$node_type]['workflow'];
+    // TODO This variable was probably removed in Backdrop without replacement.
     variable_del('workflow_' . $node_type);
     if ($wid) {
       workflow_insert_workflow_type_map($node_type, $wid);
+      // TODO This variable was probably removed in Backdrop without replacement.
       variable_set('workflow_' . $node_type, array_keys(array_filter(($form_values['type_map'][$node_type]['placement']))));
 
       // If this type uses workflow, make sure pre-existing nodes are set
@@ -186,7 +192,7 @@ function workflow_admin_ui_type_map_form_submit($form, &$form_state) {
       }
     }
   }
-  drupal_set_message(t('The workflow mapping was saved.'));
+  backdrop_set_message(t('The workflow mapping was saved.'));
 }
 
 /**
@@ -237,5 +243,5 @@ function _workflow_node_initialize_nodes($entity_type, $node_type, $field_name, 
     workflow_execute_transition($entity_type, $entity, $field_name, $transition, $force);
   }
 
-  drupal_set_message(t('!count @type nodes have been initialized.', array('@type' => node_type_get_name($node_type), '!count' => $how_many)));
+  backdrop_set_message(t('!count @type nodes have been initialized.', array('@type' => node_type_get_name($node_type), '!count' => $how_many)));
 }

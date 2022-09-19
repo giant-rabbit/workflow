@@ -24,7 +24,6 @@ function workflow_entity_info() {
     // Make WorkflowTransition fieldable. The wid is the Transition Type.
     'fieldable' => FALSE,
     'bundle of' => 'WorkflowTransition',
-
     'exportable' => TRUE,
     'entity keys' => array(
       'id' => 'wid',
@@ -34,14 +33,14 @@ function workflow_entity_info() {
     'uri callback' => 'entity_class_uri',
     // The following is added in workflow_admin_ui.module.
     /*
-    // 'access callback' => 'workflow_access',
-    // 'admin ui' => array(
-    //   'path' => WORKFLOW_ADMIN_UI_PATH,
-    //   'file' => 'workflow_admin_ui/workflow_admin_ui.pages.inc',
-    //   'controller class' => 'EntityWorkflowUIController',
-    //   'menu wildcard' => '%workflow',
-    // ),
-     */
+ // 'access callback' => 'workflow_access',
+ // 'admin ui' => array(
+ //   'path' => WORKFLOW_ADMIN_UI_PATH,
+ //   'file' => 'workflow_admin_ui/workflow_admin_ui.pages.inc',
+ //   'controller class' => 'EntityWorkflowUIController',
+ //   'menu wildcard' => '%workflow',
+ // ),
+ */
   );
 
   $entities['WorkflowState'] = array(
@@ -75,16 +74,15 @@ function workflow_entity_info() {
       'status' => 'status',
     ),
     'label callback' => 'entity_class_label',
-    // 'uri callback' => 'entity_class_uri',
-/*
-    'view modes' => array(
-      'full' => array(
-        'label' => t('Full'),
-        'custom settings' => TRUE,
-      ),
-    ),
-    'views controller class' => 'EntityDefaultViewsController',
-    'access callback' => 'workflow_tab_access', // @todo: use to-be workflow_access here. Access to Tab <> access to workflow.
+    // 'uri callback' => 'entity_class_uri', /*
+ 'view modes' => array(
+ 'full' => array(
+ 'label' => t('Full'),
+ 'custom settings' => TRUE,
+ ),
+ ),
+ 'views controller class' => 'EntityDefaultViewsController',
+ 'access callback' => 'workflow_tab_access', // @todo: use to-be workflow_access here. Access to Tab <> access to workflow.
  */
   );
 
@@ -100,7 +98,6 @@ function workflow_entity_info() {
     'rules controller class' => 'EntityDefaultRulesController',
     'features controller class' => FALSE,
     'base table' => 'workflow_node_history',
-
     'fieldable' => TRUE,
     // Bundles are defined by the $types below.
     'bundles' => array(),
@@ -108,27 +105,21 @@ function workflow_entity_info() {
     'bundle keys' => array(
       'bundle' => 'wid',
     ),
-
-//    'admin ui' => array(
-//      'path' => WORKFLOW_ADMIN_UI_PATH . '/manage/%workflow_transition/fields2',
-//      'menu wildcard' => '%workflow_transition',
-//      'controller class' => 'EntityDefaultUIController',
-//    ),
-
+    //    'admin ui' => array( //      'path' => WORKFLOW_ADMIN_UI_PATH . '/manage/%workflow_transition/fields2', //      'menu wildcard' => '%workflow_transition', //      'controller class' => 'EntityDefaultUIController', //    ),
     'entity keys' => array(
       'id' => 'hid',
-      'bundle'=> 'wid',
+      'bundle' => 'wid',
     ),
     'label callback' => 'entity_class_label',
     'module' => 'workflow',
   );
 
-  // Add bundle info but bypass entity_load() as we cannot use it here.
+  // Add bundle info but bypass entity_load_multiple() as we cannot use it here.
   // (The bundle-setup is copied from the D7 entityform module.)
   // Get all workflows, keyed by wid.
   // Use try..catch.. to workaround #1311820, @see #2484325.
   try {
-    // Add bundle info but bypass entity_load() as we cannot use it here.
+    // Add bundle info but bypass entity_load_multiple() as we cannot use it here.
     // (The bundle-setup is copied from the D7 entityform module.)
     // Get all workflows, keyed by wid.
     $types = db_select('workflows', 'w')
@@ -138,9 +129,9 @@ function workflow_entity_info() {
   }
   catch (PDOException $ex) {
     watchdog(
-      'workflow',
-      'Failed to retrieve workflow types: %exception',
-      array('%exception' => (string)$ex),
+      'workflow', 
+      'Failed to retrieve workflow types: %exception', 
+      array('%exception' => (string) $ex), 
       WATCHDOG_ERROR);
 
     $types = array();
@@ -154,7 +145,7 @@ function workflow_entity_info() {
         'path' => WORKFLOW_ADMIN_UI_PATH . '/manage/%workflow',
         'real path' => WORKFLOW_ADMIN_UI_PATH . "/manage/$wid",
         'bundle argument' => 5,
-//        'access callback' => 'workflow_access',
+        //        'access callback' => 'workflow_access',
       ),
     );
   }
@@ -201,7 +192,7 @@ function workflow_entity_info() {
  * - workflow_entity_property_info_alter()
  * - workflow_views_views_data_alter()
  */
-function workflow_entity_property_info_alter(&$info) {
+function workflow_entity_plus_property_info_alter(&$info) {
 
   // Properties for Entites. @todo wrapper: not only nodes.
 //  $info['node']['properties']['workflows'] = array(
@@ -371,7 +362,7 @@ function _workflow_metadata_workflow_get_properties($entity, array $options, $na
     case 'tab_roles':
       // @todo: for some reason, Tab_roles gives no result.
       // Code copied from 'user' entity.
-      return isset($entity->tab_roles) ? array_keys($entity->tab_roles) : array();
+      return isset($entity->tab_roles)?array_keys($entity->tab_roles) : array();
 
     case 'langcode':
       // Gets the language code of a Workflow Field, hence its State, Transitions.
@@ -399,7 +390,7 @@ function _workflow_metadata_workflow_get_properties($entity, array $options, $na
       $entity_wrapper = entity_metadata_wrapper($entity->entity_type, $entity->nid);
       return $entity_wrapper;
 
-    // The following properties need more love. Also test their tokens!
+      // The following properties need more love. Also test their tokens!
     case 'options':
       return 'n/a';
   }
@@ -413,8 +404,8 @@ function _workflow_metadata_workflow_get_properties($entity, array $options, $na
  * fields, not 'form' fields. Use hook_field_extra_fields instead.
  *
  * hook_field_extra_fields() is invoked by _field_extra_fields_pre_render(), which is a pre-render function used by field_attach_form(), and field_attach_view().
- * @see https://api.drupal.org/api/drupal/modules!field!field.api.php/function/hook_field_extra_fields/7
- * @see http://drupal.stackexchange.com/questions/10527/how-should-i-use-hook-field-extra-fields
+ * @see https://api.drupal.org/api/backdrop/modules!field!field.api.php/function/hook_field_extra_fields/7
+ * @see http://backdrop.stackexchange.com/questions/10527/how-should-i-use-hook-field-extra-fields
  *
  */
 function workflow_field_extra_fields() {
@@ -446,7 +437,7 @@ function workflow_field_extra_fields() {
         ),
       ),
       'display' => array(
-      )
+      ),
     );
   }
 
@@ -458,37 +449,57 @@ function workflow_field_extra_fields() {
  *
  * Also used as Menu wild card loader {wildcard_name}_load for '%workflow'.
  *
- * @see http://www.phpgainers.com/content/creating-menu-wildcard-loader-function-drupal-7
+ * @see http://www.phpgainers.com/content/creating-menu-wildcard-loader-function-backdrop-7
  * @todo D8: deprecated in favour of workflow_load_single(), not needed for menu.
  *
  * $id can be numeric ID ('wid') or machine name ('name').
- * Caveat: this only works for entities with EntityAPIControllerExportable. #1741956
+ * Caveat: this only works for entities with EntityPlusControllerExportable. #1741956
  */
 function workflow_load($id) {
   // Some Admin UI menu page loaders pass the $wid as string, not int.
   // @see workflow_admin_ui_edit_form_validate().
-  $workflow = entity_load_single('Workflow', $id);
+  $workflow = entity_load('Workflow', $id);
   return $workflow;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function workflow_load_by_name($name) {
   $workflows = entity_load_multiple_by_name('Workflow', array($name));
   return reset($workflows);
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function workflow_load_multiple_by_name($names = FALSE) {
   $workflows = entity_load_multiple_by_name('Workflow', $names);
   return $workflows;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function workflow_load_single($id) {
-  return entity_load_single('Workflow', $id);
+  return entity_load('Workflow', $id);
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function workflow_load_multiple($ids = FALSE, $reset = FALSE) {
-  return entity_load('Workflow', $ids, array(), $reset);
+  return entity_load_multiple('Workflow', $ids, array(), $reset);
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function workflow_create($name) {
   // @todo: avoid double names in db-table, to get rid of this line of code.
   $workflow = workflow_load_by_name($name);
@@ -534,14 +545,26 @@ function workflow_state_load($sid) {
   return WorkflowState::load($sid);
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function workflow_state_load_single($sid) {
   return WorkflowState::load($sid);
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function workflow_state_load_multiple($wid = 0, $reset = FALSE) {
   return WorkflowState::getStates($wid, $reset);
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function workflow_state_load_by_name($name, $wid) {
   return WorkflowState::loadByName($name, $wid);
 }
@@ -585,5 +608,5 @@ function workflow_transition_load_single($entity_type, $entity_id, $field_name =
  *   object representing one row from the {workflow_node_history} table.
  */
 function workflow_transition_load($hid) {
-  return entity_load_single('WorkflowTransition', $hid);
+  return entity_load('WorkflowTransition', $hid);
 }

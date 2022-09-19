@@ -14,7 +14,7 @@
 function workflow_block_info() {
   $blocks['workflow_transition'] = array(
     'info' => t('Workflow transition form'),
-    'cache' => DRUPAL_NO_CACHE, // DRUPAL_CACHE_PER_ROLE will be assumed.
+    'cache' => BACKDROP_NO_CACHE, // BACKDROP_CACHE_PER_ROLE will be assumed.
   );
 
   return $blocks;
@@ -32,7 +32,7 @@ function workflow_block_view($delta) {
   if ((arg(0) == 'node') && (arg(1) !== NULL) ) {
     $entity_type = arg(0);
     $entity_id = arg(1);
-    $entity = entity_load_single($entity_type, $entity_id);
+    $entity = entity_load($entity_type, $entity_id);
   }
 
   if ($entity) {
@@ -44,7 +44,7 @@ function workflow_block_view($delta) {
 
     // Get the current sid.
     $current_sid = workflow_node_current_state($entity, $entity_type, $field_name);
-    $current_state = ($current_sid) ? workflow_state_load_single($current_sid) : NULL;
+    $current_state = ($current_sid)?workflow_state_load_single($current_sid) : NULL;
     $workflow = ($current_state) ? $current_state->getWorkflow() : NULL;
     if (!$workflow) {
       return $block;
@@ -64,7 +64,7 @@ function workflow_block_view($delta) {
     }
 
     $form_id = implode('_', array('workflow_transition_form', $entity_type, $entity_id, $field_id));
-    $form += drupal_get_form($form_id, $field, $instance, $entity_type, $entity);
+    $form += backdrop_get_form($form_id, $field, $instance, $entity_type, $entity);
 
     $block['content'] = $form;
     if ($block['content']) {
