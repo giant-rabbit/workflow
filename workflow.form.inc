@@ -21,7 +21,7 @@
 function _workflow_use_action_buttons($new_value = NULL) {
   global $_workflow_use_actions_buttons;
 
-  $old_value = $_workflow_use_actions_buttons?TRUE : FALSE;
+  $old_value = $_workflow_use_actions_buttons ? TRUE : FALSE;
   // Reset value if requested.
   if ($new_value !== NULL) {
     $_workflow_use_actions_buttons = $new_value;

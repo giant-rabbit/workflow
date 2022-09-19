@@ -182,17 +182,17 @@ function workflownode_tokens($type, $tokens, array $data = array(), array $optio
             break;
 
           case 'workflow-current-state-name':
-            $replacements[$original] = $sanitize?check_plain($states[$new_sid]->getName()) : $states[$new_sid]->getName();
+            $replacements[$original] = $sanitize ? check_plain($states[$new_sid]->getName()) : $states[$new_sid]->getName();
             break;
 
           case 'workflow-old-state-name':
             $old_state_name = (!empty($states[$old_sid])) ? $states[$old_sid]->getName() : 'Deleted state';
-            $replacements[$original] = $sanitize?check_plain($old_state_name) : $old_state_name;
+            $replacements[$original] = $sanitize ? check_plain($old_state_name) : $old_state_name;
             break;
 
           case 'workflow-current-state-updating-user-name':
             $name = user_format_name($account);
-            $replacements[$original] = $sanitize?check_plain($name) : $name;
+            $replacements[$original] = $sanitize ? check_plain($name) : $name;
             break;
 
           case 'workflow-current-state-updating-user-link':
@@ -205,7 +205,7 @@ function workflownode_tokens($type, $tokens, array $data = array(), array $optio
             break;
 
           case 'workflow-current-state-updating-user-mail':
-            $replacements[$original] = $sanitize?check_plain($account->mail) : $account->mail;
+            $replacements[$original] = $sanitize ? check_plain($account->mail) : $account->mail;
             break;
 
           case 'workflow-current-state-updating-user-mailto':
@@ -213,7 +213,7 @@ function workflownode_tokens($type, $tokens, array $data = array(), array $optio
             break;
 
           case 'workflow-current-state-log-entry':
-            $replacements[$original] = $sanitize?check_markup($comment, filter_default_format(), $langcode) : $comment;
+            $replacements[$original] = $sanitize ? check_markup($comment, filter_default_format(), $langcode) : $comment;
             break;
 
           case 'workflow-current-state-date-iso':
@@ -221,7 +221,7 @@ function workflownode_tokens($type, $tokens, array $data = array(), array $optio
             break;
 
           case 'workflow-current-state-date-tstamp':
-            $replacements[$original] = $sanitize?check_plain($date) : $date;
+            $replacements[$original] = $sanitize ? check_plain($date) : $date;
             break;
 
           case 'workflow-current-state-date-formatted':

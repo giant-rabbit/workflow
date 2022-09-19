@@ -27,7 +27,7 @@ class workflow_views_handler_filter_sid extends views_handler_filter_in_operator
       // Count the workflows to determine grouping.
       // Even if $wid is not set, we may only have 1 workflow.
       $grouped = FALSE;
-      $workflows = workflow_load_multiple($wid?array($wid) : FALSE);
+      $workflows = workflow_load_multiple($wid ? array($wid) : FALSE);
       $count = count($workflows);
       if ($count > 1) {
         $states += array('' => t('No state'));

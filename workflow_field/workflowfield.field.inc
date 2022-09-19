@@ -117,7 +117,7 @@ function _workflowfield_metadata_property_get($entity, array $options, $name, $e
     }
   }
   // For an empty single-valued field, we have to return NULL.
-  return $field['cardinality'] == 1 ? ($values?reset($values) : NULL) : $values;
+  return $field['cardinality'] == 1 ? ($values ? reset($values) : NULL) : $values;
 }
 
 /**
@@ -128,7 +128,7 @@ function _workflowfield_metadata_property_set($entity, $name, $value, $langcode,
   $field = field_info_field($name);
   $columns = array_keys($field['columns']);
   $langcode = entity_metadata_field_get_language($entity_type, $entity, $field, $langcode);
-  $values = $field['cardinality'] == 1?array($value) : (array) $value;
+  $values = $field['cardinality'] == 1 ? array($value) : (array) $value;
 }
 
 

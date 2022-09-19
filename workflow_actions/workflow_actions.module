@@ -125,7 +125,7 @@ function workflow_actions_trigger_info() {
    $wid = arg(4);
    }
    */
-  $workflows = workflow_load_multiple($wid?array($wid) : FALSE);
+  $workflows = workflow_load_multiple($wid ? array($wid) : FALSE);
 
   // Get the mapping for Node API.
   // Build an array of Wid => array of types.

@@ -181,7 +181,7 @@ function workflow_vbo_given_state_action_form(array $context) {
   $entity_bundle = '';
 
   // Get the common Workflow, or create a dummy Workflow.
-  $workflow = $wid?workflow_load($wid) : workflow_create('dummy VBO');
+  $workflow = $wid ? workflow_load($wid) : workflow_create('dummy VBO');
   // Show the current state and the Workflow form to allow state changing.
   // N.B. This part is replicated in hook_node_view, workflow_tab_page, workflow_vbo.
   if ($workflow) {
