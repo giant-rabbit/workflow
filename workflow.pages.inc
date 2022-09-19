@@ -23,7 +23,7 @@ function workflow_tab_page($entity_type, $entity = NULL) {
 
   // Figure out the $entity's bundle and id.
   list($entity_id, , $entity_bundle) = entity_extract_ids($entity_type, $entity);
-  $entity_id = entity_id($entity_type, $entity);
+  $entity_id = $entity->id();
 
   // Get the current sid. $field_name is updated with relevant value.
   $current_sid = workflow_node_current_state($entity, $entity_type, $field_name);

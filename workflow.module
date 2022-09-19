@@ -796,7 +796,7 @@ function workflow_node_previous_state($entity, $entity_type, $field_name) {
     // Get Id. Is empty when creating a node.
     $entity_id = 0;
     if (!$sid) {
-      $entity_id = entity_id($entity_type, $entity);
+      $entity_id = $entity->id();
     }
     if (!$sid && $entity_id) {
       // Read the history with an explicit langcode.
@@ -1245,7 +1245,7 @@ function workflow_autoload_info() {
     'WorkflowStateController' => 'includes/Entity/WorkflowState.php',
     'WorkflowTransition' => 'includes/Entity/WorkflowTransition.php',
     'WorkflowTransitionController' => 'includes/Entity/WorkflowTransition.php',
-    'WorkflowTransitionController' => 'includes/Entity/WorkflowTransitionController.php',
+    // 'WorkflowTransitionController' => 'includes/Entity/WorkflowTransitionController.php',
     'WorkflowD7Base' => 'includes/Field/WorkflowD7Base.php',
     'WorkflowDefaultWidget' => 'includes/Field/WorkflowDefaultWidget.php',
     'WorkflowItem' => 'includes/Field/WorkflowItem.php',

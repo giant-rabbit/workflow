@@ -21,7 +21,7 @@
 function workflow_views_views_data_alter(&$data) {
   // In version 7.x-1.2, the following groups were defined in
   // workflow_views_views_data. Now, in 7.x-2.x the Transitions have become
-  // entities, and are already declared by EntityDefaultViewsController.
+  // entities, and are already declared by EntityPlusDefaultViewsController.
   // So, the overrides have now moved to _alter, to avoid Notices.
 
   // WorkflowTransition data.

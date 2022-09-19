@@ -81,7 +81,7 @@ function workflow_entity_info() {
  'custom settings' => TRUE,
  ),
  ),
- 'views controller class' => 'EntityDefaultViewsController',
+ 'views controller class' => 'EntityPlusDefaultViewsController',
  'access callback' => 'workflow_tab_access', // @todo: use to-be workflow_access here. Access to Tab <> access to workflow.
  */
   );
@@ -94,7 +94,7 @@ function workflow_entity_info() {
     'metadata controller class' => 'EntityDefaultMetadataController',
     // Do not use 'extra fields controller class'. Use hook_field_extra_fields instead.
     // 'extra fields controller class' => 'EntityDefaultExtraFieldsController',
-    'views controller class' => 'EntityDefaultViewsController',
+    'views controller class' => 'EntityPlusDefaultViewsController',
     'rules controller class' => 'EntityDefaultRulesController',
     'features controller class' => FALSE,
     'base table' => 'workflow_node_history',
@@ -155,7 +155,7 @@ function workflow_entity_info() {
     'entity class' => 'WorkflowScheduledTransition',
     'controller class' => 'WorkflowTransitionController',
     'metadata controller class' => 'EntityDefaultMetadataController',
-    'views controller class' => 'EntityDefaultViewsController',
+    'views controller class' => 'EntityPlusDefaultViewsController',
     'rules controller class' => 'EntityDefaultRulesController',
     'features controller class' => FALSE,
     'base table' => 'workflow_scheduled_transition',

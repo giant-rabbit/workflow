@@ -150,7 +150,7 @@ class EntityWorkflowUIController extends EntityDefaultUIController {
     $admin_path = $this->path;
     $label = entity_label($this->entityType, $entity);
     $vars = array('%entity' => $this->entityInfo['label'], '%label' => $label);
-    $wid = entity_id($this->entityType, $entity);
+    $wid = $entity->id();
     $edit_link = l(t('edit'), "$admin_path/manage/$wid/edit");
 
     switch ($op) {

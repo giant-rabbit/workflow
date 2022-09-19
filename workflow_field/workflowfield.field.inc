@@ -87,7 +87,7 @@ function _workflowfield_metadata_property_get($entity, array $options, $name, $e
   $field = field_info_field($name);
   $columns = array_keys($field['columns']);
   $langcode = isset($options['language']) ? $options['language']->language : LANGUAGE_NONE;
-  $langcode = entity_metadata_field_get_language($entity_type, $entity, $field, $langcode, TRUE);
+  $langcode = entity_plus_metadata_field_get_language($entity_type, $entity, $field, $langcode, TRUE);
 
   if (isset($entity->{$name}[$langcode])) {
     foreach ($entity->{$name}[$langcode] as $delta => $data) {
@@ -127,7 +127,7 @@ function _workflowfield_metadata_property_set($entity, $name, $value, $langcode,
   // return entity_metadata_field_property_set($entity, $name, $value, $langcode, $entity_type, $info);
   $field = field_info_field($name);
   $columns = array_keys($field['columns']);
-  $langcode = entity_metadata_field_get_language($entity_type, $entity, $field, $langcode);
+  $langcode = entity_plus_metadata_field_get_language($entity_type, $entity, $field, $langcode);
   $values = $field['cardinality'] == 1 ? array($value) : (array) $value;
 }
 

@@ -347,7 +347,7 @@ class WorkflowState extends Entity {
     $entity_uid = isset($entity->uid) ? $entity->uid : 0;
 
     // Fetch entity_id from entity for _newness_ check
-    $entity_id = ($entity) ? entity_id($entity_type, $entity) : '';
+    $entity_id = ($entity) ? $entity->id() : '';
 
     if ($force || ($user && $user->uid == 1)) {
       // Superuser is special. And $force allows Rules to cause transition.
@@ -439,7 +439,7 @@ class WorkflowState extends Entity {
 
     $options = array();
 
-    $entity_id = ($entity) ? entity_id($entity_type, $entity) : '';
+    $entity_id = ($entity) ? $entity->id() : '';
     $current_sid = $this->sid;
 
     // Get options from page cache, using a non-empty index (just to be sure).

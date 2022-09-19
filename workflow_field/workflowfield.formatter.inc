@@ -60,7 +60,7 @@ function workflowfield_field_formatter_view($entity_type, $entity, $field, $inst
   // Add the form/widget to the formatter, and include the nid in the form id,
   // to allow multiple forms per page (in listings, with hook_forms() ).
   // Ultimately, this is a wrapper for WorkflowDefaultWidget.
-  $entity_id = entity_id($entity_type, $entity);
+  $entity_id = $entity->id();
   $form_id = implode('_', array('workflow_transition_form', $entity_type, $entity_id, $field_id));
   $element = backdrop_get_form($form_id, $field, $instance, $entity_type, $entity);
 

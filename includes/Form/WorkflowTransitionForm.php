@@ -37,7 +37,7 @@ class WorkflowTransitionForm { // extends FormBase {
   public function getFormId() {
     $field = $this->field;
     // No entity may be set on VBO form.
-    $entity_id = ($this->entity) ? entity_id($this->entity_type, $this->entity) : '';
+    $entity_id = ($this->entity) ? $this->entity->id() : '';
     // The field is not set when editing a stand alone Transition.
     $field_id = isset($field['id']) ? $field['id'] : '';
 
@@ -74,7 +74,7 @@ class WorkflowTransitionForm { // extends FormBase {
       $entity_type = $this->entity_type = $transition->entity_type;
       // Figure out the $entity's bundle and id.
       list(, , $entity_bundle) = entity_extract_ids($entity_type, $entity);
-      $entity_id = entity_id($entity_type, $entity);
+      $entity_id = $entity->id();
 
       // Show the current state and the Workflow form to allow state changing.
       // N.B. This part is replicated in hook_node_view, workflow_tab_page, workflow_vbo, transition_edit.
@@ -87,7 +87,7 @@ class WorkflowTransitionForm { // extends FormBase {
       // Get data from normal parameters.
       $entity = $this->entity;
       $entity_type = $this->entity_type;
-      $entity_id = ($entity) ? entity_id($entity_type, $entity) : 0;
+      $entity_id = ($entity) ? $entity->id() : 0;
 
       $field = $this->field;
       $field_name = $field['field_name'];
@@ -604,7 +604,7 @@ class WorkflowTransitionForm { // extends FormBase {
       // have a state yet, old_sid contains '(creation)' state. But if the
       // content is not associated to a workflow, old_sid is now 0. This may
       // happen in workflow_vbo, if you assign a state to non-relevant nodes.
-      $entity_id = entity_id($entity_type, $entity);
+      $entity_id = $entity->id();
       drupal_set_message(t('Error: content @id has no workflow attached. The data is not saved.', array('@id' => $entity_id)), 'error');
       // The new state is still the previous state.
       $new_sid = $old_sid;
@@ -674,7 +674,7 @@ class WorkflowTransitionForm { // extends FormBase {
   public function getTransition($old_sid, array $items, $field_name, stdClass $user, array &$form = array(), array &$form_state = array()) {
     $entity_type = $this->entity_type;
     $entity = $this->entity;
-    // $entity_id = entity_id($entity_type, $entity);
+    // $entity_id = $entity->id();
     $field_name = !empty($this->field) ? $this->field['field_name'] : '';
 
     if (isset($items[0]['transition'])) {
