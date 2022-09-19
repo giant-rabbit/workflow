@@ -84,6 +84,7 @@ class EntityWorkflowUIController extends EntityDefaultUIController {
 
     // Allow modules to insert their own workflow operations.
     foreach ($form['table']['#rows'] as &$row) {
+      dpm($row);
       $url = $row[0]['data']['#url'];
       $workflow = $url['options']['entity'];
       foreach ($actions = module_invoke_all('workflow_operations', 'workflow', $workflow) as $action) {
@@ -128,7 +129,7 @@ class EntityWorkflowUIController extends EntityDefaultUIController {
     $status = $entity->status;
 
     // @see parent::overviewTableRow() how to determine a deletable entity.
-    if (!entity_has_status($this->entityType, $entity, ENTITY_IN_CODE) && !$entity->isDeletable())  {
+    if (!entity_plus_has_status($this->entityType, $entity, ENTITY_IN_CODE) && !$entity->isDeletable())  {
       // Set to a state that does not allow deleting, but allows other actions.
       $entity->status = ENTITY_IN_CODE;
     }

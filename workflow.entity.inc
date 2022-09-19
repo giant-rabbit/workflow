@@ -93,9 +93,9 @@ function workflow_entity_info() {
     'controller class' => 'WorkflowTransitionController',
     'metadata controller class' => 'EntityDefaultMetadataController',
     // Do not use 'extra fields controller class'. Use hook_field_extra_fields instead.
-    // 'extra fields controller class' => 'EntityDefaultExtraFieldsController',
+    // 'extra fields controller class' => 'EntityPlusDefaultExtraFieldsController',
     'views controller class' => 'EntityPlusDefaultViewsController',
-    'rules controller class' => 'EntityDefaultRulesController',
+    'rules controller class' => 'EntityPlusDefaultRulesController',
     'features controller class' => FALSE,
     'base table' => 'workflow_node_history',
     'fieldable' => TRUE,
@@ -156,7 +156,7 @@ function workflow_entity_info() {
     'controller class' => 'WorkflowTransitionController',
     'metadata controller class' => 'EntityDefaultMetadataController',
     'views controller class' => 'EntityPlusDefaultViewsController',
-    'rules controller class' => 'EntityDefaultRulesController',
+    'rules controller class' => 'EntityPlusDefaultRulesController',
     'features controller class' => FALSE,
     'base table' => 'workflow_scheduled_transition',
     'entity keys' => array(
@@ -236,6 +236,7 @@ function workflow_entity_plus_property_info_alter(&$info) {
 
   // Properties for WorkflowState.
   $info['WorkflowState']['properties']['wid']['type'] = 'Workflow';
+  $info['WorkflowState']['properties']['wid']['label'] = 'Workflow';
   //
   $info['WorkflowState']['properties']['label'] = $info['WorkflowState']['properties']['state'];
   $info['WorkflowState']['properties']['label']['label'] = t("Label");
@@ -284,6 +285,7 @@ function workflow_entity_plus_property_info_alter(&$info) {
   $info['WorkflowTransition']['properties']['label'] = $info['WorkflowConfigTransition']['properties']['label'];
   $info['WorkflowTransition']['properties']['workflow'] = $info['WorkflowConfigTransition']['properties']['workflow'];
   $info['WorkflowTransition']['properties']['wid'] = $info['WorkflowConfigTransition']['properties']['wid'];
+  $info['WorkflowTransition']['properties']['wid']['label'] = 'Workflow ID';
   $info['WorkflowTransition']['properties']['hid']['label'] = 'Transition ID';
 
   // @todo: Unify ID's to old_sid, new_sid.

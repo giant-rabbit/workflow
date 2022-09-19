@@ -722,6 +722,7 @@ class Workflow extends Entity implements WorkflowInterface {
   public function uri() {
     return array(
       'path' => 'workflow/' . $this->wid,
+      'options' => array('entity' => $this->wid),
     );
   }
 
