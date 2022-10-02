@@ -192,7 +192,7 @@ function workflow_entity_info() {
  * - workflow_entity_property_info_alter()
  * - workflow_views_views_data_alter()
  */
-function workflow_entity_plus_property_info_alter(&$info) {
+function workflow_entity_property_info_alter(&$info) {
 
   // Properties for Entites. @todo wrapper: not only nodes.
 //  $info['node']['properties']['workflows'] = array(
@@ -260,8 +260,12 @@ function workflow_entity_plus_property_info_alter(&$info) {
     'entity token' => FALSE,
   );
   // @todo: Unify ID's to old_sid, new_sid.
+  $info['WorkflowConfigTransition']['properties']['label']['label'] = 'The ID of old state.';
+  $info['WorkflowConfigTransition']['properties']['label']['description'] = 'The ID of old state.';
   $info['WorkflowConfigTransition']['properties']['sid']['description'] = 'The ID of old state.';
+  $info['WorkflowConfigTransition']['properties']['sid']['label'] = 'The ID of old state.';
   $info['WorkflowConfigTransition']['properties']['target_sid']['description'] = 'The ID of new state.';
+  $info['WorkflowConfigTransition']['properties']['target_sid']['label'] = 'The ID of new state.';
 
   // Unify objects to old_state, new_state.
   $info['WorkflowConfigTransition']['properties']['old_state'] = array(
@@ -279,6 +283,7 @@ function workflow_entity_plus_property_info_alter(&$info) {
     'getter callback' => '_workflow_metadata_workflow_get_properties',
   );
   $info['WorkflowConfigTransition']['properties']['roles']['type'] = 'list<integer>';
+  $info['WorkflowConfigTransition']['properties']['roles']['label'] = 'list<integer>';
   $info['WorkflowConfigTransition']['properties']['roles']['description'] = t("The roles that may execute the transition.");
 
   // Properties for WorkflowTransition.
@@ -289,7 +294,9 @@ function workflow_entity_plus_property_info_alter(&$info) {
   $info['WorkflowTransition']['properties']['hid']['label'] = 'Transition ID';
 
   // @todo: Unify ID's to old_sid, new_sid.
+  $info['WorkflowTransition']['properties']['old_sid']['label'] = 'The ID of old state.';
   $info['WorkflowTransition']['properties']['old_sid']['description'] = 'The ID of old state.';
+  $info['WorkflowTransition']['properties']['sid']['label'] = 'The ID of new state.';
   $info['WorkflowTransition']['properties']['sid']['description'] = 'The ID of new state.';
   // Unify objects to old_state, new_state.
   $info['WorkflowTransition']['properties']['old_state'] = $info['WorkflowConfigTransition']['properties']['old_state'];
@@ -319,9 +326,12 @@ function workflow_entity_plus_property_info_alter(&$info) {
 
   // Properties for WorkflowScheduledTransition.
   $info['WorkflowScheduledTransition']['properties']['scheduled']['type'] = 'date';
+  $info['WorkflowScheduledTransition']['properties']['scheduled']['label'] = 'date';
   $info['WorkflowScheduledTransition']['properties']['workflow'] = $info['WorkflowTransition']['properties']['workflow'];
   // @todo: Unify ID's to old_sid, new_sid.
+  $info['WorkflowScheduledTransition']['properties']['old_sid']['label'] = 'The ID of old state.';
   $info['WorkflowScheduledTransition']['properties']['old_sid']['description'] = 'The ID of old state.';
+  $info['WorkflowScheduledTransition']['properties']['sid']['label'] = 'The ID of new state.';
   $info['WorkflowScheduledTransition']['properties']['sid']['description'] = 'The ID of new state.';
   // Unify objects to old_state, new_state.
   $info['WorkflowScheduledTransition']['properties']['old_state'] = $info['WorkflowTransition']['properties']['old_state'];
