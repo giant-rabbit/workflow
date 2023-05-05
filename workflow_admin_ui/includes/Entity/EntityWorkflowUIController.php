@@ -86,7 +86,7 @@ class EntityWorkflowUIController extends EntityDefaultUIController {
     foreach ($form['table']['#rows'] as &$row) {
       //debug($row);
       $url = $row[0]['data']['#url'];
-      $workflow = $url['options']['entity'];
+      $workflow = entity_load('Workflow', $url['options']['entity']);
       foreach ($actions = module_invoke_all('workflow_operations', 'workflow', $workflow) as $action) {
         $action['attributes'] = isset($action['attributes']) ? $action['attributes'] : array();
         $row[] = l(strtolower($action['title']), $action['href'], $action['attributes']);

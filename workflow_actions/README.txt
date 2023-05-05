@@ -1,11 +1,5 @@
-
-CONTENTS OF THIS FILE
----------------------
-
- * Introduction
-
-INTRODUCTION
-------------
+Workflow actions
+================
 
 There is an important issue to keep in mind as you use action hooks and workflow!!
 

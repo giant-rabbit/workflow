@@ -135,14 +135,14 @@ complete text.
 Maintainers
 -----------
 
-- [docwilmot](https://github.com/docwilmot)
-- [herbdool](https://github.com/herbdool)
-- Seeking more maintainers.
+- This module is not yet fully operational.
+- Seeking maintainers.
 
 Credit
 ------
 
-Ported to Backdrop by [docwilmot](https://github.com/docwilmot).
+Ported to Backdrop by [docwilmot](https://github.com/docwilmot)
+and [herbdool](https://github.com/herbdool).
 
 Drupal Maintainers:
 

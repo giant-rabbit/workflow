@@ -618,8 +618,8 @@ class WorkflowTransitionForm { // extends FormBase {
     // Try to execute the transition. Return $old_sid when error.
     if (!$transition) {
       // This should only happen when testing/developing.
-      backdrop_set_message(t('Error: the transition from @old_sid to @new_sid could not be generated.',
-        array('@old_sid' => $old_sid, '@new_sid' => $new_sid)), 'error');
+      backdrop_set_message(t('Error: the transition from @old_sid could not be generated.',
+        array('@old_sid' => $old_sid)), 'error');
       // The current value is still the previous state.
       $new_sid = $old_sid;
     }
