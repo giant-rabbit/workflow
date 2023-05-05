@@ -28,7 +28,6 @@ function workflowfield_field_formatter_view($entity_type, $entity, $field, $inst
   // E.g., on ScheduledTransition->execute()? But this function is mostly used in UI.
 
   $field_name = isset($field['field_name']) ? $field['field_name'] : '';
-  $field_id = isset($field['id']) ? $field['id'] : 0;
 
   $current_sid = workflow_node_current_state($entity, $entity_type, $field_name);
   $current_state = workflow_state_load_single($current_sid);
@@ -61,7 +60,7 @@ function workflowfield_field_formatter_view($entity_type, $entity, $field, $inst
   // to allow multiple forms per page (in listings, with hook_forms() ).
   // Ultimately, this is a wrapper for WorkflowDefaultWidget.
   $entity_id = $entity->id();
-  $form_id = implode('_', array('workflow_transition_form', $entity_type, $entity_id, $field_id));
+  $form_id = implode('_', array('workflow_transition_form', $entity_type, $entity_id, $field_name));
   $element = backdrop_get_form($form_id, $field, $instance, $entity_type, $entity);
 
   return $element;

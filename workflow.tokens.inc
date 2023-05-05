@@ -194,8 +194,8 @@ function workflow_tokens($type, $tokens, array $data = array(), array $options =
         $wrapper = entity_metadata_wrapper($data['workflow_token_type'], $data[$data['workflow_token_type']]);
         $property_name = str_replace('-', '_', $name);
         try {
-          if ($name == 'workflow' || 
-            $name == 'states' || 
+          if ($name == 'workflow' ||
+            $name == 'states' ||
             $name == 'transitions'
           ) {
             $replacement = _workflow_token_get_token($wrapper->$property_name, $options);

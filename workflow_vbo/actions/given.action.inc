@@ -17,7 +17,8 @@ function workflow_vbo_given_action_info() {
       'label' => t('Change workflow state of post to new state'),
       'configurable' => TRUE,
       'triggers' => array('any'),
-      //      'aggregate' => TRUE, //      'pass rows' => TRUE, // you will have $context['views row'] as the current selected row.
+      //      'aggregate' => TRUE,
+ //      'pass rows' => TRUE, // you will have $context['views row'] as the current selected row.
     ),
   );
 }
@@ -90,7 +91,7 @@ function workflow_vbo_given_state_action($entity, array $context) {
   $field_name = NULL;
   $current_sid = workflow_node_current_state($entity, $entity_type, $field_name);
   if (!$current_sid) {
-    watchdog('workflow_vbo', 'Unable to get current workflow state of entity %id.', 
+    watchdog('workflow_vbo', 'Unable to get current workflow state of entity %id.',
       array('%id' => $entity_id));
     return;
   }
@@ -187,12 +188,11 @@ function workflow_vbo_given_state_action_form(array $context) {
   if ($workflow) {
     $field = _workflow_info_field($field_name, $workflow);
     $field_name = $field['field_name'];
-    $field_id = $field['id'];
     $instance = field_info_instance($entity_type, $field_name, $entity_bundle);
 
     // Hide the submit button. VBO has its own 'next' button.
     $instance['widget']['settings']['submit_function'] = '';
-    if (!$field_id) {
+    if (!$instance) {
       // This is a Workflow Node workflow. Set widget options as in v7.x-1.2
       $field['settings']['widget']['comment'] = isset($workflow->options['comment_log_tab']) ? $workflow->options['comment_log_tab'] : 1; // vs. ['comment_log_node'];
       $field['settings']['widget']['current_status'] = TRUE;
@@ -203,15 +203,15 @@ function workflow_vbo_given_state_action_form(array $context) {
     }
   }
 
-  // Add the form/widget to the formatter, and include the nid and field_id in the form id,
+  // Add the form/widget to the formatter, and include the nid and field_name in the form id,
   // to allow multiple forms per page (in listings, with hook_forms() ).
   // Ultimately, this is a wrapper for WorkflowDefaultWidget.
   // $form['workflow_current_state'] = workflow_state_formatter($entity_type, $entity, $field, $instance);
-  $form_id = implode('_', array('workflow_transition_form', $entity_type, $entity_id, $field_id));
+  $form_id = implode('_', array('workflow_transition_form', $entity_type, $entity_id, $field_name));
   $form += backdrop_get_form($form_id, $field, $instance, $entity_type, $entity);
 
   if (!$entity) {
-    // For the Advanced actions form on admin/config/system/actions, 
+    // For the Advanced actions form on admin/config/system/actions,
     // remove the Submit function.
     unset($form['#submit']);
   }

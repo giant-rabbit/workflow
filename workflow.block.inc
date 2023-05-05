@@ -55,15 +55,14 @@ function workflow_block_view($delta) {
     // @todo: support multiple workflows per entity.
     // For workflow_tab_page with multiple workflows, use a separate view. See [#2217291].
     $field = _workflow_info_field($field_name, $workflow);
-    $field_id = $field['id'];
     $instance = field_info_instance($entity_type, $field_name, $entity_bundle);
-    if (!$field_id) {
+    if (!$instance) {
       // This is a Workflow Node workflow. Set widget options as in v7.x-1.2
       $field['settings']['widget']['comment'] = isset($workflow->options['comment_log_tab']) ? $workflow->options['comment_log_tab'] : 1; // vs. ['comment_log_node'];
       $field['settings']['widget']['current_status'] = TRUE;
     }
 
-    $form_id = implode('_', array('workflow_transition_form', $entity_type, $entity_id, $field_id));
+    $form_id = implode('_', array('workflow_transition_form', $entity_type, $entity_id, $field_name));
     $form += backdrop_get_form($form_id, $field, $instance, $entity_type, $entity);
 
     $block['content'] = $form;

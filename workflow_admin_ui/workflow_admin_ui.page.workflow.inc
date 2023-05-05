@@ -14,7 +14,10 @@
  * @return array
  *   HTML form and permissions table.
  */
-function workflow_admin_ui_edit_form($form, &$form_state, $workflow = NULL, $op) {
+function workflow_admin_ui_edit_form($form, &$form_state, $workflow, $op) {
+  if (!$workflow) {
+    $workflow = NULL;
+  }
   $noyes = array(t('No'), t('Yes'));
   $fieldset_options = array(
     0 => t('No fieldset'),
@@ -219,14 +222,14 @@ function workflow_admin_ui_edit_form_validate($form, &$form_state) {
 
   // Make sure workflow name is not numeric.
   if (ctype_digit($name)) {
-    form_set_error('name', t('Please choose a non-numeric name for your workflow.', 
+    form_set_error('name', t('Please choose a non-numeric name for your workflow.',
       array('%name' => $name)));
   }
 
   // Make sure workflow name is not a duplicate.
   foreach (workflow_load_multiple() as $stored_workflow) {
     if ($name == $stored_workflow->name && $workflow->wid != $stored_workflow->wid) {
-      form_set_error('name', t('A workflow with the name %name already exists. Please enter another name for this workflow.', 
+      form_set_error('name', t('A workflow with the name %name already exists. Please enter another name for this workflow.',
         array('%name' => $name)));
       break;
     }

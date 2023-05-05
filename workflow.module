@@ -505,7 +505,7 @@ function workflow_entity_field_save($entity_type, $entity, $field_name, $langcod
     $entity->{$field_name}[$langcode][0]['workflow'] = $value;
   }
 
-//  entity_save($entity_type, $entity);
+  $entity->save();
   field_attach_presave($entity_type, $entity);
   field_attach_update($entity_type, $entity);
   if ($entity_type == 'node') {
@@ -1147,7 +1147,6 @@ function _workflow_info_field($field_name, $workflow = NULL) {
   }
   else {
     $field['field_name'] = '';
-    $field['id'] = 0;
     $field['settings']['wid'] = 0;
     $field['settings']['widget'] = array();
     if ($workflow != NULL) {

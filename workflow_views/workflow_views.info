@@ -5,5 +5,5 @@ backdrop = 1.x
 type = module
 
 dependencies[] = workflow
-dependencies[] = views (>3.3)
+dependencies[] = views
 

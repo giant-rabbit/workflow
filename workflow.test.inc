@@ -129,7 +129,7 @@ function _workflow_test_entity2() {
   $ts = entity_load_multiple('WorkflowConfigTransition', array(6));
   $t = reset($ts);
   $t->roles += array(3 => 3);
-  entity_save('WorkflowConfigTransition', $t);
+  $t->save();
 }
 
 function _workflow_test_entity3() {
@@ -172,9 +172,9 @@ function _workflow_test_entity_allowable() {
   $t->save();
   $t3 = $t = $workflow->createTransition('open', 'closed');
   $t->roles = $roles;
-  DPM($t3);
+  dpm($t3);
   $t->save();
-  DPM($t3);
+  dpm($t3);
   $t4 = $t = $workflow->createTransition('closed', 'open');
   $t->roles = $roles;
   $t->save();

@@ -16,6 +16,7 @@ class WorkflowTransitionForm { // extends FormBase {
   protected $field;
   protected $instance;
   protected $entity;
+  protected $entity_type;
 
   /**
    * Constructs a WorkflowTransitionForm object.
@@ -39,9 +40,9 @@ class WorkflowTransitionForm { // extends FormBase {
     // No entity may be set on VBO form.
     $entity_id = ($this->entity) ? $this->entity->id() : '';
     // The field is not set when editing a stand alone Transition.
-    $field_id = isset($field['id']) ? $field['id'] : '';
+    $field_name = isset($field['name']) ? $field['name'] : '';
 
-    return implode('_', array('workflow_transition_form', $this->entity_type, $entity_id, $field_id));
+    return implode('_', array('workflow_transition_form', $this->entity_type, $entity_id, $field_name));
   }
 
   /**
@@ -179,7 +180,7 @@ class WorkflowTransitionForm { // extends FormBase {
     if (!isset($form_state['build_info']['base_form_id'])) {
       // Strange: on node form, the base_form_id is node_form,
       // but on term form, it is not set.
-      // In both cases, it is OK. 
+      // In both cases, it is OK.
     }
     else {
       if ($form_state['build_info']['base_form_id'] == 'workflow_transition_wrapper_form') {
@@ -565,7 +566,7 @@ class WorkflowTransitionForm { // extends FormBase {
         $entity->{$field_name}[$langcode][0]['workflow'] = $form_state['input'];
         // @todo & totest: Save ony the field, not the complete entity.
         // workflow_entity_field_save($entity_type, $entity, $field_name, $langcode, FALSE);
-        entity_save($entity_type, $entity);
+        $entity->save();
 
         return; // <-- exit!
       }
@@ -575,7 +576,7 @@ class WorkflowTransitionForm { // extends FormBase {
         $entity->{$field_name}[$langcode] = $items;
         // @todo & totest: Save ony the field, not the complete entity.
         // workflow_entity_field_save($entity_type, $entity, $field_name, $langcode, FALSE);
-        entity_save($entity_type, $entity);
+        $entity->save();
 
         return; // <-- exit!
       }
