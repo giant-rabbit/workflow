@@ -208,7 +208,7 @@ function workflow_tokens($type, $tokens, array $data = array(), array $options =
           }
         }
         catch (EntityMetadataWrapperException $e) {
-          // dpm('token not found: ' . $name);
+          // debug('token not found: ' . $name);
           // If tokens for not existing values are requested, just do nothing.
         }
       }

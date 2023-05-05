@@ -43,6 +43,7 @@ function workflow_tab_page($entity_type, $entity = NULL) {
   }
 
   $form_id = implode('_', array('workflow_transition_form', $entity_type, $entity_id, $field_name));
+  debug($form_id);
   $form += backdrop_get_form($form_id, $field, $instance, $entity_type, $entity);
 
   $output = backdrop_render($form);

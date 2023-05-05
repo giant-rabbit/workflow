@@ -191,7 +191,7 @@ function hook_field_widget_form_alter(&$element, &$form_state, $context) {
   // Widget. (Even though the message is only shown once.)
   // D7: This hook is introduced in Drupal 7.8.
   // workflow_debug(__FILE__, __FUNCTION__, __LINE__, '', '');
-  // dpm($context['widget']->getPluginId());
+  // debug($context['widget']->getPluginId());
 }
 
 function hook_field_widget_workflow_default_form_alter(&$element, $form_state, $context) {
@@ -199,7 +199,7 @@ function hook_field_widget_workflow_default_form_alter(&$element, $form_state, $
   // D7: This hook is introduced in Drupal 7.8.
   // D8: This name is specified in the annotation of WorkflowDefaultWidget.
   // workflow_debug(__FILE__, __FUNCTION__, __LINE__, '', '');
-  // dpm($context['widget']->getPluginId());
+  // debug($context['widget']->getPluginId());
 
   // A widget on an entity form.
 

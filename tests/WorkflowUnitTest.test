@@ -28,7 +28,7 @@ class WorkflowExampleTestCase extends BackdropWebTestCase {
   public function testWorkflow() {
 
 //    $workflows = workflow_load_multiple();
-//    dpm($workflows, "These are the current Workflows in the system.");
+//    debug($workflows, "These are the current Workflows in the system.");
     $wid = 1;
     $workflow = workflow_load_single($wid);
     $this->assertEqual($workflow->wid, $wid, t('The wid of the Workflow should be the same as we decided.'));
@@ -45,9 +45,9 @@ class WorkflowExampleTestCase extends BackdropWebTestCase {
     $this->testId = '2';
 
     $wf_state =  $workflow->createState('State 2');
-dpm($wf_state, 'This is state ' . $sid . ' of workflow ' . $wid);
+debug($wf_state, 'This is state ' . $sid . ' of workflow ' . $wid);
     $workflow = $wf_state->getWorkflow();
-dpm($workflow, 'This is the workflow of sid ' . $sid);
+debug($workflow, 'This is the workflow of sid ' . $sid);
 
 
 return;

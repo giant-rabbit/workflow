@@ -142,7 +142,7 @@ class WorkflowConfigTransition extends Entity {
   /**
    * Helper debugging function to easily show the contents of a transition.
    */
-  public function dpm($function = 'not_specified') {
+  public function debug($function = 'not_specified') {
     $transition = $this;
     $time = NULL;
 
@@ -153,7 +153,7 @@ class WorkflowConfigTransition extends Entity {
     $output[] = 'From/To = ' . $transition->sid . ' > ' . $transition->target_sid . ' @ ' . $time;
     //$output[] = 'Comment = ' . $user_name . ' says: ' . $transition->getComment();
     //$output[] = 'Forced  = ' . ($transition->isForced() ? 'yes' : 'no');
-    if (function_exists('dpm')) { dpm($output, $t_string); }
+    if (function_exists('debug')) { debug($output, $t_string); }
   }
 
   public function uri() {

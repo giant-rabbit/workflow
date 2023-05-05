@@ -53,33 +53,33 @@ function _workflow_test_entity1() {
   $workflow = NULL;
 
   // Create a workflow.
-  dpm('--- Create Workflow ---');
-  dpm($workflow, '--- test workflow_create() pre');
+  debug('--- Create Workflow ---');
+  debug($workflow, '--- test workflow_create() pre');
   $workflow = workflow_create('test' . REQUEST_TIME);
-  dpm($workflow, '--- test workflow_create() pre_save');
+  debug($workflow, '--- test workflow_create() pre_save');
   $workflow->save();
-  dpm($workflow, '--- test workflow_create() post_save');
+  debug($workflow, '--- test workflow_create() post_save');
 
   // Create States for the workflow.
-  dpm('--- Create States ---');
-  dpm($workflow->getStates(TRUE), '--- test getStates() pre');
-  dpm($workflow, '--- test getStates() pre');
+  debug('--- Create States ---');
+  debug($workflow->getStates(TRUE), '--- test getStates() pre');
+  debug($workflow, '--- test getStates() pre');
   $s1 = $workflow->createState('first');
-  dpm($workflow->getStates(TRUE), '--- test getStates() post s1');
-  dpm($workflow, '--- test getStates() post s1');
+  debug($workflow->getStates(TRUE), '--- test getStates() post s1');
+  debug($workflow, '--- test getStates() post s1');
   $s2 = $workflow->createState('second');
   $s3 = $workflow->createState('third');
 //  $s1->save();
 //  $s2->save();
 //  $s3->save();
-  dpm($workflow->getStates(TRUE), '--- test getStates() post');
-  dpm($workflow, '--- test getStates() post');
-  dpm($s3->getWorkflow(), '--- test getStates() post');
+  debug($workflow->getStates(TRUE), '--- test getStates() post');
+  debug($workflow, '--- test getStates() post');
+  debug($s3->getWorkflow(), '--- test getStates() post');
 
   // Create Transitions for the workflow.
-  dpm('--- Create Transitions ---');
-  dpm('--- Create Transition s1->s2 ---');
-  dpm($workflow->getTransitions(), '--- test getTransitions() pre');
+  debug('--- Create Transitions ---');
+  debug('--- Create Transition s1->s2 ---');
+  debug($workflow->getTransitions(), '--- test getTransitions() pre');
   $roles = array(-1, 5);
   $t1 = $workflow->createTransition($s1->sid, $s2->sid);
   $t1->label = 'transitions t1';
@@ -87,11 +87,11 @@ function _workflow_test_entity1() {
   // The transition was initially saved in createState,
   // but without roles and name.
   $t1->save();
-  dpm($t1, '-- test show new Transition');
-  dpm($workflow->getTransitions(), '-- test getTransitions() post 1');
+  debug($t1, '-- test show new Transition');
+  debug($workflow->getTransitions(), '-- test getTransitions() post 1');
 
-  dpm('--- Create Transition s1->s2 ---');
-  dpm($workflow->getTransitions(), '--- test getTransitions() pre');
+  debug('--- Create Transition s1->s2 ---');
+  debug($workflow->getTransitions(), '--- test getTransitions() pre');
   $roles = array(-1, 6);
   $t2 = $workflow->createTransition($s2->sid, $s3->sid);
   $t2->label = 'transitions t2';
@@ -99,31 +99,31 @@ function _workflow_test_entity1() {
   // The transition was initially saved in createState,
   // but without roles and name.
   $t2->save();
-  dpm($t2, '-- test show new Transition');
-  dpm($workflow->getTransitions(), '-- test getTransitions() post 2');
+  debug($t2, '-- test show new Transition');
+  debug($workflow->getTransitions(), '-- test getTransitions() post 2');
 
-  dpm('--- Show resulting Workflow ---');
-  dpm($workflow);
-  dpm('todo: Test if workflow, states and transitions are properly shown in Admin UI.');
-  dpm('--- Show resulting Workflow after workflow_load---');
+  debug('--- Show resulting Workflow ---');
+  debug($workflow);
+  debug('todo: Test if workflow, states and transitions are properly shown in Admin UI.');
+  debug('--- Show resulting Workflow after workflow_load---');
   // Refresh the workflow, and show again.
   $workflow2 = workflow_load($workflow->wid);
-  dpm($workflow2);
+  debug($workflow2);
 
-//  dpm($t->uri());
-//  dpm($t->label());
+//  debug($t->uri());
+//  debug($t->label());
 
   // Remove the workflow and its components.
-  dpm('--- Delete resulting Workflow ---');
+  debug('--- Delete resulting Workflow ---');
   $workflow->delete();
-  dpm($workflow);
-  dpm('todo: Test if workflow, states and transitions are properly deleted.');
+  debug($workflow);
+  debug('todo: Test if workflow, states and transitions are properly deleted.');
 }
 
 function _workflow_test_entity2() {
   $w = workflow_load('test');
-  dpm($w);
-  dpm($w->getTransitions());
+  debug($w);
+  debug($w->getTransitions());
   return;
 
   $ts = entity_load_multiple('WorkflowConfigTransition', array(6));
@@ -134,16 +134,16 @@ function _workflow_test_entity2() {
 
 function _workflow_test_entity3() {
   $workflow = workflow_load_single(1);
-  dpm($workflow->getStates());
-  dpm($workflow->loadTransitions());
+  debug($workflow->getStates());
+  debug($workflow->loadTransitions());
 //  $t1 = $workflow->createTransition($s1->sid, $s2->sid);
 //  $t1->save();
-//  dpm($t1);
+//  debug($t1);
 //  $t2 = $workflow->createTransition('third', 'second');
 //  $t2->save();
-//  dpm($t2);
-//  dpm($t->uri());
-//  dpm($t->label());
+//  debug($t2);
+//  debug($t->uri());
+//  debug($t->label());
   // $workflow->delete();
 
 //  $ts = entity_load_multiple('WorkflowConfigTransition', array(6));
@@ -172,28 +172,28 @@ function _workflow_test_entity_allowable() {
   $t->save();
   $t3 = $t = $workflow->createTransition('open', 'closed');
   $t->roles = $roles;
-  dpm($t3);
+  debug($t3);
   $t->save();
-  dpm($t3);
+  debug($t3);
   $t4 = $t = $workflow->createTransition('closed', 'open');
   $t->roles = $roles;
   $t->save();
 
-  dpm($s2->getOptions('', NULL, '', $user, FALSE));
+  debug($s2->getOptions('', NULL, '', $user, FALSE));
   // returns TRUE if the role is allowed to do the transition.
   $rc = $t3->isAllowed($role = 2);
-  dpm($t3);
-  dpm('this result must be TRUE: ' . (int) $rc);
+  debug($t3);
+  debug('this result must be TRUE: ' . (int) $rc);
   $rc = $t3->isAllowed($role = 3);
-  dpm('this result must be FALSE: ' . (int) $rc);
+  debug('this result must be FALSE: ' . (int) $rc);
 
   $rc = $workflow->GetTransitionsBySid($s3->sid);
-  dpm($rc, 'allowed transitions from ' . $s3->label());
+  debug($rc, 'allowed transitions from ' . $s3->label());
 
   $ts = $workflow->getTransitions();
-  dpm($ts);
+  debug($ts);
   $ts = $workflow->getTransitionsBySid($s3->sid);
-  dpm($ts);
+  debug($ts);
 
   $workflow->delete();
 }
@@ -203,57 +203,57 @@ function _workflow_test_metadata() {
   // Find the first, arbitrary workflow.
   $workflows = workflow_load_multiple();
   $workflow = reset($workflows);
-  dpm($workflow);
+  debug($workflow);
 
   // Add a Workflow wrapper;
   $wrapper = $workflow_wrapper = entity_metadata_wrapper('Workflow', $workflow);
-  dpm(t('---- Workflow: showing objects ---'));
-  dpm($wrapper);
+  debug(t('---- Workflow: showing objects ---'));
+  debug($wrapper);
 
   // Get properties of the Workflow.
-  dpm(t('---- Workflow: showing getters ---'));
-  dpm($wrapper->wid->label() . ' => ' . $wrapper->wid->value() );
-  dpm($wrapper->name->label() . ' => ' . $wrapper->name->value() );
-  dpm($wrapper->label->label() . ' => ' . $wrapper->label->value() );
-  dpm($wrapper->status->value() );
-  dpm($wrapper->tab_roles->value() );
-  //dpm($wrapper->states->value() );
-  dpm($wrapper->states->optionsList() );
-  //dpm($wrapper->transitions->value() );
-  dpm($wrapper->options->optionsList() );
+  debug(t('---- Workflow: showing getters ---'));
+  debug($wrapper->wid->label() . ' => ' . $wrapper->wid->value() );
+  debug($wrapper->name->label() . ' => ' . $wrapper->name->value() );
+  debug($wrapper->label->label() . ' => ' . $wrapper->label->value() );
+  debug($wrapper->status->value() );
+  debug($wrapper->tab_roles->value() );
+  //debug($wrapper->states->value() );
+  debug($wrapper->states->optionsList() );
+  //debug($wrapper->transitions->value() );
+  debug($wrapper->options->optionsList() );
   // Set properties of the Workflow.
-  //dpm($wrapper->label->set('ssdfdss') );
+  //debug($wrapper->label->set('ssdfdss') );
   // ...
 
   // Get properties of States.
-  dpm(t('---- start of WorkflowState getters ---'));
+  debug(t('---- start of WorkflowState getters ---'));
   $states = $workflow->getStates();
   $state = reset($states);
   $state_wrapper = entity_metadata_wrapper('WorkflowState', $state);
-  dpm($states);
-  dpm(  $state_wrapper->sid->value()  );
-  dpm(  $state_wrapper->wid->value()  );
-  dpm(  $state_wrapper->weight->value()  );
-  //dpm(  $state_wrapper->state->value()  );
-  dpm(  $state_wrapper->status->value()  );
+  debug($states);
+  debug(  $state_wrapper->sid->value()  );
+  debug(  $state_wrapper->wid->value()  );
+  debug(  $state_wrapper->weight->value()  );
+  //debug(  $state_wrapper->state->value()  );
+  debug(  $state_wrapper->status->value()  );
 
-  //dpm(  $wrapper->author->mail->value()  );
-  //dpm(  $wrapper->title->value(array('sanitize' => TRUE))  );
+  //debug(  $wrapper->author->mail->value()  );
+  //debug(  $wrapper->title->value(array('sanitize' => TRUE))  );
 
   // Get the transitions.
-  dpm(t('---- start of WorkflowConfigTransition getters ---'));
+  debug(t('---- start of WorkflowConfigTransition getters ---'));
   $transitions = $state->getTransitions();
-  dpm($transitions);
+  debug($transitions);
   $options = $state->getOptions('', NULL, '', NULL);
-  dpm($options);
+  debug($options);
   $transition = reset($transitions);
-  dpm($transition);
+  debug($transition);
 
   $transition_wrapper = entity_metadata_wrapper('WorkflowConfigTransition', $transition);
-  dpm(  $transition_wrapper  );
-  //dpm(  $transition_wrapper->old_sid->value()  );
-  dpm(  $transition_wrapper->old_state->value()  );
-  dpm(  $transition_wrapper->old_state->value()->sid  );
+  debug(  $transition_wrapper  );
+  //debug(  $transition_wrapper->old_sid->value()  );
+  debug(  $transition_wrapper->old_state->value()  );
+  debug(  $transition_wrapper->old_state->value()->sid  );
 
 }
 
@@ -381,10 +381,10 @@ function _workflow_test_tokens($entity_id = 76, $entity_type = 'node', $field_na
   $data['entity_type'] = 'node';
 
   // Display the tokenized text.
-  dpm($node);
-  dpm(token_replace(  $t_greetings, $data));
-  dpm(token_replace(  $t_node_all, $data));
-//  dpm(token_replace(  $t_node_sub, $data));
+  debug($node);
+  debug(token_replace(  $t_greetings, $data));
+  debug(token_replace(  $t_node_all, $data));
+//  debug(token_replace(  $t_node_sub, $data));
 
 }
 
@@ -490,11 +490,11 @@ function _workflow_test_tokens_term($entity_id = '2', $entity_type = 'taxonomy_t
   $options['sanitize'] = FALSE;
   $options['clear'] = TRUE;
   $options['language'] = NULL;
-  //dpm($node);
-  //dpm($data);
+  //debug($node);
+  //debug($data);
   // Display the tokenized text.
-//  dpm(token_replace($t_greetings, $data));
-  dpm(token_replace($t_node_all, $data, $options));
+//  debug(token_replace($t_greetings, $data));
+  debug(token_replace($t_node_all, $data, $options));
 }
 
 /**

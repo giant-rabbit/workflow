@@ -84,7 +84,7 @@ class EntityWorkflowUIController extends EntityDefaultUIController {
 
     // Allow modules to insert their own workflow operations.
     foreach ($form['table']['#rows'] as &$row) {
-      dpm($row);
+      //debug($row);
       $url = $row[0]['data']['#url'];
       $workflow = $url['options']['entity'];
       foreach ($actions = module_invoke_all('workflow_operations', 'workflow', $workflow) as $action) {

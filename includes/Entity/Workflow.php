@@ -744,7 +744,7 @@ class Workflow extends Entity implements WorkflowInterface {
    * Implements EntityInterface::label().
    */
   public function label() {
-    return $this->name;
+    return $this->label;
   }
 
 }
