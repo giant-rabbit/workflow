@@ -23,7 +23,7 @@ function workflow_access_priority_form($form, $form_state) {
     '#title' => t('Workflow Access Priority'),
     '#default_value' => config_get('workflow_access.settings', 'workflow_access_priority'),
     '#description' => t('This sets the node access priority. Changing this
-      setting can be dangerous. If there is any doubt, leave it at 0. 
+      setting can be dangerous. If there is any doubt, leave it at 0.
       <a href="@url">Read the manual.</a>', array('@url' => url('https://api.drupal.org/api/backdrop/modules!node!node.api.php/function/hook_node_access_records/7'))),
   );
   $form['submit'] = array(
@@ -76,19 +76,20 @@ function workflow_access_form($form, $form_state, Workflow $workflow) {
     foreach (workflow_access_get_workflow_access_by_sid($state->sid) as $access) {
       $count++;
       if ($access->grant_view) {
-        $view[] = $access->rid;
+        $view[] = $access->gid;
       }
       if ($access->grant_update) {
-        $update[] = $access->rid;
+        $update[] = $access->gid;
       }
       if ($access->grant_delete) {
-        $delete[] = $access->rid;
+        $delete[] = $access->gid;
       }
     }
     // Allow view grants by default for anonymous and authenticated users,
     // if no grants were set up earlier.
+    // @todo can't use role names for grant ID.
     if (!$count) {
-      $view = array(BACKDROP_ANONYMOUS_RID, BACKDROP_AUTHENTICATED_RID);
+      $view = array(BACKDROP_ANONYMOUS_ROLE, BACKDROP_AUTHENTICATED_ROLE);
     }
     // @todo: better tables using a #theme function instead of direct #prefixing.
     $form[$state->sid] = array(
@@ -144,13 +145,13 @@ function workflow_access_form_submit($form, &$form_state) {
     if (!is_numeric($sid)) {
       continue;
     }
-    foreach ($access['view'] as $rid => $checked) {
+    foreach ($access['view'] as $role => $checked) {
       $data = array(
         'sid' => $sid,
-        'rid' => $rid,
+        'role' => $role,
         'grant_view' => (!empty($checked)) ? (bool) $checked : 0,
-        'grant_update' => (!empty($access['update'][$rid])) ? (bool) $access['update'][$rid] : 0,
-        'grant_delete' => (!empty($access['delete'][$rid])) ? (bool) $access['delete'][$rid] : 0,
+        'grant_update' => (!empty($access['update'][$role])) ? (bool) $access['update'][$role] : 0,
+        'grant_delete' => (!empty($access['delete'][$role])) ? (bool) $access['delete'][$role] : 0,
       );
       workflow_access_insert_workflow_access_by_sid($data);
     }

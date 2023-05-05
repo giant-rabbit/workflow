@@ -105,27 +105,10 @@ function workflow_access_help($path, $arg) {
 }
 
 /**
- * Implements hook_features_api().
- *
- * Tell the Features module that we intend to provide one exportable component.
- */
-function workflow_access_features_api() {
-  return array(
-    'workflow_access' => array(
-      'name' => t('Workflow access'),
-      'file' => backdrop_get_path('module', 'workflow_access') . '/workflow_access.features.inc',
-      'default_hook' => 'workflow_access_features_default_settings',
-      'default_file' => FEATURES_DEFAULTS_INCLUDED,
-      'feature_source' => TRUE,
-    ),
-  );
-}
-
-/**
  * Implements hook_node_grants().
  *
  * Supply the workflow access grants. We are simply using
- * roles as access lists, so rids translate directly to gids.
+ * roles as access lists, so roles get translates to gids.
  */
 function workflow_access_node_grants($account, $op) {
   return array(
@@ -204,13 +187,14 @@ function workflow_access_node_access_records($node) {
 
     if ($current_sid = workflow_node_current_state($node, 'node', $field_name)) {
       foreach (workflow_access_get_workflow_access_by_sid($current_sid) as $grant) {
-        $realm = ($uid > 0 && $grant->rid == WORKFLOW_ROLE_AUTHOR_RID) ? 'workflow_access_owner' : 'workflow_access';
-        $gid = ($uid > 0 && $grant->rid == WORKFLOW_ROLE_AUTHOR_RID) ? $uid : $grant->rid;
+        $realm = ($uid > 0 && $grant->role == WORKFLOW_ROLE_AUTHOR_RID) ? 'workflow_access_owner' : 'workflow_access';
+        // @todo the gid has to be an integer so need to use a new gid column in table.
+        $gid = ($uid > 0 && $grant->role == WORKFLOW_ROLE_AUTHOR_RID) ? $uid : $grant->role;
 
         // Anonymous ($uid == 0) author is not allowed for role 'author' (== -1).
         // Both logically (Anonymous having more rights then authenticated)
         // and technically: $gid must be a positive int.
-        if ($gid < 0) { // if ($uid == 0 && $grant->rid == WORKFLOW_ROLE_AUTHOR_RID) {
+        if ($gid < 0) { // if ($uid == 0 && $grant->role == WORKFLOW_ROLE_AUTHOR_RID) {
           continue;
         }
 
@@ -269,8 +253,8 @@ function workflow_access_get_workflow_access_by_sid($sid) {
 /**
  * Given a sid and rid (the unique key), delete all access data for this state.
  */
-function workflow_access_delete_workflow_access_by_sid_rid($sid, $rid) {
-  db_delete('workflow_access')->condition('sid', $sid)->condition('rid', $rid)->execute();
+function workflow_access_delete_workflow_access_by_sid_rid($sid, $role) {
+  db_delete('workflow_access')->condition('sid', $sid)->condition('role', $role)->execute();
 }
 
 /**
@@ -285,6 +269,6 @@ function workflow_access_delete_workflow_access_by_sid($sid) {
  */
 function workflow_access_insert_workflow_access_by_sid(&$data) {
   $data = (object) $data;
-  workflow_access_delete_workflow_access_by_sid_rid($data->sid, $data->rid);
+  workflow_access_delete_workflow_access_by_sid_rid($data->sid, $data->role);
   backdrop_write_record('workflow_access', $data);
 }

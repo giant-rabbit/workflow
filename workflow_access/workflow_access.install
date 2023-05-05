@@ -14,12 +14,20 @@ function workflow_access_schema() {
     'fields' => array(
       'sid' => array(
         'type' => 'int',
-        'description' => 'The Workflow state ID.',
+        'description' => 'Primary Key: The Workflow state ID.',
         'not null' => TRUE,
       ),
-      'rid' => array(
-        'type' => 'int',
+      'gid' => array(
+        'type' => 'serial',
+        'description' => 'Primary Key: The Workflow grant ID.',
         'not null' => TRUE,
+      ),
+      'role' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'description' => 'The name of the role.',
+        'not null' => TRUE,
+        'default' => '',
       ),
       'grant_view' => array(
         'type' => 'int',
@@ -43,9 +51,10 @@ function workflow_access_schema() {
         'default' => 0,
       ),
     ),
-    'primary key' => array('sid', 'rid'),
+    'primary key' => array('sid', 'gid'),
     'indexes' => array(
-      'rid' => array('rid'),
+      'gid' => array('gid'),
+      'role' => array('role'),
     ),
   );
   return $schema;
@@ -80,6 +89,48 @@ function workflow_access_update_1000() {
   $config->save();
 
   update_variable_del('workflow_access_priority');
+}
+
+/**
+ * Change workflow_access table column from rid to role
+ */
+function workflow_access_update_1001() {
+  // Update role ID to be a varchar instead of an integer.
+  if (db_field_exists('workflow_access', 'rid')) {
+    db_drop_primary_key('workflow_access');
+    db_drop_index('workflow_access', 'rid');
+    if (db_field_exists('workflow_access', 'role')) {
+      db_drop_field('workflow_access', 'role');
+    }
+    $role_column = array(
+      'type' => 'varchar',
+      'length' => 64,
+      'description' => 'Primary Key: The name of the role.',
+      'not null' => TRUE,
+      'default' => '',
+    );
+    db_change_field('workflow_access', 'rid', 'role', $role_column);
+    db_add_index('workflow_access', 'role', array('role'));
+  }
+}
+
+/**
+ * Create gid column in workflow_access table.
+ */
+function workflow_access_update_1002() {
+  if (!db_field_exists('workflow_access', 'gid')) {
+    db_drop_primary_key('workflow_access');
+    $gid_column = array(
+      'type' => 'int',
+      'description' => 'Primary Key: The Workflow grant ID.',
+      'not null' => TRUE,
+      'default' => 0,
+    );
+    db_add_field('workflow_access', 'gid', $gid_column);
+
+    db_add_primary_key('workflow_access', array('sid', 'gid'));
+    db_add_index('workflow_access', 'gid', array('gid'));
+  }
 }
 
 /**
