@@ -269,7 +269,7 @@ class Workflow extends Entity implements WorkflowInterface {
       // That's all, so let's remind them to create some states.
       $message = t('Workflow %workflow has no states defined, so it cannot be assigned to content yet.',
         array('%workflow' => $workflow_name));
-      drupal_set_message($message, 'warning');
+      backdrop_set_message($message, 'warning');
 
       // Skip allowing this workflow.
       $is_valid = FALSE;
@@ -281,7 +281,7 @@ class Workflow extends Entity implements WorkflowInterface {
       // That's all, so let's remind them to create some transitions.
       $message = t('Workflow %workflow has no transitions defined, so it cannot be assigned to content yet.',
         array('%workflow' => $workflow_name));
-      drupal_set_message($message, 'warning');
+      backdrop_set_message($message, 'warning');
 
       // Skip allowing this workflow.
       $is_valid = FALSE;
@@ -296,7 +296,7 @@ class Workflow extends Entity implements WorkflowInterface {
           '@url' => url(WORKFLOW_ADMIN_UI_PATH . "/manage/$wid"),
         )
       );
-      drupal_set_message($message, 'warning');
+      backdrop_set_message($message, 'warning');
 
       // Skip allowing this workflow.
       // $is_valid = FALSE;
@@ -416,7 +416,7 @@ class Workflow extends Entity implements WorkflowInterface {
     }
     else {
       // This should never happen, but it did during testing.
-      drupal_set_message(t('There are no workflow states available. Please notify your site administrator.'), 'error');
+      backdrop_set_message(t('There are no workflow states available. Please notify your site administrator.'), 'error');
       $sid = 0;
     }
     return $sid;
@@ -674,11 +674,11 @@ class Workflow extends Entity implements WorkflowInterface {
             return $field['settings']['watchdog_log'];
           }
         }
-        drupal_set_message('Setting Workflow::getSetting(' . $key . ') does not exist', 'error');
+        backdrop_set_message('Setting Workflow::getSetting(' . $key . ') does not exist', 'error');
         break;
 
       default:
-        drupal_set_message('Setting Workflow::getSetting(' . $key . ') does not exist', 'error');
+        backdrop_set_message('Setting Workflow::getSetting(' . $key . ') does not exist', 'error');
     }
   }
 
@@ -793,7 +793,7 @@ class WorkflowController extends EntityPlusControllerExportable {
   }
 
   /**
-   * Overrides DrupalDefaultEntityController::cacheGet().
+   * Overrides DefaultEntityController::cacheGet().
    *
    * Override default function, due to Core issue #1572466.
    */
@@ -806,7 +806,7 @@ class WorkflowController extends EntityPlusControllerExportable {
   }
 
   /**
-   * Overrides DrupalDefaultEntityController::cacheSet().
+   * Overrides DefaultEntityController::cacheSet().
    */
   /*
     // protected function cacheSet($entities) { }
@@ -815,7 +815,7 @@ class WorkflowController extends EntityPlusControllerExportable {
    */
 
   /**
-   * Overrides DrupalDefaultEntityController::resetCache().
+   * Overrides DefaultEntityController::resetCache().
    *
    * Called by workflow_reset_cache, to
    * Reset the Workflow when States, Transitions have been changed.
@@ -825,7 +825,7 @@ class WorkflowController extends EntityPlusControllerExportable {
   // }
 
   /**
-   * Overrides DrupalDefaultEntityController::attachLoad().
+   * Overrides DefaultEntityController::attachLoad().
    */
   protected function attachLoad(&$queried_entities, $revision_id = FALSE) {
     foreach ($queried_entities as $entity) {

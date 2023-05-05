@@ -194,7 +194,7 @@ class WorkflowConfigTransition extends Entity {
 class WorkflowConfigTransitionController extends EntityPlusController {
 
   /**
-   * Overrides DrupalDefaultEntityController::cacheGet().
+   * Overrides DefaultEntityController::cacheGet().
    *
    * Override default function, due to core issue #1572466.
    */

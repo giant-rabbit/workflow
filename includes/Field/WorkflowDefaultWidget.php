@@ -62,7 +62,7 @@ class WorkflowDefaultWidget extends WorkflowD7Base { // D8: extends WidgetBase {
     $entity = $this->entity;
     $entity_type = $this->entity_type;
 
-    // Add the element. Do not use drupal_get_form, or you will have a form in a form.
+    // Add the element. Do not use backdrop_get_form, or you will have a form in a form.
     workflow_transition_form($form, $form_state, $field, $instance, $entity_type, $entity);
   }
 

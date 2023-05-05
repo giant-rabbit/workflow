@@ -104,7 +104,7 @@ class WorkflowTransition extends Entity {
     // Load the supplied entity.
     if ($entity && !$entity_type) {
       // Not all parameters are passed programmatically.
-      drupal_set_message(t('Wrong call to new Workflow*Transition()'), 'error');
+      backdrop_set_message(t('Wrong call to new Workflow*Transition()'), 'error');
     }
     elseif ($entity) {
       $this->setEntity($entity_type, $entity);
@@ -128,7 +128,7 @@ class WorkflowTransition extends Entity {
     }
     elseif (!$old_sid) {
       // Not all parameters are passed programmatically.
-      drupal_set_message(
+      backdrop_set_message(
         t('Wrong call to constructor Workflow*Transition(@old_sid to @new_sid)', array('@old_sid' => $old_sid, '@new_sid' => $new_sid)),
         'error');
     }
@@ -287,7 +287,7 @@ class WorkflowTransition extends Entity {
     );
 
     if (!$this->getOldState()) {
-      drupal_set_message($message = t('You tried to set a Workflow State, but
+      backdrop_set_message($message = t('You tried to set a Workflow State, but
         the entity is not relevant. Please contact your system administrator.'),
         'error');
       $message = 'Setting a non-relevant Entity from state %old to %new';
@@ -367,7 +367,7 @@ class WorkflowTransition extends Entity {
         'uid' => $user->uid,
         'transition' => $this,
       );
-      drupal_alter('workflow_comment', $this->comment, $context);
+      backdrop_alter('workflow_comment', $this->comment, $context);
     }
 
     // Now, change the database.
@@ -715,7 +715,7 @@ class WorkflowTransition extends Entity {
 class WorkflowTransitionController extends EntityPlusController {
 
   /**
-   * Overrides DrupalDefaultEntityController::cacheGet().
+   * Overrides DefaultEntityController::cacheGet().
    *
    * Override default function, due to core issue #1572466.
    */

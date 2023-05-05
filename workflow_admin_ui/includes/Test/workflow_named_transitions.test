@@ -5,7 +5,7 @@
  * Tests for the Workflow Named Transitions module.
  */
 
-class WorkflowNamedTransitionsTest extends DrupalWebTestCase {
+class WorkflowNamedTransitionsTest extends BackdropWebTestCase {
   function getInfo() {
     return array(
       'name' => 'Workflow Named Transitions Test',
@@ -19,22 +19,22 @@ class WorkflowNamedTransitionsTest extends DrupalWebTestCase {
   }
 
   function testEditLabelsExistsAdmin() {
-    $user = $this->drupalCreateUser(array('administer workflow'));
-    $this->drupalLogin($user);
-    $this->drupalGet('admin/build/workflow');
+    $user = $this->backdropCreateUser(array('administer workflow'));
+    $this->backdropLogin($user);
+    $this->backdropGet('admin/build/workflow');
     // HTML of the Edit labels tab.
     $this->assertRaw(sprintf('admin/build/workflow/labels">%s</a>', t('Edit labels')), t('Edit labels tab found'));
-    $this->drupalGet('admin/build/workflow/labels');
+    $this->backdropGet('admin/build/workflow/labels');
     $this->assertResponse('200');
   }
 
   function testEditLabelsMissing() {
-    $user = $this->drupalCreateUser(array('access content'));
-    $this->drupalLogin($user);
-    $this->drupalGet('admin/build/workflow');
+    $user = $this->backdropCreateUser(array('access content'));
+    $this->backdropLogin($user);
+    $this->backdropGet('admin/build/workflow');
     // HTML of the Edit labels tab
     $this->assertNoRaw(sprintf('admin/build/workflow/labels">%s</a>', t('Edit labels')), t('Edit labels tab not found'));
-    $this->drupalGet('admin/build/workflow/labels');
+    $this->backdropGet('admin/build/workflow/labels');
     $this->assertResponse('403');
   }
 

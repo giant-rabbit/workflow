@@ -327,13 +327,13 @@ class WorkflowTransitionForm { // extends FormBase {
     // permission. State change cannot be scheduled at entity creation because
     // that leaves the entity in the (creation) state.
     if ($settings_schedule == TRUE) {
-      if (variable_get('configurable_timezones', 1) && $user->uid && drupal_strlen($user->timezone)) {
+      if (config_get('system.date','user_configurable_timezones') && $user->uid && backdrop_strlen($user->timezone)) {
         $timezone = $user->timezone;
       }
       else {
-        $timezone = variable_get('date_default_timezone', 0);
+        $timezone = config_get('system.date','default_timezone');
       }
-      $timezones = drupal_map_assoc(timezone_identifiers_list());
+      $timezones = backdrop_map_assoc(timezone_identifiers_list());
       $timestamp = $transition->getTimestamp();
       $hours = (!$transition->isScheduled()) ? '00:00' : format_date($timestamp, 'custom', 'H:i', $timezone);
       // Add a container, so checkbox and time stay together in extra fields.
@@ -351,7 +351,7 @@ class WorkflowTransitionForm { // extends FormBase {
         '#default_value' => $transition->isScheduled() ? '1' : '0',
         '#attributes' => array(
           // 'id' => 'scheduled_' . $form_id,
-          'class' => array(drupal_html_class('scheduled_' .  $form_id)),
+          'class' => array(backdrop_html_class('scheduled_' .  $form_id)),
         ),
       );
       $element['workflow']['workflow_scheduling']['date_time'] = array(
@@ -362,7 +362,7 @@ class WorkflowTransitionForm { // extends FormBase {
         '#suffix' => '</div>',
         '#states' => array(
           //'visible' => array(':input[id="' . 'scheduled_' . $form_id . '"]' => array('value' => '1')),
-          'visible' => array('input.' . drupal_html_class('scheduled_' .  $form_id) => array('value' => '1')),
+          'visible' => array('input.' . backdrop_html_class('scheduled_' .  $form_id) => array('value' => '1')),
         ),
       );
       $element['workflow']['workflow_scheduling']['date_time']['workflow_scheduled_date'] = array(
@@ -606,7 +606,7 @@ class WorkflowTransitionForm { // extends FormBase {
       // content is not associated to a workflow, old_sid is now 0. This may
       // happen in workflow_vbo, if you assign a state to non-relevant nodes.
       $entity_id = $entity->id();
-      drupal_set_message(t('Error: content @id has no workflow attached. The data is not saved.', array('@id' => $entity_id)), 'error');
+      backdrop_set_message(t('Error: content @id has no workflow attached. The data is not saved.', array('@id' => $entity_id)), 'error');
       // The new state is still the previous state.
       $new_sid = $old_sid;
       return $new_sid;
@@ -618,7 +618,7 @@ class WorkflowTransitionForm { // extends FormBase {
     // Try to execute the transition. Return $old_sid when error.
     if (!$transition) {
       // This should only happen when testing/developing.
-      drupal_set_message(t('Error: the transition from @old_sid to @new_sid could not be generated.',
+      backdrop_set_message(t('Error: the transition from @old_sid to @new_sid could not be generated.',
         array('@old_sid' => $old_sid, '@new_sid' => $new_sid)), 'error');
       // The current value is still the previous state.
       $new_sid = $old_sid;

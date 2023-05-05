@@ -110,7 +110,7 @@ class WorkflowScheduledTransition extends WorkflowTransition {
     $clone = clone $this;
     $clone->delete();
     // Save (insert or update) a record to the database based upon the schema.
-    drupal_write_record('workflow_scheduled_transition', $this);
+    backdrop_write_record('workflow_scheduled_transition', $this);
 
     // Create user message.
     if ($state = $this->getNewState()) {
@@ -125,7 +125,7 @@ class WorkflowScheduledTransition extends WorkflowTransition {
       );
       $uri = entity_uri($entity_type, $entity);
       watchdog('workflow', $message, $args, WATCHDOG_NOTICE, l('view', $uri['path'] . '/workflow'));
-      drupal_set_message(t($message, $args));
+      backdrop_set_message(t($message, $args));
     }
   }
 

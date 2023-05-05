@@ -375,7 +375,7 @@ class WorkflowState extends Entity {
     $transitions = $workflow->getTransitionsBySid($current_sid, $roles);
 
     // Let custom code add/remove/alter the available transitions.
-    // Using the new drupal_alter.
+    // Using the new backdrop_alter.
     // Modules may veto a choice by removing a transition from the list.
     $context = array(
       'entity_type' => $entity_type,
@@ -388,11 +388,11 @@ class WorkflowState extends Entity {
       'user_roles' => $roles, // @todo: can be removed in D8, since $user is in.
     );
     // @todo D8: rename to 'workflow_permitted_transitions'.
-    drupal_alter('workflow_permitted_state_transitions', $transitions, $context);
+    backdrop_alter('workflow_permitted_state_transitions', $transitions, $context);
 
     // Let custom code change the options, using old_style hook.
     // @todo D8: delete below foreach/hook for better performance and flexibility.
-    // Above drupal_alter() calls hook_workflow_permitted_state_transitions_alter() only once.
+    // Above backdrop_alter() calls hook_workflow_permitted_state_transitions_alter() only once.
     foreach ($transitions as $transition) {
       $new_sid = $transition->target_sid;
       $permitted = array();
@@ -467,7 +467,7 @@ class WorkflowState extends Entity {
       foreach ($transitions as $transition) {
         // Get the label of the transition, and if empty of the target state.
         // Beware: the target state may not exist, since it can be invented
-        // by custom code in the above drupal_alter() hook.
+        // by custom code in the above backdrop_alter() hook.
         if (!$label = $transition->label()) {
           $target_state = $transition->getNewState();
           $label = $target_state ? $target_state->label() : '';

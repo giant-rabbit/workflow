@@ -8,7 +8,7 @@
 /**
  * Tests for the Workflow classes.
  */
-class WorkflowExampleTestCase extends DrupalWebTestCase {
+class WorkflowExampleTestCase extends BackdropWebTestCase {
   protected $workflow;
   public static function getInfo() {
     return array(

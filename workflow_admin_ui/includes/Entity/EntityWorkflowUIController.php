@@ -23,7 +23,7 @@ class EntityWorkflowUIController extends EntityDefaultUIController {
     // $workflow_operations = module_invoke_all('workflow_operations', 'workflow', NULL);
 
     $item = array(
-      'file path' => isset($this->entityInfo['admin ui']['file path']) ? $this->entityInfo['admin ui']['file path'] : drupal_get_path('module', $this->entityInfo['module']),
+      'file path' => isset($this->entityInfo['admin ui']['file path']) ? $this->entityInfo['admin ui']['file path'] : backdrop_get_path('module', $this->entityInfo['module']),
       'access arguments' => array('administer workflow'),
       'type' => MENU_LOCAL_TASK,
     );
@@ -32,7 +32,7 @@ class EntityWorkflowUIController extends EntityDefaultUIController {
       'file' => 'workflow_admin_ui/workflow_admin_ui.page.states.inc',
       'title' => 'States',
       'weight' => '11',
-      'page callback' => 'drupal_get_form',
+      'page callback' => 'backdrop_get_form',
       'page arguments' => array('workflow_admin_ui_states_form', $id_count + 1, $id_count + 2),
     );
 
@@ -40,7 +40,7 @@ class EntityWorkflowUIController extends EntityDefaultUIController {
       'file' => 'workflow_admin_ui/workflow_admin_ui.page.transitions.inc',
       'title' => 'Transitions',
       'weight' => '12',
-      'page callback' => 'drupal_get_form',
+      'page callback' => 'backdrop_get_form',
       'page arguments' => array('workflow_admin_ui_transitions_form', $id_count + 1, $id_count + 2),
     );
 
@@ -48,7 +48,7 @@ class EntityWorkflowUIController extends EntityDefaultUIController {
       'file' => 'workflow_admin_ui/workflow_admin_ui.page.labels.inc',
       'title' => 'Labels',
       'weight' => '13',
-      'page callback' => 'drupal_get_form',
+      'page callback' => 'backdrop_get_form',
       'page arguments' => array('workflow_admin_ui_labels_form', $id_count + 1, $id_count + 2),
     );
 
@@ -58,8 +58,8 @@ class EntityWorkflowUIController extends EntityDefaultUIController {
       'weight' => '14',
       'page callback' => 'workflow_admin_ui_view_permissions_form',
       'page arguments' => array($id_count + 1, $id_count + 2),
-      // @todo: convert to drupal_get_form('workflow_admin_ui_view_permissions_form');
-      // 'page callback' => 'drupal_get_form',
+      // @todo: convert to backdrop_get_form('workflow_admin_ui_view_permissions_form');
+      // 'page callback' => 'backdrop_get_form',
       // 'page arguments' => array('workflow_admin_ui_view_permissions_form', $id_count + 1, $id_count + 2),
     );
 

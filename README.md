@@ -72,7 +72,7 @@ to the transition.
 Getting started: adding a workflow to a content type
 ----------------------------------------------------
 
-Now let's tell Drupal which node types should use this workflow. Go to
+Now let's tell Backdrop which node types should use this workflow. Go to
 
   Administration » Structure » Content types » MY_CONTENT_TYPE
 

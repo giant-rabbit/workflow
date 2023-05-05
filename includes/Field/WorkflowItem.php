@@ -89,7 +89,7 @@ class WorkflowItem extends WorkflowD7Base {// D8: extends ConfigFieldItemBase im
 
     // Set message, if no 'validated' workflows exist.
     if (count($workflows) == 1) {
-      drupal_set_message(
+      backdrop_set_message(
         t('You must create at least one workflow before content can be
           assigned to a workflow.')
       );
@@ -174,7 +174,7 @@ class WorkflowItem extends WorkflowD7Base {// D8: extends ConfigFieldItemBase im
         'Using Workflow Field, the widget is always shown when editing an
         Entity. Set this checkbox in case you only want to change the status
         on the Workflow History tab or on the Node View. (This checkbox is
-        only needed because Drupal core does not have a "hidden" widget.)'
+        only needed because Backdrop core does not have a "hidden" widget.)'
       ),
     );
     $element['widget']['name_as_title'] = array(

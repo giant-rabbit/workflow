@@ -2,27 +2,27 @@
 
 /**
  * @file
- * Contains Drupal\workflow\Entity\WorkflowInterface.
+ * Contains Backdrop\workflow\Entity\WorkflowInterface.
  */
 
-// D8: namespace Drupal\workflow\Entity;
+// D8: namespace Backdrop\workflow\Entity;
 
-// D8: use Drupal\Core\Config\Entity\ConfigEntityBase;
-// D8: use Drupal\Core\Session\AccountInterface;
+// D8: use Backdrop\Core\Config\Entity\ConfigEntityBase;
+// D8: use Backdrop\Core\Session\AccountInterface;
 
 /**
  * Defines a common interface for Workflow*Transition* objects.
  *
- * @see \Drupal\workflow\Entity\WorkflowConfigTransition
- * @see \Drupal\workflow\Entity\WorkflowTransition
- * @see \Drupal\workflow\Entity\WorkflowScheduledTransition
+ * @see \Backdrop\workflow\Entity\WorkflowConfigTransition
+ * @see \Backdrop\workflow\Entity\WorkflowTransition
+ * @see \Backdrop\workflow\Entity\WorkflowScheduledTransition
  */
 interface WorkflowInterface {
 
   /**
    * Retrieves the entity manager service.
    *
-   * @return \Drupal\workflow\Entity\WorkflowManagerInterface
+   * @return \Backdrop\workflow\Entity\WorkflowManagerInterface
    *   The entity manager service.
    */
 //D8: public static function workflowManager();
@@ -64,7 +64,7 @@ interface WorkflowInterface {
    *   saved directly in the database. This is because you can use States only
    *   with Transitions, and they rely on State IDs which are generated
    *   magically when saving the State. But you may need a temporary state.
-   * @return \Drupal\workflow\Entity\WorkflowState
+   * @return \Backdrop\workflow\Entity\WorkflowState
    *   The new state.
    */
   public function createState($sid, $save = TRUE);
@@ -163,7 +163,7 @@ interface WorkflowInterface {
    * @param bool $reset
    *   Indicator to reset the cache.
    *
-   * @return \Drupal\workflow\Entity\WorkflowConfigTransition[]
+   * @return \Backdrop\workflow\Entity\WorkflowConfigTransition[]
    */
   public function getTransitions($tids = FALSE, array $conditions = array(), $reset = FALSE);
 

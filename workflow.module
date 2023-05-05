@@ -1101,11 +1101,7 @@ function _workflow_info_fields($entity = NULL, $entity_type = '', $entity_bundle
     $field_info[$field_name] = $field;
   }
   else {
-    // In Backdrop 7.22, function field_info_field_map() was added, which is more
-    // memory-efficient in certain cases than field_info_fields().
-    // @see https://drupal.org/node/1915646
-    $field_map_available = version_compare(VERSION, '7.22', '>=');
-    $field_list = $field_map_available ? field_info_field_map() : field_info_fields();
+    $field_list = field_info_field_map();
     // Get the bundle, if not provided yet.
     if ($entity && !$entity_bundle) {
       list(, , $entity_bundle) = entity_extract_ids($entity_type, $entity);
@@ -1114,7 +1110,7 @@ function _workflow_info_fields($entity = NULL, $entity_type = '', $entity_bundle
       if (($data['type'] == 'workflow')
           && (!$entity_type || array_key_exists($entity_type, $data['bundles']))
           && (!$entity_bundle || in_array($entity_bundle, $data['bundles'][$entity_type]))) {
-        $field_info[$field_name] = $field_map_available ? field_info_field($field_name) : $data;
+        $field_info[$field_name] = field_info_field($field_name);
       }
     }
   }
