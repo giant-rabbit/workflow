@@ -17,11 +17,6 @@ function workflow_access_schema() {
         'description' => 'Primary Key: The Workflow state ID.',
         'not null' => TRUE,
       ),
-      'gid' => array(
-        'type' => 'serial',
-        'description' => 'Primary Key: The Workflow grant ID.',
-        'not null' => TRUE,
-      ),
       'role' => array(
         'type' => 'varchar',
         'length' => 64,
@@ -51,9 +46,8 @@ function workflow_access_schema() {
         'default' => 0,
       ),
     ),
-    'primary key' => array('sid', 'gid'),
+    'primary key' => array('sid', 'role'),
     'indexes' => array(
-      'gid' => array('gid'),
       'role' => array('role'),
     ),
   );
